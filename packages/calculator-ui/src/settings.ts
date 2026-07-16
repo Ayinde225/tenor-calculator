@@ -18,6 +18,8 @@ export interface Preferences {
   theme: Theme;
   sound: boolean;
   haptics: boolean;
+  /** Whether the guided-learning panel is shown. */
+  guided: boolean;
 }
 
 const PREFS_KEY = 'tenor.prefs.v1';
@@ -27,6 +29,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   theme: 'dark',
   sound: false, // key-click sound is off by default, per the brief
   haptics: true,
+  guided: false,
 };
 
 function safeGet(key: string): string | null {

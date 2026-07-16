@@ -13,6 +13,7 @@ import { createLcd } from './lcd.js';
 import { createKeypad } from './keypad.js';
 import { tokenFor, type KeyDef } from './layout.js';
 import { keyFromEvent, SHORTCUT_GUIDE } from './keyboard.js';
+import { createGuide } from './guide.js';
 import { Feedback } from './feedback.js';
 import {
   loadPreferences,
@@ -30,15 +31,28 @@ feedback.haptics = prefs.haptics;
 
 const engine = new Engine(loadSession() ?? INITIAL_STATE);
 const lcd = createLcd();
+const guide = createGuide();
 
 const keypad = createKeypad({
-  onKey: (def: KeyDef) => sendKey(tokenFor(def, engine.secondArmed)),
+  onKey: (def: KeyDef) => {
+    // The token the user actually invoked (primary or the armed secondary) is what
+    // the key history should show, so the guide records the same key the engine ran.
+    const key = tokenFor(def, engine.secondArmed);
+    guide.pushKey(labelForToken(def, key));
+    sendKey(key);
+  },
   onFeedback: () => feedback.press(),
 });
 
 function sendKey(key: Key): void {
   engine.press(key);
   saveSession(engine.current);
+}
+
+/** The face text to show in the key history for a token the user invoked. */
+function labelForToken(def: KeyDef, key: Key): string {
+  if (key === def.secondary && def.secondaryLabel !== undefined) return def.secondaryLabel;
+  return def.label;
 }
 
 // ---------------------------------------------------------------------------
@@ -56,12 +70,15 @@ const header = buildHeader();
 const controls = buildControls();
 
 shell.append(header, lcd.root, keypad.root);
-app.append(shell, controls.panel, buildDisclaimer());
+app.append(shell, guide.root, controls.panel, buildDisclaimer());
 
-engine.subscribe((display) => {
+engine.subscribe((display, state) => {
   lcd.update(display);
+  guide.update(display, state);
   shell.classList.toggle('second-armed', display.indicators.includes('2nd'));
 });
+
+guide.setOpen(prefs.guided);
 
 // ---------------------------------------------------------------------------
 // Physical keyboard
@@ -99,9 +116,24 @@ function buildHeader(): HTMLElement {
   const nav = document.createElement('div');
   nav.className = 'header-actions';
 
-  const guideBtn = iconButton('Keyboard shortcuts', '?', () => toggleDialog('shortcuts'));
+  const learnBtn = document.createElement('button');
+  learnBtn.type = 'button';
+  learnBtn.className = 'learn-button';
+  learnBtn.textContent = 'Learn';
+  learnBtn.setAttribute('aria-pressed', String(prefs.guided));
+  learnBtn.addEventListener('click', () => {
+    const open = !guide.open;
+    guide.setOpen(open);
+    learnBtn.setAttribute('aria-pressed', String(open));
+    learnBtn.classList.toggle('on', open);
+    prefs.guided = open;
+    savePreferences(prefs);
+  });
+  learnBtn.classList.toggle('on', prefs.guided);
+
+  const shortcutsBtn = iconButton('Keyboard shortcuts', '?', () => toggleDialog('shortcuts'));
   const settingsBtn = iconButton('Settings', '⚙', () => toggleDialog('settings'));
-  nav.append(guideBtn, settingsBtn);
+  nav.append(learnBtn, shortcutsBtn, settingsBtn);
 
   el.append(brand, nav);
   return el;

@@ -434,6 +434,155 @@ body {
   padding: 0 8px;
 }
 
+/* --- Learn toggle --- */
+
+.learn-button {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--key-edge);
+  background: var(--key-bg);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.learn-button:hover {
+  border-color: var(--accent);
+}
+.learn-button.on {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+/* --- Guided-learning panel --- */
+
+.guide {
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-radius: calc(var(--radius) + 6px);
+  padding: clamp(14px, 3vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.guide-title {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent);
+}
+.guide-intro {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.guide-active {
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.guide-active[hidden] {
+  display: none;
+}
+.guide-active-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.guide-active-label {
+  font-family: var(--font-lcd);
+  font-size: 18px;
+  color: var(--accent);
+}
+.guide-active-name {
+  font-weight: 650;
+}
+.guide-active-explain {
+  margin: 6px 0 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.guide-subhead {
+  margin: 6px 0 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+.guide-vars {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2px 12px;
+  align-items: baseline;
+}
+.guide-var-label {
+  font-family: var(--font-lcd);
+  color: var(--text);
+  padding: 6px 0;
+}
+.guide-var-label.active {
+  color: var(--accent);
+  font-weight: 700;
+}
+.guide-var-body {
+  margin: 0;
+  display: contents;
+}
+.guide-var-name {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 0;
+}
+.guide-var-value {
+  font-family: var(--font-lcd);
+  color: var(--lcd-label);
+  text-align: right;
+  padding: 6px 0;
+}
+.guide-var-explain {
+  grid-column: 1 / -1;
+  margin: 0 0 6px;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.guide-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 30px;
+}
+.key-chip {
+  font-family: var(--font-lcd);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: var(--key-bg);
+  border: 1px solid var(--key-edge);
+  color: var(--text);
+}
+.guide-example {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.guide-example-title {
+  margin: 0;
+  font-weight: 650;
+  font-size: 14px;
+}
+.guide-example-steps {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .key {
     transition: none;
