@@ -69,6 +69,8 @@ import {
   setFlow,
   setFrequency,
   setI,
+  setNPV,
+  setIRR,
   solveIRR,
   solveNPV,
 } from '../../worksheets/cash-flow.js';
@@ -143,9 +145,9 @@ export const CASH_FLOW: WorksheetDescriptor = {
  * enter-only and per cash-flow period, distinct from the TVM worksheet's I/Y
  * (p. 42); it is stored at full precision by `setI` regardless of the display.
  *
- * `2ND CLR WORK` in this view clears NPV alone (p. 42) and, per OPEN-QUESTIONS
- * CF-19, leaves I: since NPV is recomputed rather than stored there is no register
- * to zero, so the clear is a no-op on state and simply re-lands on I.
+ * NPV is a RETAINED register (p. 45), not recomputed on sight: opening the field
+ * shows its stored value (0.00 until first computed), and CPT solves and stores.
+ * `2ND CLR WORK` clears the NPV register alone and leaves I (p. 42).
  */
 export const NPV: WorksheetDescriptor = {
   id: 'NPV',
@@ -159,18 +161,18 @@ export const NPV: WorksheetDescriptor = {
     {
       label: 'NPV=',
       kind: 'compute',
-      get: (s) => solveNPV(s.cashFlow),
-      compute: (s) => s,
+      get: (s) => s.cashFlow.NPV ?? 0,
+      compute: (s) => ({ ...s, cashFlow: setNPV(s.cashFlow, solveNPV(s.cashFlow)) }),
     },
   ],
-  clearWork: (s) => s,
+  clearWork: (s) => ({ ...s, cashFlow: { ...s.cashFlow, NPV: null } }),
 };
 
 /**
- * IRR -- a single computed field, solved against the loaded stream with no rate
- * input (p. 45). Opening it shows the current value; CPT solves. `2ND CLR WORK`
- * clears IRR alone (p. 42); as with NPV there is no stored register, so the clear
- * is a no-op that re-lands on IRR.
+ * IRR -- a single retained register solved against the loaded stream with no rate
+ * input (p. 45). Opening it shows the stored value (0.00 until computed), which is
+ * why opening IRR right after computing NPV still reads 0.00: computing NPV never
+ * populates IRR (p. 48). CPT solves and stores. `2ND CLR WORK` clears IRR alone.
  */
 export const IRR: WorksheetDescriptor = {
   id: 'IRR',
@@ -178,11 +180,11 @@ export const IRR: WorksheetDescriptor = {
     {
       label: 'IRR=',
       kind: 'compute',
-      get: (s) => solveIRR(s.cashFlow),
-      compute: (s) => s,
+      get: (s) => s.cashFlow.IRR ?? 0,
+      compute: (s) => ({ ...s, cashFlow: setIRR(s.cashFlow, solveIRR(s.cashFlow)) }),
     },
   ],
-  clearWork: (s) => s,
+  clearWork: (s) => ({ ...s, cashFlow: { ...s.cashFlow, IRR: null } }),
 };
 
 /** The three descriptors keyed by id, for the central registry wiring. */

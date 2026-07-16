@@ -61,6 +61,17 @@ export interface CashFlowState {
   readonly groups: readonly CashFlowGroup[];
   /** Discount rate per cash-flow period, as a percent. Not the TVM worksheet's I/Y. */
   readonly I: number;
+  /**
+   * The last computed NPV and IRR, as RETAINED registers (p. 45, p. 48). null
+   * means "not computed since reset" and displays as 0.00. They are stored, not
+   * recomputed on sight: opening IRR right after computing NPV still shows IRR's
+   * own retained value, because computing NPV never populates IRR (p. 48). CPT on
+   * either field refreshes only that one. Deliberately NOT invalidated when the
+   * stream is edited -- the guidebook shows IRR holding a stale value until it is
+   * explicitly recomputed (p. 45).
+   */
+  readonly NPV: number | null;
+  readonly IRR: number | null;
 }
 
 /** Hard ceiling on GROUPS, not on periods -- frequencies stretch these across up to 24 x 9,999 periods (p. 44). */
@@ -94,7 +105,19 @@ export const CASH_FLOW_DEFAULTS: CashFlowState = Object.freeze({
   CFo: 0,
   groups: Object.freeze([]) as readonly CashFlowGroup[],
   I: 0,
+  NPV: null,
+  IRR: null,
 });
+
+/** Store a computed NPV into its retained register (p. 45). */
+export function setNPV(state: CashFlowState, value: number): CashFlowState {
+  return { ...state, NPV: toInternal(value) };
+}
+
+/** Store a computed IRR into its retained register (p. 45). */
+export function setIRR(state: CashFlowState, value: number): CashFlowState {
+  return { ...state, IRR: toInternal(value) };
+}
 
 /**
  * Below this the annuity factor's 0/0 is resolved by its limit. Matches the

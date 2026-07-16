@@ -174,10 +174,6 @@ interface Unsupported {
  * `xP/Y`, `CPT`, the worksheet navigation keys, and the AMORT/PROFIT entry keys.
  */
 const UNSUPPORTED: Partial<Readonly<Record<Key, Unsupported>>> = {
-  // Cash Flow editing. The worksheet itself is registered and driven, but the
-  // insert/delete edit keys that shift the flow list are not yet wired.
-  INS: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND INS is not implemented' },
-  DEL: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND DEL is not implemented' },
   // 2ND RAND is non-deterministic by nature; the corpus's single RAND case reuses
   // a prior display as its seed and is flagged unkeyable in the spec anyway.
   RAND: {

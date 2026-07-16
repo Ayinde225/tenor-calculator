@@ -73,6 +73,7 @@ import {
   type MemoryAddress,
   type MemoryOperation,
 } from '../worksheets/memory-worksheet.js';
+import { deleteFlow, insertFlow, flowAt, type CashFlowState } from '../worksheets/cash-flow.js';
 import {
   WORKSHEET_ENTRY_KEYS,
   enterWorksheet,
@@ -572,6 +573,37 @@ function reduceMemoryWorksheet(state: CalculatorState, key: Key): CalculatorStat
   return null;
 }
 
+/** The value a Cash Flow field currently holds, given its ring index. */
+function cashFlowFieldValue(cashFlow: CashFlowState, field: number): number {
+  if (field < 1) return cashFlow.CFo;
+  const n = Math.ceil(field / 2);
+  const group = flowAt(cashFlow, n);
+  return field % 2 === 1 ? group.C : group.F; // odd -> Cnn amount, even -> Fnn frequency
+}
+
+/**
+ * Cash Flow editing: 2ND INS and 2ND DEL (guidebook pp. 43-44, 47).
+ *
+ * DEL removes the group at the current slot, shortening the list; the display
+ * stays on the slot number, which now shows the next group down (or the vacant
+ * tail). INS opens a blank group at the current slot, renumbering the rest upward;
+ * the following keyed amount + ENTER fills it. Both act on the group the current
+ * field belongs to (a Cnn or its Fnn); CFo has neither (p. 44). Returns null for
+ * keys it does not own.
+ */
+function reduceCashFlowWorksheet(state: CalculatorState, key: Key): CalculatorState | null {
+  if (state.mode.kind !== 'worksheet' || state.mode.worksheet !== 'CF') return null;
+  if (key !== 'INS' && key !== 'DEL') return null;
+
+  const field = state.mode.field;
+  if (field < 1) return state; // CFo is structural; INS/DEL are inert on it (p. 44)
+  const n = Math.ceil(field / 2);
+
+  const s = commit(state);
+  const cashFlow = key === 'DEL' ? deleteFlow(s.cashFlow, n) : insertFlow(s.cashFlow, n, 0);
+  return { ...s, cashFlow, displayValue: cashFlowFieldValue(cashFlow, field), entryBuffer: null };
+}
+
 /**
  * 2ND K: arm the constant from the pending operation (p. 18).
  *
@@ -687,6 +719,10 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
   // handling can see them (p. 73).
   const mem = reduceMemoryWorksheet(state, key);
   if (mem !== null) return disarm(mem);
+
+  // The Cash Flow worksheet claims 2ND INS / 2ND DEL to edit the flow list.
+  const cf = reduceCashFlowWorksheet(state, key);
+  if (cf !== null) return disarm(cf);
 
   // Navigation claims only the keys it owns; everything else falls through to the
   // standard-calculator handling below and stays live inside the worksheet. That

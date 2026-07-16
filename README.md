@@ -16,7 +16,7 @@ before release. See [docs/IP.md](docs/IP.md).
 
 ## Status
 
-Following the phased plan in the project brief. **1,464 tests passing**, 20
+Following the phased plan in the project brief. **1,476 tests passing**, 9
 documented skips, typecheck clean.
 
 | Phase | Scope | Status |
@@ -34,15 +34,17 @@ documented skips, typecheck clean.
 The keypad state machine replays all **256 recorded key sequences** from the
 guidebook's worked examples and asserts the exact displayed string
 ([`golden-corpus.test.ts`](packages/calculator-core/src/golden-corpus.test.ts)):
-**236 of 236 asserted cases pass.** The 20 skips are a documented allowlist —
-each names the feature it waits on or the reason the recorded case is not runnable
-(a keystroke slip, a raw-vs-formatted idealization, a non-self-contained setup).
+**247 of 247 asserted cases pass.** The 9 remaining cases are skipped by a
+documented allowlist, each with a stated reason — none is an unbuilt feature.
+They are recorded keystroke slips (one press short of the guidebook's own noted
+path), raw-vs-formatted display idealizations the case notes acknowledge, a
+non-self-contained setup, the 14-digit entry-limit case, and `2ND RAND` (inherently
+non-deterministic; its single recorded case reuses a prior display as the seed).
 
-**Known remaining feature:** cash-flow editing (`2ND INS` / `2ND DEL`) and the
-NPV/IRR retained registers. The maths is ready in `cash-flow.ts`; the gap is the
-key routing and moving NPV/IRR from compute-on-sight to stored registers. Tracked
-as `it.fails` in `cash-flow-nav.test.ts` (self-correcting when built) and as
-`feature:cf-edit` skips in the corpus runner.
+Every standard BA II Plus worksheet, every primary and secondary key, and the full
+keypad workflow — 2ND/INV/HYP, CPT, ENTER, worksheet navigation, context-sensitive
+clearing, memory, constants, Last Answer, and cash-flow editing — are implemented
+and driven through the reducer.
 
 ### Required verification examples (project brief §12)
 

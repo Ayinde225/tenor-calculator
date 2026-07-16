@@ -342,34 +342,31 @@ describe('golden cases fixed since this descriptor was written', () => {
 });
 
 /**
- * Cash-flow editing (2ND INS / 2ND DEL) and the NPV/IRR retained registers are
- * not built yet. These are tracked with `it.fails`, which PASSES while the
- * assertion fails and will itself FAIL the day the feature lands -- forcing a
- * conversion back to a plain `it`. That keeps the gap visible and self-correcting
- * rather than silently skipped. The maths (insertFlow/deleteFlow, solveNPV,
- * solveIRR) is ready in cash-flow.ts; the gaps are the INS/DEL key routing and
- * moving NPV/IRR from compute-on-sight to stored registers per ENGINE-DESIGN §4.
+ * Cash-flow editing (2ND INS / 2ND DEL) and the NPV/IRR retained registers, now
+ * built. INS/DEL edit the flow list through the reducer; NPV and IRR are stored
+ * registers (ENGINE-DESIGN §4) that show 0.00 until CPT computes them, so
+ * computing NPV never populates IRR (p. 48).
  */
-describe('cash-flow editing and NPV/IRR registers (not yet implemented)', () => {
-  it.fails('delete-c03 -> C03= 0.00 [2ND DEL inert]', () => {
+describe('cash-flow editing and NPV/IRR registers (guidebook pp. 47-48)', () => {
+  it('deletes the last flow, leaving the slot vacant', () => {
     expect(screen(kDelC03)).toBe('C03= 0.00');
   });
-  it.fails('inserted-flow-gets-frequency-1 -> F02= 1.00 [no insert-shift]', () => {
+  it('gives an inserted flow the default frequency of 1', () => {
     expect(screen(kInsF02)).toBe('F02= 1.00');
   });
-  it.fails('verify-c03-shifted -> C03= 5,000.00 [no insert-shift]', () => {
+  it('renumbers the displaced amount upward (C02 5,000 -> C03)', () => {
     expect(screen(kShC03)).toBe('C03= 5,000.00');
   });
-  it.fails('verify-f03-shifted -> F03= 4.00 [no insert-shift]', () => {
+  it('carries the displaced frequency with its amount (F02 4 -> F03)', () => {
     expect(screen(kShF03)).toBe('F03= 4.00');
   });
-  it.fails('compute-npv on edited stream -> NPV= 7,266.44 [pre-edit stream]', () => {
+  it('computes NPV on the EDITED stream -> 7,266.44 (arbiter)', () => {
     expect(screen(kNpvVal)).toBe('NPV= 7,266.44');
   });
-  it.fails('open-irr -> IRR= 0.00 [compute-on-sight, not a retained register]', () => {
+  it('IRR reads 0.00 on open, since computing NPV does not populate it', () => {
     expect(screen(kIrrOpen)).toBe('IRR= 0.00');
   });
-  it.fails('compute-irr on edited stream -> IRR= 52.71 [pre-edit stream]', () => {
+  it('computes IRR on CPT -> 52.71 (arbiter)', () => {
     expect(screen(kIrrVal)).toBe('IRR= 52.71');
   });
 });
@@ -552,15 +549,15 @@ describe('errors latch rather than throw (guidebook pp. 84-85)', () => {
   });
 
   it('Error 5: IRR on a stream with no sign change (empty/default stream)', () => {
-    // p. 84: IRR without at least one sign change. IRR recomputes on sight, so the
-    // error appears the moment the worksheet opens on the fresh stream.
-    const r = press(['IRR']);
+    // p. 84: IRR without at least one sign change. IRR is a retained register, so
+    // opening the field shows 0.00 and the error appears when CPT computes it.
+    const r = press(['IRR', 'CPT']);
     expect(r.display.value).toBe('Error 5');
     expect(r.state.errorState).toBe(ErrorCode.NoSolution);
   });
 
   it('Error 5: IRR on an all-outflow stream (the lease has no sign change)', () => {
-    const r = press(['IRR'], withStream(leaseStream()));
+    const r = press(['IRR', 'CPT'], withStream(leaseStream()));
     expect(r.display.value).toBe('Error 5');
     expect(r.state.errorState).toBe(ErrorCode.NoSolution);
   });
@@ -576,7 +573,7 @@ describe('errors latch rather than throw (guidebook pp. 84-85)', () => {
     // NPV = -1 + 3x - 3x^2 has a negative discriminant: two sign changes, no root.
     let s = setCFo(CASH_FLOW_DEFAULTS, -1);
     s = setFlow(setFlow(s, 1, 3), 2, -3);
-    const r = press(['IRR'], withStream(s));
+    const r = press(['IRR', 'CPT'], withStream(s));
     expect(r.display.value).toBe('Error 7');
     expect(r.state.errorState).toBe(ErrorCode.IterationLimitExceeded);
   });
@@ -594,16 +591,26 @@ describe('errors latch rather than throw (guidebook pp. 84-85)', () => {
 // Totality: project never throws, even on a throwing field powered off
 // ===========================================================================
 
-describe('projection stays total on a throwing field (worksheet-nav contract)', () => {
-  it('never throws out of project when IRR cannot be solved', () => {
-    const bad: CalculatorState = {
-      ...INITIAL_STATE, // default stream: no sign change, so IRR get() throws Error 5
+describe('IRR is a retained register, so opening it never computes (p. 45, p. 48)', () => {
+  it('shows 0.00 on a default stream instead of throwing Error 5', () => {
+    // Under the register model, opening IRR reads its stored value; only CPT
+    // computes, so an unsolvable stream cannot make the display throw on landing.
+    const onIrr: CalculatorState = {
+      ...INITIAL_STATE,
+      mode: { kind: 'worksheet', worksheet: 'IRR', field: 0 },
+    };
+    expect(() => project(onIrr)).not.toThrow();
+    expect(project(onIrr).value).toBe('0.00');
+    expect(project(onIrr).indicators).toContain('='); // the register value IS on screen
+  });
+
+  it('projection stays total even powered off', () => {
+    const off: CalculatorState = {
+      ...INITIAL_STATE,
       mode: { kind: 'worksheet', worksheet: 'IRR', field: 0 },
       poweredOn: false,
     };
-    expect(() => project(bad)).not.toThrow();
-    expect(() => reduce(bad, '5')).not.toThrow();
-    // The field cannot be read, so = is not lit.
-    expect(project(bad).indicators).not.toContain('=');
+    expect(() => project(off)).not.toThrow();
+    expect(() => reduce(off, '5')).not.toThrow();
   });
 });
