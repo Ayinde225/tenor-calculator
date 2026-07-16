@@ -151,6 +151,12 @@ export interface CalculatorState {
   readonly constantArming: { readonly op: BinaryOp; readonly isPercent: boolean } | null;
   /** A STO/RCL prefix awaiting its register digit; null when none is pending. */
   readonly memoryPrefix: MemoryPrefix | null;
+  /**
+   * In-place arithmetic armed inside the Memory worksheet: pressing an operator on
+   * a memory field (e.g. `+` on M4) remembers it here, and the next ENTER applies
+   * `M4 = M4 <op> keyed` rather than overwriting M4 (p. 73).
+   */
+  readonly worksheetMemOp: MemoryOperation | null;
   readonly randomSeed: number | null;
 
   readonly tvm: TvmState;
@@ -195,6 +201,7 @@ export const INITIAL_STATE: CalculatorState = Object.freeze({
   constant: null,
   constantArming: null,
   memoryPrefix: null,
+  worksheetMemOp: null,
   randomSeed: null,
 
   tvm: TVM_DEFAULTS,

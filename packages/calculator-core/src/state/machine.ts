@@ -523,6 +523,43 @@ function pressLastAnswer(state: CalculatorState): CalculatorState {
 }
 
 /**
+ * In-place arithmetic inside the Memory worksheet (p. 73).
+ *
+ * On a memory field, an operator arms `worksheetMemOp` and the following ENTER
+ * applies `M<field> = M<field> <op> keyed`, then redisplays the register. This is
+ * distinct from the standard-mode STO grammar: here the operand is keyed normally
+ * and there is no register digit, because the register is the field you are on.
+ *
+ * Returns null for keys it does not own, so navigation and digit entry fall
+ * through to the generic worksheet handling.
+ */
+function reduceMemoryWorksheet(state: CalculatorState, key: Key): CalculatorState | null {
+  if (state.mode.kind !== 'worksheet' || state.mode.worksheet !== 'MEM') return null;
+
+  const op = MEMORY_OP[key];
+  if (op !== undefined) {
+    return { ...commit(state), worksheetMemOp: op };
+  }
+
+  if (key === 'ENTER' && state.worksheetMemOp !== null) {
+    const memOp = state.worksheetMemOp;
+    const s = commit(state);
+    const addr = s.mode.kind === 'worksheet' ? s.mode.field : 0;
+    if (!isMemoryAddress(addr)) return { ...s, worksheetMemOp: null };
+    const memories = memoryArithmetic(s.memories, memOp, addr, s.displayValue);
+    return {
+      ...s,
+      memories,
+      displayValue: recall(memories, addr),
+      entryBuffer: null,
+      worksheetMemOp: null,
+    };
+  }
+
+  return null;
+}
+
+/**
  * 2ND K: arm the constant from the pending operation (p. 18).
  *
  * Two printed forms (p. 18), distinguished by whether the operand is already keyed:
@@ -624,6 +661,12 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
   // alternative to pressing `↓` from INT.
   const opens = WORKSHEET_ENTRY_KEYS[key];
   if (opens !== undefined) return disarm(enterWorksheet(state, opens, WORKSHEETS));
+
+  // The Memory worksheet claims operator keys and ENTER-after-operator for its
+  // in-place arithmetic, before the generic navigation or the standard operator
+  // handling can see them (p. 73).
+  const mem = reduceMemoryWorksheet(state, key);
+  if (mem !== null) return disarm(mem);
 
   // Navigation claims only the keys it owns; everything else falls through to the
   // standard-calculator handling below and stays live inside the worksheet. That
