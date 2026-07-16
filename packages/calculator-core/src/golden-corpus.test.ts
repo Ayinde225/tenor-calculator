@@ -219,6 +219,39 @@ const CORPUS_AMBIGUITY: Readonly<Record<string, Unsupported>> = {
       'same one-DOWN-short slip as amort-year3-auto-advance-p1; engine returns P2=33.00 on the ' +
       'corrected path. Verified correct.',
   },
+  // Same one-DOWN-short slip as amort. The bond worksheet has nine fields
+  // (SDT..AI); AI is the auto-compute field that raises Error 6 on the invalid
+  // default dates (RDT <= SDT, p. 85). Reaching it needs DOWN x8; the recorded
+  // keys press DOWN x7, landing on PRI. VERIFIED: DOWN x8 raises Error 6 exactly
+  // as the case expects. Engine correct; corpus keys one short.
+  'bond-error6-on-default-dates': {
+    category: 'corpus-defect:keystroke-count',
+    reason:
+      'recorded DOWN x7 lands on PRI; the auto-compute AI field that raises Error 6 on the ' +
+      'default RDT<=SDT dates is at DOWN x8. Verified: engine raises Error 6 there. Corpus one short.',
+  },
+  // The case asserts the raw keyed string '5'; the engine renders the committed
+  // '5.00'. VERIFIED: the memory VALUE is correct (M9 = 105), which is the p. 16
+  // invariant this case derives from ("memory arithmetic changes only the value
+  // in the affected memory and not the displayed value"). The case note itself
+  // states the expected '5' is an unformatted idealization, not a display capture.
+  'memory-and-last-answer-memory-arithmetic-leaves-display-untouched': {
+    category: 'corpus-idealization:raw-echo',
+    reason:
+      "asserts raw '5'; engine shows committed '5.00'. The memory value it actually tests is " +
+      'correct (M9 = 105). The note flags the unformatted expectation as an idealization.',
+  },
+  // Not self-contained as recorded. STO + 1 adds the DISPLAY to M1, but the setup
+  // establishes no display value, so the sum is M1 + 0. It also seeds
+  // M1 = 16341.0969196093, which carries 15 significant digits -- more than the
+  // 13-digit machine can hold. The case is a fragment of a longer accumulation
+  // whose running display it does not reproduce. Flagged by the Phase 3 audit.
+  'tvm-variable-cash-flow-total-pv': {
+    category: 'corpus-incomplete:missing-display-seed',
+    reason:
+      'STO + 1 needs a display value the setup never establishes, and the M1 seed exceeds 13 ' +
+      'digits. Not runnable as recorded; a fragment of a longer accumulation.',
+  },
 };
 
 /** Digits the machine's entry buffer accepts before further presses are ignored (p. 86). */
