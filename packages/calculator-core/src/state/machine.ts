@@ -237,6 +237,19 @@ function pressOperatorKey(state: CalculatorState, op: BinaryOp): CalculatorState
   return { ...s, pendingOps: pending, displayValue: value };
 }
 
+/**
+ * Complete every pending operation and clear the stack, leaving the result on the
+ * display. Shared by `=` and by worksheet ENTER: keying `10 / 12 ENTER` into a
+ * worksheet field must store 0.8333..., not the bare 12, because the division is
+ * a pending operation the ENTER has to settle first (guidebook p. 49 lease).
+ */
+export function settlePending(state: CalculatorState): CalculatorState {
+  const s = commit(state);
+  const { value } = reduceStack(s, s.displayValue, null, 0);
+  const v = toInternal(value);
+  return { ...s, pendingOps: [], parenLevels: 0, displayValue: v };
+}
+
 function pressEqualsKey(state: CalculatorState): CalculatorState {
   const s = commit(state);
 

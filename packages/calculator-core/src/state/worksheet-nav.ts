@@ -48,7 +48,7 @@ import {
   renderValue,
 } from './display-state.js';
 import { toInternal } from '../numeric/precision.js';
-import { currentValue } from './machine.js';
+import { currentValue, settlePending } from './machine.js';
 
 // ---------------------------------------------------------------------------
 // The contract
@@ -286,17 +286,20 @@ export function enterWorksheet(
 /**
  * ENTER: assign the displayed value to the displayed variable (p. 21).
  *
- * The value taken is whatever the display holds -- the entry buffer if the user
- * is mid-entry, otherwise the committed display value. That second path is not
- * academic: p. 41 amortizes a balloon with `↓ 5 2ND [xP/Y] ENTER`, where xP/Y has
- * already turned the keyed 5 into a committed 60 before ENTER is pressed.
+ * The value taken is whatever the display holds after any pending arithmetic is
+ * settled. Two non-academic cases ride on that:
+ *   - p. 41 amortizes a balloon with `↓ 5 2ND [xP/Y] ENTER`, where xP/Y has
+ *     already turned the keyed 5 into a committed 60 before ENTER is pressed.
+ *   - p. 49 keys the monthly rate as `NPV 10 / 12 ENTER`, where the division is
+ *     a PENDING operation that ENTER must complete (storing 0.8333..., not 12).
  *
  * A field with no `set` ignores ENTER.
  */
 function pressEnter(state: CalculatorState, field: FieldDescriptor): CalculatorState {
   if (field.set === undefined) return state;
-  const v = toInternal(currentValue(state));
-  const stored = field.set({ ...state, entryBuffer: null, displayValue: v }, v);
+  const settled = settlePending(state);
+  const v = settled.displayValue;
+  const stored = field.set(settled, v);
   return { ...land(stored, field), ans: v };
 }
 
