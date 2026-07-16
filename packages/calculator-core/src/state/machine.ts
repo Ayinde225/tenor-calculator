@@ -666,6 +666,13 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
     return { ...state, poweredOn: false };
   }
 
+  // SET is the second function of the ENTER key, so `2ND ENTER` is `2ND SET`. The
+  // corpus records the p. 58 depreciation year-bump in that physical spelling
+  // while other cases use the SET token; both must cycle the setting.
+  if (state.secondArmed && key === 'ENTER') {
+    return dispatch(state, 'SET');
+  }
+
   // 3. The prompted worksheets.
   //
   // An entry key is checked before navigation so that `2ND PROFIT` pressed inside
