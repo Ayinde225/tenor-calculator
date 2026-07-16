@@ -16,17 +16,33 @@ before release. See [docs/IP.md](docs/IP.md).
 
 ## Status
 
-Following the phased plan in the project brief. **670 tests passing**, typecheck clean.
+Following the phased plan in the project brief. **1,464 tests passing**, 20
+documented skips, typecheck clean.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 0 | Research, spec extraction, traceability matrix | Complete |
-| 1 | Engine: precision, display, standard math, CHN/AOS, memory | Complete except the keypad state machine |
+| 1 | Engine: precision, display, standard math, CHN/AOS, memory, keypad state machine | Complete |
 | 2 | TVM and amortization | Complete |
 | 3 | Cash flow, bonds, depreciation, statistics, other worksheets | Complete |
 | 4 | UI and PWA | Not started |
 | 5 | Optional accounts and sync | Not started |
 | 6 | Final parity audit | Not started |
+
+### Golden corpus parity
+
+The keypad state machine replays all **256 recorded key sequences** from the
+guidebook's worked examples and asserts the exact displayed string
+([`golden-corpus.test.ts`](packages/calculator-core/src/golden-corpus.test.ts)):
+**236 of 236 asserted cases pass.** The 20 skips are a documented allowlist —
+each names the feature it waits on or the reason the recorded case is not runnable
+(a keystroke slip, a raw-vs-formatted idealization, a non-self-contained setup).
+
+**Known remaining feature:** cash-flow editing (`2ND INS` / `2ND DEL`) and the
+NPV/IRR retained registers. The maths is ready in `cash-flow.ts`; the gap is the
+key routing and moving NPV/IRR from compute-on-sight to stored registers. Tracked
+as `it.fails` in `cash-flow-nav.test.ts` (self-correcting when built) and as
+`feature:cf-edit` skips in the corpus runner.
 
 ### Required verification examples (project brief §12)
 
