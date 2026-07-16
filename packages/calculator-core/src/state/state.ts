@@ -104,6 +104,13 @@ export interface CalculatorState {
    * is why it has to be state rather than a special case at the call site.
    */
   readonly computeArmed: boolean;
+  /**
+   * 2ND RESET is a two-step confirmation, not an immediate action (p. 11):
+   * pressing it shows `RST ?` and waits. ENTER then performs the hard reset;
+   * 2ND QUIT (or any other key) cancels. This latch holds that intermediate
+   * "armed but not confirmed" state.
+   */
+  readonly resetArmed: boolean;
 
   // Expression evaluation.
   readonly pendingOps: readonly PendingOp[];
@@ -147,6 +154,7 @@ export const INITIAL_STATE: CalculatorState = Object.freeze({
   invArmed: false,
   hypArmed: false,
   computeArmed: false,
+  resetArmed: false,
 
   pendingOps: [],
   parenLevels: 0,

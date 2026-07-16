@@ -59,11 +59,19 @@ import {
   type DisplayState,
   type Indicator,
   errorDisplayState,
+  makeDisplay,
   renderEntry,
   renderValue,
 } from './display-state.js';
 import { type Key, isDigit } from './keys.js';
 import { computeTvm, type TvmVariable } from '../worksheets/tvm.js';
+import {
+  WORKSHEET_ENTRY_KEYS,
+  enterWorksheet,
+  reduceWorksheet,
+  worksheetDisplay,
+} from './worksheet-nav.js';
+import { WORKSHEETS } from './worksheet-registry.js';
 
 export interface ReduceResult {
   readonly state: CalculatorState;
@@ -91,8 +99,22 @@ function indicatorsFor(state: CalculatorState): Indicator[] {
 export function project(state: CalculatorState): DisplayState {
   if (state.errorState !== null) return errorDisplayState(state.errorState);
 
+  // 2ND RESET has been pressed and is waiting for confirmation: the LCD shows the
+  // `RST ?` prompt with the ENTER annunciator lit (p. 11). It owns the whole
+  // display until ENTER confirms or 2ND QUIT cancels.
+  if (state.resetArmed) return makeDisplay('RST ?', '', ['ENTER']);
+
   const fmt = { decimals: state.format.DEC, separator: state.format.separators };
   const ind = indicatorsFor(state);
+
+  // A displayed worksheet field owns the whole LCD: the label, the annunciator
+  // prompts, and the `=` cue that says the number belongs to the label (p. 27).
+  // Null means the mode names a worksheet with no descriptor yet, which renders
+  // as standard mode rather than crashing.
+  if (state.mode.kind === 'worksheet') {
+    const d = worksheetDisplay(state, WORKSHEETS, fmt, ind);
+    if (d !== null) return d;
+  }
 
   if (state.entryBuffer !== null) return renderEntry(state.entryBuffer, fmt, '', ind);
   return renderValue(state.displayValue, fmt, '', ind);
@@ -435,6 +457,16 @@ export function reduce(state: CalculatorState, key: Key): ReduceResult {
 }
 
 function dispatch(state: CalculatorState, key: Key): CalculatorState {
+  // 2ND RESET is armed and waiting for confirmation (p. 11). ENTER performs the
+  // hard reset; 2ND QUIT cancels; anything else also cancels and is then handled
+  // normally, since the guidebook commits only to those two outcomes and a
+  // stranded RST prompt would be worse than a lenient cancel.
+  if (state.resetArmed) {
+    if (key === 'ENTER') return INITIAL_STATE;
+    if (key === '2ND') return { ...state, secondArmed: true }; // lets 2ND QUIT cancel
+    return dispatch({ ...state, resetArmed: false }, key);
+  }
+
   // 2. The modifier latches.
   if (key === '2ND') {
     // Pressing 2ND twice disarms. There is no 2ND-of-2ND function (p. 7).
@@ -454,7 +486,27 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
     return { ...state, poweredOn: false };
   }
 
-  // 3. Dispatch.
+  // 3. The prompted worksheets.
+  //
+  // An entry key is checked before navigation so that `2ND PROFIT` pressed inside
+  // AMORT switches worksheets rather than being swallowed, and so that `2ND
+  // AMORT` pressed inside AMORT returns to P1 -- which p. 28 offers as the
+  // alternative to pressing `↓` from INT.
+  const opens = WORKSHEET_ENTRY_KEYS[key];
+  if (opens !== undefined) return disarm(enterWorksheet(state, opens, WORKSHEETS));
+
+  // Navigation claims only the keys it owns; everything else falls through to the
+  // standard-calculator handling below and stays live inside the worksheet. That
+  // is deliberate. p. 22: "You can assign values to TVM variables while in a
+  // prompted worksheet". p. 41 uses `2ND xP/Y` inside AMORT to key 5 years as 60
+  // payments. Those keys leave a number on the LCD that does not belong to the
+  // displayed label, which is precisely the p. 27 trap the `=` indicator marks.
+  if (state.mode.kind === 'worksheet') {
+    const next = reduceWorksheet(state, key, WORKSHEETS);
+    if (next !== null) return disarm(next);
+  }
+
+  // 4. Dispatch.
   if (isDigit(key)) return pressDigit(state, key);
 
   switch (key) {
@@ -507,8 +559,9 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
     case 'CLR TVM':
       return pressClearTvm(state);
     case 'RESET':
-      // 2ND RESET ENTER is a two-step confirmation (p. 11); ENTER completes it.
-      return { ...disarm(state), mode: { kind: 'standard' } };
+      // Arm the two-step confirmation: show `RST ?` and wait (p. 11). The armed
+      // branch at the top of dispatch handles the ENTER/cancel that follows.
+      return { ...disarm(state), resetArmed: true };
 
     case 'N':
     case 'I/Y':
