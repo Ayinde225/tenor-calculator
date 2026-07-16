@@ -154,10 +154,13 @@ import { DATE_WORKSHEET } from './worksheets/date-nav.js';
 import { BREAKEVEN } from './worksheets/breakeven-nav.js';
 import { MEMORY } from './worksheets/memory-nav.js';
 import { FORMAT } from './worksheets/format-nav.js';
+import { PY_WORKSHEET, BGN_WORKSHEET } from './worksheets/tvm-settings-nav.js';
 
 export const WORKSHEETS: WorksheetRegistry = Object.freeze({
   PROFIT,
   AMORT,
+  PY: PY_WORKSHEET,
+  BGNSET: BGN_WORKSHEET,
   CF: CASH_FLOW,
   NPV,
   IRR,

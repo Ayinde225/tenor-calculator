@@ -178,15 +178,6 @@ const UNSUPPORTED: Partial<Readonly<Record<Key, Unsupported>>> = {
   // insert/delete edit keys that shift the flow list are not yet wired.
   INS: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND INS is not implemented' },
   DEL: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND DEL is not implemented' },
-  // TVM sub-settings the reducer never dispatches (fall through to a no-op disarm).
-  'P/Y': {
-    category: 'tvm-setting:P/Y',
-    reason: '2ND P/Y payments-per-year entry is not consumed by the reducer',
-  },
-  BGN: {
-    category: 'tvm-setting:BGN',
-    reason: '2ND BGN END/BGN timing toggle is not consumed by the reducer',
-  },
   // Standard-mode features the reducer never dispatches.
   STO: { category: 'feature:memory', reason: 'STO/RCL memory is not wired into the reducer' },
   RCL: { category: 'feature:memory', reason: 'STO/RCL memory is not wired into the reducer' },

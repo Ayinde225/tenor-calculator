@@ -45,7 +45,13 @@ export type WorksheetId =
   | 'PROFIT'
   | 'BRKEVN'
   | 'MEM'
-  | 'FORMAT';
+  | 'FORMAT'
+  // The two TVM sub-settings, reached from standard-calculator mode by 2ND P/Y
+  // and 2ND BGN. They are one- and two-field prompts over the TVM registers
+  // rather than worksheets in their own right, but the navigation is identical,
+  // so they ride the same descriptor machinery.
+  | 'PY'
+  | 'BGNSET';
 
 export type Mode = { kind: 'standard' } | { kind: 'worksheet'; worksheet: WorksheetId; field: number };
 

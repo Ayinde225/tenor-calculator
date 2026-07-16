@@ -145,6 +145,8 @@ export const WORKSHEET_ENTRY_KEYS: Partial<Readonly<Record<Key, WorksheetId>>> =
   BRKEVN: 'BRKEVN',
   MEM: 'MEM',
   FORMAT: 'FORMAT',
+  'P/Y': 'PY',
+  BGN: 'BGNSET',
 } as const);
 
 /** The keys this engine claims while a worksheet is displayed. Everything else falls through. */
