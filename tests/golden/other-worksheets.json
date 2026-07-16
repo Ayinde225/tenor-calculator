@@ -1,0 +1,339 @@
+{
+  "section": "other-worksheets",
+  "sourcePages": "63-73",
+  "cases": [
+    {
+      "id": "other-worksheets-pct-change-compute-pct",
+      "title": "Percent change from forecast 658 to actual 700",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "658", "ENTER", "DOWN", "700", "ENTER", "DOWN", "CPT"],
+      "expect": { "variable": "%CH", "display": "6.38" },
+      "notes": "Exact value 6.382978723...%. Positive %CH = increase (p. 64). Example does NOT press CLR WORK first; it relies on #PD already being 1. Guidebook display carries a computed-value marker (*) that is not part of the numeric string."
+    },
+    {
+      "id": "other-worksheets-pct-change-enter-old",
+      "title": "Entering OLD in the Percent Change worksheet",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "658", "ENTER"],
+      "expect": { "variable": "OLD", "display": "658.00" },
+      "notes": "Entered-value marker (a small left triangle) accompanies the display in the guidebook; not part of the string."
+    },
+    {
+      "id": "other-worksheets-pct-change-enter-new",
+      "title": "Entering NEW in the Percent Change worksheet",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "658", "ENTER", "DOWN", "700", "ENTER"],
+      "expect": { "variable": "NEW", "display": "700.00" },
+      "notes": "DOWN from OLD reaches NEW."
+    },
+    {
+      "id": "other-worksheets-pct-change-enter-negative-pct",
+      "title": "Entering -7 as percent change",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "658", "ENTER", "DOWN", "700", "ENTER", "DOWN", "CPT", "7", "+/-", "ENTER"],
+      "expect": { "variable": "%CH", "display": "-7.00" },
+      "notes": "Keying over a just-computed value re-marks %CH as entered. Negative %CH = decrease (p. 64)."
+    },
+    {
+      "id": "other-worksheets-pct-change-compute-new-from-negative",
+      "title": "New amount 7% below the 658 forecast",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "658", "ENTER", "DOWN", "700", "ENTER", "DOWN", "CPT", "7", "+/-", "ENTER", "UP", "CPT"],
+      "expect": { "variable": "NEW", "display": "611.94" },
+      "notes": "658 x (1 - 0.07)^1 = 611.94 exactly. UP from %CH reaches NEW. Overwrites the previously entered NEW=700."
+    },
+    {
+      "id": "other-worksheets-compound-interest-enter-old",
+      "title": "Entering the stock purchase price 500 as OLD",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "500", "ENTER"],
+      "expect": { "variable": "OLD", "display": "500.00" },
+      "notes": "OLD = present value in the compound-interest role mapping (p. 64). The example opens on 'Current value' without clearing."
+    },
+    {
+      "id": "other-worksheets-compound-interest-enter-new",
+      "title": "Entering the stock selling price 750 as NEW",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "500", "ENTER", "DOWN", "750", "ENTER"],
+      "expect": { "variable": "NEW", "display": "750.00" },
+      "notes": "NEW = future value in the compound-interest role mapping (p. 64). DOWN from OLD reaches NEW."
+    },
+    {
+      "id": "other-worksheets-compound-interest-enter-periods",
+      "title": "Entering #PD = 5 periods",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "500", "ENTER", "DOWN", "750", "ENTER", "DOWN", "DOWN", "5", "ENTER"],
+      "expect": { "variable": "#PD", "display": "5.00" },
+      "notes": "DOWN DOWN from NEW passes %CH and lands on #PD."
+    },
+    {
+      "id": "other-worksheets-compound-interest-growth-rate",
+      "title": "Annual growth rate: 500 to 750 over 5 years",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "500", "ENTER", "DOWN", "750", "ENTER", "DOWN", "DOWN", "5", "ENTER", "UP", "CPT"],
+      "expect": { "variable": "%CH", "display": "8.45" },
+      "notes": "Exact 100*((750/500)^(1/5)-1) = 8.44717712...%. This case is the arbiter proving #PD is an EXPONENT in the p.81 formula, which the vector rendering flattens to a trailing factor."
+    },
+    {
+      "id": "other-worksheets-clr-work-zeroes-old",
+      "title": "CLR WORK in the Percent Change worksheet zeroes OLD",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "2ND", "CLR WORK"],
+      "expect": { "variable": "OLD", "display": "0.00" },
+      "notes": "Display carries no entered/computed marker after a clear."
+    },
+    {
+      "id": "other-worksheets-cost-sell-markup-enter-cost",
+      "title": "Entering the original cost 100 as OLD",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "2ND", "CLR WORK", "100", "ENTER"],
+      "expect": { "variable": "OLD", "display": "100.00" },
+      "notes": "OLD = cost in the cost-sell-markup role mapping (p. 64). This example is the one in the chapter that clears the worksheet first."
+    },
+    {
+      "id": "other-worksheets-cost-sell-markup-enter-sell",
+      "title": "Entering the selling price 125 as NEW",
+      "guidebookPage": 65,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "2ND", "CLR WORK", "100", "ENTER", "DOWN", "125", "ENTER"],
+      "expect": { "variable": "NEW", "display": "125.00" },
+      "notes": "NEW = selling price in the cost-sell-markup role mapping (p. 64). Same numeric pair as the Profit Margin example on p. 71, but that one yields MAR = 20 against the selling price while this yields %CH = 25 against the cost."
+    },
+    {
+      "id": "other-worksheets-cost-sell-markup",
+      "title": "Markup from cost 100 to selling price 125",
+      "guidebookPage": 66,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "Δ%", "2ND", "CLR WORK", "100", "ENTER", "DOWN", "125", "ENTER", "DOWN", "CPT"],
+      "expect": { "variable": "%CH", "display": "25.00" },
+      "notes": "CRITICAL DISCREPANCY ARBITER: the p.63 reset table prints #PD default = 0, but this example clears the worksheet and enters only OLD and NEW, then gets 25.00. That is only reachable if CLR WORK leaves #PD = 1 (matching the p.64 prose). The printed default table is wrong; #PD clears to 1. Markup is measured against cost, unlike the Profit Margin worksheet's MAR."
+    },
+    {
+      "id": "other-worksheets-iconv-enter-nom",
+      "title": "Entering a 15% nominal rate",
+      "guidebookPage": 67,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "ICONV", "15", "ENTER"],
+      "expect": { "variable": "NOM", "display": "15.00" },
+      "notes": "NOM and EFF are both entered as ANNUAL rates in percent (p. 67)."
+    },
+    {
+      "id": "other-worksheets-iconv-enter-cy",
+      "title": "Setting quarterly compounding (C/Y = 4)",
+      "guidebookPage": 67,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "ICONV", "15", "ENTER", "DOWN", "DOWN", "4", "ENTER"],
+      "expect": { "variable": "C/Y", "display": "4.00" },
+      "notes": "DOWN DOWN from NOM passes EFF and lands on C/Y. C/Y here is enter-only and is the Interest Conversion worksheet's own variable (default 1); 2ND CLR WORK in this worksheet deliberately does not touch it (p. 67)."
+    },
+    {
+      "id": "other-worksheets-iconv-eff-from-nom",
+      "title": "Effective rate for 15% nominal compounded quarterly",
+      "guidebookPage": 67,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "ICONV", "15", "ENTER", "DOWN", "DOWN", "4", "ENTER", "UP", "CPT"],
+      "expect": { "variable": "EFF", "display": "15.87" },
+      "notes": "Exact 100*((1+0.15/4)^4 - 1) = 15.86504150390625% -> rounds to 15.87. FORMULA ARBITER: the p.80 printed EFF equation reads 'ln(x DIVIDE 1)'; the '+ 1' reading is the only one producing 15.87 (the printed '÷ 1' reading yields ln(0.0375), i.e. approximately -100). The example wins. The printed equation also flattens the exponent of e and drops its closing parenthesis."
+    },
+    {
+      "id": "other-worksheets-date-default-dt1",
+      "title": "Date worksheet opens on the default DT1",
+      "guidebookPage": 69,
+      "setup": { "decimals": 2, "dateFormat": "US", "dayCount": "ACT" },
+      "keys": ["2ND", "DATE"],
+      "expect": { "variable": "DT1", "display": "12-31-1990" },
+      "notes": "Default shown only on a freshly reset machine (2ND RESET ENTER) or after 2ND CLR WORK in this worksheet. Dates display MM-DD-YYYY with an unpadded month."
+    },
+    {
+      "id": "other-worksheets-date-enter-dt1",
+      "title": "Entering DT1 = September 4, 2003",
+      "guidebookPage": 69,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "DATE", "9.0403", "ENTER"],
+      "expect": { "variable": "DT1", "display": "9-04-2003" },
+      "notes": "US entry format is MM.DDYY -- 9.0403 is one keyed token. Two-digit year 03 maps into the 1980-2079 window (p. 81). Keying MM.DDYYYY instead raises Error 6 (p. 85). Note the day is zero-padded on output but the month is not."
+    },
+    {
+      "id": "other-worksheets-date-enter-dt2",
+      "title": "Entering DT2 = November 1, 2003",
+      "guidebookPage": 69,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "DATE", "9.0403", "ENTER", "DOWN", "11.0103", "ENTER"],
+      "expect": { "variable": "DT2", "display": "11-01-2003" },
+      "notes": "DOWN from DT1 reaches DT2. The calculator assumes DT1 is earlier than DT2 (p. 68)."
+    },
+    {
+      "id": "other-worksheets-date-act-setting-displayed",
+      "title": "Actual/actual day-count setting is displayed",
+      "guidebookPage": 69,
+      "setup": { "decimals": 2, "dateFormat": "US", "dayCount": "ACT" },
+      "keys": ["2ND", "DATE", "9.0403", "ENTER", "DOWN", "11.0103", "ENTER", "DOWN", "DOWN"],
+      "expect": { "variable": "ACT", "display": "ACT" },
+      "notes": "DOWN DOWN from DT2 passes DBD and lands on the day-count setting slot. This is a setting, not a number: the display is the bare method name with no '=' and no value. The example does not press 2ND SET because ACT is already the default."
+    },
+    {
+      "id": "other-worksheets-date-dbd-act",
+      "title": "Days between Sept 4, 2003 and Nov 1, 2003 (actual/actual)",
+      "guidebookPage": 69,
+      "setup": { "decimals": 2, "dateFormat": "US", "dayCount": "ACT" },
+      "keys": ["2ND", "DATE", "9.0403", "ENTER", "DOWN", "11.0103", "ENTER", "DOWN", "DOWN", "UP", "CPT"],
+      "expect": { "variable": "DBD", "display": "58.00" },
+      "notes": "26 remaining days in September + 31 in October + 1 in November = 58. UP from the ACT slot returns to DBD. Displayed with the current DEC setting, hence '58.00' not '58'. Under the 30/360 method the same pair would give 57, but the guidebook does not print that comparison."
+    },
+    {
+      "id": "other-worksheets-profit-margin-open-cst",
+      "title": "Profit Margin worksheet opens on CST",
+      "guidebookPage": 71,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "PROFIT"],
+      "expect": { "variable": "CST", "display": "0.00" },
+      "notes": "The guidebook shows 0.00 here rather than 'Current value', implying a freshly reset/cleared machine. There is no auto-clear on worksheet entry."
+    },
+    {
+      "id": "other-worksheets-profit-margin-enter-sel",
+      "title": "Entering selling price 125",
+      "guidebookPage": 71,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "PROFIT", "DOWN", "125", "ENTER"],
+      "expect": { "variable": "SEL", "display": "125.00" },
+      "notes": "DOWN from CST reaches SEL."
+    },
+    {
+      "id": "other-worksheets-profit-margin-enter-mar",
+      "title": "Entering a 20% gross profit margin",
+      "guidebookPage": 71,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "PROFIT", "DOWN", "125", "ENTER", "DOWN", "20", "ENTER"],
+      "expect": { "variable": "MAR", "display": "20.00" },
+      "notes": "MAR is a percentage of SELLING PRICE, not of cost (p. 70)."
+    },
+    {
+      "id": "other-worksheets-profit-margin-compute-cost",
+      "title": "Cost from selling price 125 at 20% margin",
+      "guidebookPage": 71,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "PROFIT", "DOWN", "125", "ENTER", "DOWN", "20", "ENTER", "UP", "UP", "CPT"],
+      "expect": { "variable": "CST", "display": "100.00" },
+      "notes": "125 x (1 - 0.20) = 100 exactly. Matches the p.81 printed formula with no sign flip. UP UP from MAR walks back through SEL to CST."
+    },
+    {
+      "id": "other-worksheets-breakeven-enter-fc",
+      "title": "Entering fixed costs of 3,000",
+      "guidebookPage": 72,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER"],
+      "expect": { "variable": "FC", "display": "3,000.00" },
+      "notes": "Thousands separator is present in the displayed string. FC is entered as a positive magnitude; the formula subtracts it."
+    },
+    {
+      "id": "other-worksheets-breakeven-enter-vc",
+      "title": "Entering unit variable cost of 15",
+      "guidebookPage": 72,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER", "DOWN", "15", "ENTER"],
+      "expect": { "variable": "VC", "display": "15.00" },
+      "notes": "DOWN from FC reaches VC."
+    },
+    {
+      "id": "other-worksheets-breakeven-enter-price",
+      "title": "Entering unit price of 20",
+      "guidebookPage": 72,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER", "DOWN", "15", "ENTER", "DOWN", "20", "ENTER"],
+      "expect": { "variable": "P", "display": "20.00" },
+      "notes": "DOWN from VC reaches P."
+    },
+    {
+      "id": "other-worksheets-breakeven-pft-left-at-zero",
+      "title": "Profit left at zero for a breakeven solve",
+      "guidebookPage": 72,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER", "DOWN", "15", "ENTER", "DOWN", "20", "ENTER", "DOWN"],
+      "expect": { "variable": "PFT", "display": "0.00" },
+      "notes": "The example steps onto PFT and leaves it. PFT = 0 is what makes the subsequent Q a breakeven quantity (p. 71). Display carries no entered marker because nothing was keyed. This case assumes PFT is already 0 from a prior reset/clear -- the worksheet is not auto-cleared on entry."
+    },
+    {
+      "id": "other-worksheets-breakeven-quantity",
+      "title": "Breakeven quantity: FC 3000, VC 15, P 20, PFT 0",
+      "guidebookPage": 72,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER", "DOWN", "15", "ENTER", "DOWN", "20", "ENTER", "DOWN", "DOWN", "CPT"],
+      "expect": { "variable": "Q", "display": "600.00" },
+      "notes": "Q = (FC + PFT)/(P - VC) = 3000/5 = 600 exactly. Matches the printed PFT = PQ - (FC + VCQ) with no sign inversion. Computing Q with P = VC divides by zero -> Error 1."
+    },
+    {
+      "id": "other-worksheets-memory-clear-m4",
+      "title": "Clearing memory 4 by storing zero",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER"],
+      "expect": { "variable": "M4", "display": "0.00" },
+      "notes": "Four DOWN presses from M0 reach M4. There is no single-memory clear key; 2ND CLR WORK here would wipe ALL TEN memories (p. 73)."
+    },
+    {
+      "id": "other-worksheets-memory-store",
+      "title": "Storing 95 in memory 4",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER"],
+      "expect": { "variable": "M4", "display": "95.00" },
+      "notes": "Keying a value with a memory displayed and pressing ENTER replaces the stored value. All memory variables are enter-only (p. 72)."
+    },
+    {
+      "id": "other-worksheets-memory-add",
+      "title": "Memory arithmetic: add 65",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER", "+", "65", "ENTER"],
+      "expect": { "variable": "M4", "display": "160.00" },
+      "notes": "95 + 65 = 160. Operator key, operand, ENTER applies in place and redisplays the memory."
+    },
+    {
+      "id": "other-worksheets-memory-subtract",
+      "title": "Memory arithmetic: subtract 30",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER", "+", "65", "ENTER", "-", "30", "ENTER"],
+      "expect": { "variable": "M4", "display": "130.00" },
+      "notes": "160 - 30 = 130. Stored value is the LEFT operand."
+    },
+    {
+      "id": "other-worksheets-memory-multiply",
+      "title": "Memory arithmetic: multiply by 95",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER", "+", "65", "ENTER", "-", "30", "ENTER", "*", "95", "ENTER"],
+      "expect": { "variable": "M4", "display": "12,350.00" },
+      "notes": "130 x 95 = 12,350. Thousands separator present in the display string."
+    },
+    {
+      "id": "other-worksheets-memory-divide",
+      "title": "Memory arithmetic: divide by 65",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER", "+", "65", "ENTER", "-", "30", "ENTER", "*", "95", "ENTER", "/", "65", "ENTER"],
+      "expect": { "variable": "M4", "display": "190.00" },
+      "notes": "12,350 / 65 = 190. Confirms operand ordering: stored / keyed, not keyed / stored."
+    },
+    {
+      "id": "other-worksheets-memory-power",
+      "title": "Memory arithmetic: raise to the 2nd power",
+      "guidebookPage": 73,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "MEM", "DOWN", "DOWN", "DOWN", "DOWN", "0", "ENTER", "95", "ENTER", "+", "65", "ENTER", "-", "30", "ENTER", "*", "95", "ENTER", "/", "65", "ENTER", "Y^X", "2", "ENTER"],
+      "expect": { "variable": "M4", "display": "36,100.00" },
+      "notes": "190^2 = 36,100 -- confirms the stored value is the BASE and the keyed value the exponent, not the reverse (2^190 would overflow). Y^X with a negative stored value and a non-integer, non-inverse-integer exponent raises Error 2 (p. 84)."
+    }
+  ]
+}

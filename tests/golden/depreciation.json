@@ -1,0 +1,141 @@
+{
+  "section": "depreciation",
+  "sourcePages": "55-58",
+  "cases": [
+    {
+      "id": "depreciation-sl-open-worksheet-shows-default-method",
+      "title": "Opening the Depreciation worksheet displays the active method (default SL)",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR"],
+      "expect": { "variable": "METHOD", "display": "SL" },
+      "notes": "Example table row 1. The method line shows the mnemonic only, with no numeric value, when the method is SL. Assumes the worksheet is in its reset state (method = SL per the default table, p. 56); the example does not press CLR WORK or RESET first."
+    },
+    {
+      "id": "depreciation-sl-enter-life-31-5",
+      "title": "Enter a fractional asset life of 31.5 years under SL",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER"],
+      "expect": { "variable": "LIF", "display": "31.50" },
+      "notes": "Fractional LIF is legal under SL (p. 56 permits a positive real for SL/SLF). Display carries the input indicator (shown as a left-pointing arrow in the guidebook); the numeric string itself is 31.50 at DEC=2."
+    },
+    {
+      "id": "depreciation-sl-enter-starting-month-3-5",
+      "title": "Enter starting month 3.5 (mid-March)",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER"],
+      "expect": { "variable": "M01", "display": "3.50" },
+      "notes": "Integer part 3 = March; fractional part .5 = depreciation begins halfway through that month (p. 56). Drives FSTYR = (13 - 3.5)/12 = 0.7916666..."
+    },
+    {
+      "id": "depreciation-sl-enter-cost-1000000",
+      "title": "Enter asset cost of 1,000,000",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER"],
+      "expect": { "variable": "CST", "display": "1,000,000.00" },
+      "notes": "Display includes US thousands separators (commas). Under the European separator format the same value would render as 1.000.000,00."
+    },
+    {
+      "id": "depreciation-sl-salvage-left-at-default-zero",
+      "title": "Scroll past SAL, leaving it at its default of zero",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN"],
+      "expect": { "variable": "SAL", "display": "0.00" },
+      "notes": "No value keyed; SAL retains its default 0 (p. 56). No input indicator is shown because nothing was entered on this line."
+    },
+    {
+      "id": "depreciation-sl-year-left-at-default-one",
+      "title": "Scroll past YR, leaving it at its default of one",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN"],
+      "expect": { "variable": "YR", "display": "1.00" },
+      "notes": "YR default is 1 (p. 56)."
+    },
+    {
+      "id": "depreciation-sl-year1-dep",
+      "title": "Year 1 straight-line depreciation with a mid-March start",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "DEP", "display": "25,132.28" },
+      "notes": "Auto-computed on scroll (p. 56); the display carries the * computed indicator (p. 57), which is not part of the numeric string. Arithmetic check against the appendix SL first-year formula (p. 79): ((CST - SAL)/LIF) * FSTYR = (1000000/31.5) * (9.5/12) = 25,132.2751... -> 25,132.28. Unsigned: depreciation has no cash-flow sign convention, so no minus sign appears."
+    },
+    {
+      "id": "depreciation-sl-year1-rbv",
+      "title": "Year 1 remaining book value",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "RBV", "display": "974,867.72" },
+      "notes": "1,000,000.00 - 25,132.28 = 974,867.72. RBV has no published formula; inferred as CST - accumulated depreciation. Shows the * computed indicator."
+    },
+    {
+      "id": "depreciation-sl-year1-rdv",
+      "title": "Year 1 remaining depreciable value",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "RDV", "display": "974,867.72" },
+      "notes": "Appendix p. 78: RDV = CST - SAL - accumulated depreciation = 1,000,000 - 0 - 25,132.28. Equals RBV here only because SAL = 0, so this case does not discriminate RBV from RDV."
+    },
+    {
+      "id": "depreciation-sl-wrap-from-rdv-back-to-yr",
+      "title": "Scrolling down from RDV wraps back to YR, still showing year 1",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "YR", "display": "1.00" },
+      "notes": "First of the two display lines the example prints for the 'View second year' row (p. 58); confirms the p. 57 statement that DOWN from RDV returns to YR."
+    },
+    {
+      "id": "depreciation-sl-increment-yr-as-printed-2nd-set",
+      "title": "Advance to year 2 using the exact keys printed in the example (2ND SET)",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "2ND", "SET"],
+      "expect": { "variable": "YR", "display": "2.00" },
+      "notes": "DISCREPANCY. The p. 58 example prints this step as [down] [2nd] [ENTER] (= 2ND SET) and shows YR going 1.00 -> 2.00 with the input indicator. The prose on p. 57 says twice that CPT increments YR. Verified against both the text layer and a magnified crop of page58.png, so the 2nd ENTER glyphs are really printed. Since YR is an enter-only variable and 2ND SET is the setting-change key, the example's key column is almost certainly a typo for CPT. Kept as a golden case because it is what the worked example literally prints; see the companion CPT case. The resulting value 2.00 is uncontested."
+    },
+    {
+      "id": "depreciation-sl-increment-yr-via-cpt",
+      "title": "Advance to year 2 using CPT as the prose documents",
+      "guidebookPage": 57,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "CPT"],
+      "expect": { "variable": "YR", "display": "2.00" },
+      "notes": "p. 57 states in two separate bullets that pressing CPT while YR is displayed increments YR by one. Same expected display as the printed-example variant; this is the reading an implementation should treat as authoritative."
+    },
+    {
+      "id": "depreciation-sl-year2-dep",
+      "title": "Year 2 straight-line depreciation (full year)",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "CPT", "DOWN"],
+      "expect": { "variable": "DEP", "display": "31,746.03" },
+      "notes": "Full-year SL charge, no FSTYR factor: (CST - SAL)/LIF = 1,000,000/31.5 = 31,746.0317... -> 31,746.03. Uses CPT to advance YR per p. 57; the p. 58 example reaches the identical state via 2ND SET."
+    },
+    {
+      "id": "depreciation-sl-year2-rbv",
+      "title": "Year 2 remaining book value",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "CPT", "DOWN", "DOWN"],
+      "expect": { "variable": "RBV", "display": "943,121.69" },
+      "notes": "1,000,000.00 - 25,132.28 - 31,746.03 = 943,121.69, accumulating the ROUNDED yearly DEP values. Depreciation is one of only two worksheets whose internal values are rounded to the display setting (p. 9, p. 56, p. 78). Accumulating unrounded values gives 943,121.6931 -> also 943,121.69 at DEC=2, so this case does not by itself prove the accumulation order."
+    },
+    {
+      "id": "depreciation-sl-year2-rdv",
+      "title": "Year 2 remaining depreciable value",
+      "guidebookPage": 58,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "CPT", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "RDV", "display": "943,121.69" },
+      "notes": "RDV = CST - SAL - accumulated depreciation (p. 78) = 1,000,000 - 0 - 56,878.31. Equals RBV because SAL = 0."
+    }
+  ]
+}

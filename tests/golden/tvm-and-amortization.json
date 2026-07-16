@@ -1,0 +1,339 @@
+{
+  "section": "tvm-and-amortization",
+  "sourcePages": "24-41",
+  "cases": [
+    {
+      "id": "tvm-basic-loan-interest",
+      "title": "Compute I/Y for a 30-year $75,000 mortgage with $425.84 monthly payments",
+      "guidebookPage": 28,
+      "setup": { "decimals": 2, "mode": "END", "FV": 0 },
+      "keys": ["2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","75000","PV","425.84","+/-","PMT","CPT","I/Y"],
+      "expect": { "variable": "I/Y", "display": "5.50" },
+      "notes": "Example does not press RESET; it relies on the machine being in default state, so FV=0 and END are preconditions rather than keystrokes. The 2ND P/Y 12 ENTER step sets C/Y=12 implicitly. PV positive (money received by borrower), PMT negative (money paid out) - the required sign change avoids Error 5."
+    },
+    {
+      "id": "tvm-monthly-loan-payment",
+      "title": "Compute monthly PMT on a $75,000 30-year mortgage at 5.5%",
+      "guidebookPage": 29,
+      "setup": { "decimals": 2, "mode": "END", "FV": 0 },
+      "keys": ["2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","5.5","I/Y","75000","PV","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-425.84" },
+      "notes": "No RESET; FV=0 and END are assumed preconditions. Result negative: computed outflow."
+    },
+    {
+      "id": "tvm-quarterly-loan-payment",
+      "title": "Compute quarterly PMT on the same $75,000 30-year loan at 5.5%",
+      "guidebookPage": 29,
+      "setup": { "decimals": 2, "mode": "END", "I/Y": 5.5, "PV": 75000, "FV": 0 },
+      "keys": ["2ND","P/Y","4","ENTER","2ND","QUIT","30","2ND","xP/Y","N","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-1,279.82" },
+      "notes": "Deliberately inherits I/Y and PV from tvm-monthly-loan-payment - the guidebook notes the calculator saves entered values for later use. Only reproducible if that case ran first; the inherited values are therefore encoded in setup. Setting P/Y=4 also sets C/Y=4."
+    },
+    {
+      "id": "tvm-savings-future-value",
+      "title": "Compute FV of a $5,000 deposit after 20 years at 0.5% annual",
+      "guidebookPage": 30,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","20","N",".5","I/Y","5000","+/-","PV","CPT","FV"],
+      "expect": { "variable": "FV", "display": "5,524.48" },
+      "notes": "RESET establishes the whole setup (P/Y=C/Y=1, END, DEC=2, CHN) and displays RST then 0.00. PV negative (money paid into the account), FV positive (money received back). PMT is left at its reset default of 0 - the unused fifth variable."
+    },
+    {
+      "id": "tvm-savings-present-value",
+      "title": "Compute PV needed to reach $10,000 in 20 years at 0.5% annual",
+      "guidebookPage": 30,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "N": 20, "I/Y": 0.5, "PMT": 0 },
+      "keys": ["10000","FV","CPT","PV"],
+      "expect": { "variable": "PV", "display": "-9,050.63" },
+      "notes": "Continues directly from tvm-savings-future-value, inheriting N=20, I/Y=0.5 and PMT=0; only FV is re-entered. Result negative: the deposit is an outflow."
+    },
+    {
+      "id": "tvm-pv-ordinary-annuity",
+      "title": "PV of $20,000 annual savings over 10 years at 10% (ordinary annuity)",
+      "guidebookPage": 31,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","10","N","10","I/Y","20000","+/-","PMT","CPT","PV"],
+      "expect": { "variable": "PV", "display": "122,891.34" },
+      "notes": "Furros Company example. P/Y=C/Y=1 after RESET, so I/Y=10 is both the annual and the per-period rate. PMT entered negative, PV computed positive. FV stays at its reset default of 0."
+    },
+    {
+      "id": "tvm-pv-annuity-due",
+      "title": "PV of the same $20,000 x 10yr @10% stream as an annuity due",
+      "guidebookPage": 31,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "N": 10, "I/Y": 10, "PMT": -20000, "FV": 0 },
+      "keys": ["2ND","BGN","2ND","SET","2ND","QUIT","CPT","PV"],
+      "expect": { "variable": "PV", "display": "135,180.48" },
+      "notes": "Continues from tvm-pv-ordinary-annuity, changing only the payment timing. The BGN indicator lights; no indicator is shown for END. Ratio to the ordinary annuity is exactly (1+i) = 1.10, confirming Gi = 1 + i x 1."
+    },
+    {
+      "id": "tvm-perpetual-ordinary-annuity",
+      "title": "Price of a perpetual bond paying $110/yr to yield 15% (ordinary annuity)",
+      "guidebookPage": 32,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["110","DIV","15","PCT","EQUALS"],
+      "expect": { "variable": "DISPLAY", "display": "733.33" },
+      "notes": "Land of Oz example. NOT a TVM worksheet calculation - executed purely on the arithmetic keys and must not be routed through the TVM solver. The % key converts 15 to 0.15 as a postfix unary operator; 110/0.15 = 733.33. Result is positive (a price), contrary to the TVM outflow-negative convention. Identical under CHN and AOS - no precedence conflict."
+    },
+    {
+      "id": "tvm-perpetual-annuity-due",
+      "title": "Price of the same perpetual bond as an annuity due",
+      "guidebookPage": 32,
+      "setup": { "decimals": 2, "calcMethod": "CHN", "DISPLAY": 733.33 },
+      "keys": ["PLUS","110","EQUALS"],
+      "expect": { "variable": "DISPLAY", "display": "843.33" },
+      "notes": "Chains directly off the 733.33 left on the display by tvm-perpetual-ordinary-annuity: PV = PMT + PMT/((I/Y)/100), i.e. 110 + 733.33. Arithmetic keys only."
+    },
+    {
+      "id": "tvm-variable-cash-flow-pv-year-1",
+      "title": "PV of a $5,000 cash flow received in year 1 at 10%",
+      "guidebookPage": 33,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","10","I/Y","5000","+/-","FV","1","N","CPT","PV"],
+      "expect": { "variable": "PV", "display": "4,545.45" },
+      "notes": "ABC Company example. Unequal cash flows are handled on the TVM worksheet by discounting each one separately as a lump sum (PMT=0 after RESET) and summing in memory. Cash flow entered as negative FV so the computed PV comes back positive."
+    },
+    {
+      "id": "tvm-variable-cash-flow-pv-year-2",
+      "title": "PV of a $7,000 cash flow received in year 2 at 10%",
+      "guidebookPage": 34,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "I/Y": 10, "PMT": 0 },
+      "keys": ["STO","1","7000","+/-","FV","2","N","CPT","PV"],
+      "expect": { "variable": "PV", "display": "5,785.12" },
+      "notes": "Continues from year 1; STO 1 banks the prior 4,545.45 first. I/Y and PMT=0 inherited."
+    },
+    {
+      "id": "tvm-variable-cash-flow-pv-year-3",
+      "title": "PV of an $8,000 cash flow received in year 3 at 10%",
+      "guidebookPage": 34,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "I/Y": 10, "PMT": 0 },
+      "keys": ["STO","PLUS","1","8000","+/-","FV","3","N","CPT","PV"],
+      "expect": { "variable": "PV", "display": "6,010.52" },
+      "notes": "STO + 1 accumulates the year-2 PV into memory 1 before the year-3 solve."
+    },
+    {
+      "id": "tvm-variable-cash-flow-pv-year-4",
+      "title": "PV of a $10,000 cash flow received in year 4 at 10%",
+      "guidebookPage": 34,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "END", "I/Y": 10, "PMT": 0 },
+      "keys": ["STO","PLUS","1","10000","+/-","FV","4","N","CPT","PV"],
+      "expect": { "variable": "PV", "display": "6,830.13" },
+      "notes": "STO + 1 accumulates the year-3 PV into memory 1 before the year-4 solve."
+    },
+    {
+      "id": "tvm-variable-cash-flow-total-pv",
+      "title": "Recall the summed present value of all four cash flows",
+      "guidebookPage": 34,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "M1": 16341.09731 },
+      "keys": ["STO","PLUS","1","RCL","1"],
+      "expect": { "variable": "M1", "display": "23,171.23" },
+      "notes": "CRITICAL PRECISION TEST. Memory must accumulate UNROUNDED values. The four exact PVs are 4545.4545454545, 5785.1239669421, 6010.5184072126 and 6830.1345536507, summing to 23171.2314732600 -> displays 23,171.23. Summing the four DISPLAYED (rounded) values gives 23,171.22 and fails. setup.M1 is the running total after the first three STO operations."
+    },
+    {
+      "id": "tvm-variable-cash-flow-net-gain",
+      "title": "Subtract the machine's $23,000 cost from the total present value",
+      "guidebookPage": 34,
+      "setup": { "decimals": 2, "calcMethod": "CHN", "DISPLAY": 23171.23147326 },
+      "keys": ["MINUS","23000","EQUALS"],
+      "expect": { "variable": "DISPLAY", "display": "171.23" },
+      "notes": "Chains off the unrounded 23,171.2314... recalled from memory. Answer: the PV exceeds cost by $171.23, so the investment is profitable. Rounding the recalled value to 23,171.23 first still yields 171.23 here, but the unrounded path is the correct model."
+    },
+    {
+      "id": "tvm-lease-residual-present-value",
+      "title": "PV of a $6,500 residual value, 46 months at 22% compounded monthly, BGN",
+      "guidebookPage": 35,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "BGN", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","BGN","2ND","SET","2ND","QUIT","46","N","22","DIV","12","EQUALS","I/Y","6500","+/-","FV","CPT","PV"],
+      "expect": { "variable": "PV", "display": "2,818.22" },
+      "notes": "CRITICAL PRECISION TEST. P/Y=C/Y=1 after RESET, so the PERIODIC rate is keyed directly: 22 DIV 12 EQUALS = 1.8333333... The display reads 1.83 but the stored value keeps full precision. Storing the displayed 1.83 instead makes the downstream lease total 40,601.33 rather than 40,573.18."
+    },
+    {
+      "id": "tvm-lease-total-present-value",
+      "title": "PV of a lease: $1,200 x 46 monthly payments plus $6,500 residual, BGN",
+      "guidebookPage": 35,
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "mode": "BGN", "N": 46, "I/Y": 1.8333333333333, "FV": -6500 },
+      "keys": ["1200","+/-","PMT","CPT","PV"],
+      "expect": { "variable": "PV", "display": "40,573.18" },
+      "notes": "Continues from tvm-lease-residual-present-value; adding PMT re-solves PV for residual + payment stream together. Answer: Peach Bright pays $40,573.18. setup.I/Y carries the unrounded 22/12."
+    },
+    {
+      "id": "tvm-other-monthly-payment",
+      "title": "Monthly PMT financing $525 at 20% APR compounded monthly over 2 years",
+      "guidebookPage": 36,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","2","2ND","xP/Y","N","20","I/Y","525","PV","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-26.72" },
+      "notes": "Desk and chair example. RESET forces P/Y back to 1, which is why P/Y=12 must be re-entered immediately after. 2 2ND xP/Y N gives N=24. FV=0 from RESET."
+    },
+    {
+      "id": "tvm-saving-monthly-deposits-fv",
+      "title": "FV of $200 deposited at the start of each month for 20 years at 7.5%",
+      "guidebookPage": 37,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "BGN", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","2ND","BGN","2ND","SET","2ND","QUIT","20","2ND","xP/Y","N","7.5","I/Y","200","+/-","PMT","CPT","FV"],
+      "expect": { "variable": "FV", "display": "111,438.31" },
+      "notes": "Annuity due - interest accrues from the start of each period, giving a slightly higher yield than END. PV=0 from RESET (the unused fifth variable). PMT negative (deposits paid in), FV positive (balance received)."
+    },
+    {
+      "id": "tvm-amount-to-borrow",
+      "title": "Loan amount affordable at $325/month for 48 months at 7.5% APR",
+      "guidebookPage": 38,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","4","2ND","xP/Y","N","7.5","I/Y","325","+/-","PMT","CPT","PV"],
+      "expect": { "variable": "PV", "display": "13,441.47" },
+      "notes": "Car purchase example. 4 2ND xP/Y N gives N=48. FV=0 from RESET. PMT negative, PV computed positive (the borrower receives the loan)."
+    },
+    {
+      "id": "tvm-down-payment",
+      "title": "Down payment required on a $15,100 car after borrowing $13,441.47",
+      "guidebookPage": 38,
+      "setup": { "decimals": 2, "calcMethod": "CHN", "DISPLAY": 13441.47 },
+      "keys": ["PLUS","15100","+/-","EQUALS"],
+      "expect": { "variable": "DISPLAY", "display": "-1,658.53" },
+      "notes": "Chains off the computed PV still on the display: 13,441.47 + (-15,100) = -1,658.53. Negative because the down payment is an outflow. Answer stated as $1,658.53."
+    },
+    {
+      "id": "tvm-regular-deposits-for-future-amount",
+      "title": "Monthly BGN deposit to reach $25,000 in 10 years at 0.5% with quarterly compounding",
+      "guidebookPage": 39,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 4, "mode": "BGN", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","DOWN","4","ENTER","2ND","BGN","2ND","SET","2ND","QUIT","10","2ND","xP/Y","N","0.5","I/Y","25000","FV","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-203.13" },
+      "notes": "The only example in range where P/Y != C/Y. Order is load-bearing: entering P/Y=12 auto-writes C/Y=12, so C/Y=4 must be set AFTERWARDS via the DOWN key inside the same worksheet. The guidebook flags this trap explicitly. PV=0 from RESET. i = (1+0.005/4)^(4/12)-1 = 0.00041649 per month."
+    },
+    {
+      "id": "tvm-mortgage-payment",
+      "title": "Monthly PMT on a $120,000 30-year loan at 6.125% APR",
+      "guidebookPage": 39,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","6.125","I/Y","120000","PV","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-729.13" },
+      "notes": "CRITICAL PRECISION TEST and the section's sign-convention arbiter. Keying 6.125 I/Y DISPLAYS 6.13 but STORES 6.125; storing the displayed 6.13 yields -729.52 and fails. The printed appendix PMT formula (p. 75) omits its leading minus sign and evaluates to +729.132647 (displaying 729.13) - the calculator displays -729.13, so the worked example wins and the formula needs a leading minus. Magnitude as printed is correct; only the sign is wrong."
+    },
+    {
+      "id": "amort-year1-balance",
+      "title": "Loan balance after payment 9 (first year, April start) on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","6.125","I/Y","120000","PV","CPT","PMT","2ND","AMORT","1","ENTER","DOWN","9","ENTER","DOWN"],
+      "expect": { "variable": "BAL", "display": "118,928.63" },
+      "notes": "First payment is in April, so the first year spans only 9 periods. Amortization uses PMT ROUNDED to 2 decimals (-729.13), not the unrounded -729.132647 - this is the documented BAL/FV divergence."
+    },
+    {
+      "id": "amort-year1-principal",
+      "title": "Principal paid over payments 1-9 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","6.125","I/Y","120000","PV","CPT","PMT","2ND","AMORT","1","ENTER","DOWN","9","ENTER","DOWN","DOWN"],
+      "expect": { "variable": "PRN", "display": "-1,071.37" },
+      "notes": "PRN = bal(9) - bal(0) = 118,928.63 - 120,000.00. The printed appendix formula says bal(pmt2) - bal(pmt1), which gives -954.74 and is WRONG; it must be bal(pmt2) - bal(pmt1 - 1). Guidebook typesets this value as '-1071.37' without a thousands separator while '-1,507.03' in the same column has one; the calculator's US format inserts separators uniformly, so the separator form is used here."
+    },
+    {
+      "id": "amort-year1-interest",
+      "title": "Interest paid over payments 1-9 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","6.125","I/Y","120000","PV","CPT","PMT","2ND","AMORT","1","ENTER","DOWN","9","ENTER","DOWN","DOWN","DOWN"],
+      "expect": { "variable": "INT", "display": "-5,490.80" },
+      "notes": "INT = (9-1+1) x (-729.13) - (-1,071.37) = -6,562.17 + 1,071.37. Negative: interest is an outflow, matching the PMT sign. Note the trailing zero - display must not be truncated to -5,490.8."
+    },
+    {
+      "id": "amort-year2-balance",
+      "title": "Loan balance after payment 21 (second year) on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","10","ENTER","DOWN","21","ENTER","DOWN"],
+      "expect": { "variable": "BAL", "display": "117,421.60" },
+      "notes": "HIGHEST-RISK CASE IN THE SECTION. Only reproduces if the running balance is re-rounded to 2 decimals EVERY period per bal(m) = bal(m-1) - I_m + RND(PMT) with RND applied to I_m. Carrying an unrounded running balance gives 117,421.61 and fails by a cent, while still passing amort-year1-balance. In the guidebook the range is reached by pressing DOWN from INT to wrap back to P1."
+    },
+    {
+      "id": "amort-year2-principal",
+      "title": "Principal paid over payments 10-21 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","10","ENTER","DOWN","21","ENTER","DOWN","DOWN"],
+      "expect": { "variable": "PRN", "display": "-1,507.03" },
+      "notes": "PRN = bal(21) - bal(9) = 117,421.60 - 118,928.63. Confirms the off-by-one correction: the printed bal(pmt2) - bal(pmt1) would give -1,384.93."
+    },
+    {
+      "id": "amort-year2-interest",
+      "title": "Interest paid over payments 10-21 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","10","ENTER","DOWN","21","ENTER","DOWN","DOWN","DOWN"],
+      "expect": { "variable": "INT", "display": "-7,242.53" },
+      "notes": "INT = 12 x (-729.13) - (-1,507.03) = -8,749.56 + 1,507.03."
+    },
+    {
+      "id": "amort-year3-auto-advance-p1",
+      "title": "CPT on P1 auto-advances the amortization window to the third year",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "P1": 10, "P2": 21 },
+      "keys": ["2ND","AMORT","DOWN","DOWN","DOWN","DOWN","CPT"],
+      "expect": { "variable": "P1", "display": "22.00" },
+      "notes": "Tests auto-advance. From INT, DOWN wraps to P1; CPT then advances BOTH P1 and P2 to the next window, preserving the 12-period width (10-21 becomes 22-33). The DOWN keys walk P1->P2->BAL->PRN->INT then wrap."
+    },
+    {
+      "id": "amort-year3-auto-advance-p2",
+      "title": "P2 after auto-advancing the amortization window to the third year",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "P1": 10, "P2": 21 },
+      "keys": ["2ND","AMORT","DOWN","DOWN","DOWN","DOWN","CPT","DOWN"],
+      "expect": { "variable": "P2", "display": "33.00" },
+      "notes": "P2 was recomputed automatically by the CPT on P1; the guidebook notes it can still be overwritten."
+    },
+    {
+      "id": "amort-year3-balance",
+      "title": "Loan balance after payment 33 (third year) on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","22","ENTER","DOWN","33","ENTER","DOWN"],
+      "expect": { "variable": "BAL", "display": "115,819.62" },
+      "notes": "Second per-period-rounding check: an unrounded running balance gives 115,819.64 and fails by two cents."
+    },
+    {
+      "id": "amort-year3-principal",
+      "title": "Principal paid over payments 22-33 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","22","ENTER","DOWN","33","ENTER","DOWN","DOWN"],
+      "expect": { "variable": "PRN", "display": "-1,601.98" },
+      "notes": "PRN = bal(33) - bal(21) = 115,819.62 - 117,421.60. Guidebook typesets this as '-1601.98' without a thousands separator; the separator form is used here to match the calculator's uniform US display format."
+    },
+    {
+      "id": "amort-year3-interest",
+      "title": "Interest paid over payments 22-33 on the $120,000 mortgage",
+      "guidebookPage": 40,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
+      "keys": ["2ND","AMORT","22","ENTER","DOWN","33","ENTER","DOWN","DOWN","DOWN"],
+      "expect": { "variable": "INT", "display": "-7,147.58" },
+      "notes": "INT = 12 x (-729.13) - (-1,601.98) = -8,749.56 + 1,601.98."
+    },
+    {
+      "id": "tvm-balloon-monthly-payment",
+      "title": "Monthly PMT on an $82,000 property loan at 7% over a 30-year amortization",
+      "guidebookPage": 41,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","7","I/Y","82000","PV","CPT","PMT"],
+      "expect": { "variable": "PMT", "display": "-545.55" },
+      "notes": "Seller-financing example: amortized over 30 years but with a balloon due after 5. Unrounded PMT is -545.5474..."
+    },
+    {
+      "id": "amort-balloon-balance",
+      "title": "Balloon payment: balance due after 5 years on the $82,000 loan",
+      "guidebookPage": 41,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.5474, "FV": 0, "P1": 1 },
+      "keys": ["2ND","AMORT","DOWN","5","2ND","xP/Y","ENTER","DOWN"],
+      "expect": { "variable": "BAL", "display": "77,187.72" },
+      "notes": "Demonstrates xP/Y used INSIDE the Amortization worksheet: 5 2ND xP/Y = 60 months, committed to P2 with ENTER. P1 is 1 from the preceding RESET default. Amortization uses the rounded PMT of -545.55."
+    },
+    {
+      "id": "amort-balloon-interest",
+      "title": "Total interest received over the first 5 years on the $82,000 loan",
+      "guidebookPage": 41,
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.5474, "FV": 0, "P1": 1 },
+      "keys": ["2ND","AMORT","DOWN","5","2ND","xP/Y","ENTER","DOWN","DOWN","DOWN"],
+      "expect": { "variable": "INT", "display": "-27,920.72" },
+      "notes": "DISCREPANCY - the guidebook's own prose contradicts its table. The worked table displays INT= -27,920.72; the bullet list below it says $27,790.72 (two digits transposed). The TABLE WINS: 60 x 545.55 = 32,733.00 total paid, PRN = 82,000 - 77,187.72 = 4,812.28, so INT = 27,920.72. Reached by DOWN DOWN from BAL, skipping past the PRN display."
+    }
+  ]
+}

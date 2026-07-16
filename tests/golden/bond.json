@@ -1,0 +1,159 @@
+{
+  "section": "bond",
+  "sourcePages": "50-54",
+  "cases": [
+    {
+      "id": "bond-defaults-clr-work-sdt",
+      "title": "CLR WORK inside Bond resets SDT to its default date",
+      "guidebookPage": 50,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK"],
+      "expect": { "variable": "SDT", "display": "12-31-1990" },
+      "notes": "Defaults table, pp. 50-51. CLR WORK is scoped to the worksheet you are standing in, so it must be pressed inside Bond."
+    },
+    {
+      "id": "bond-defaults-cpn",
+      "title": "CPN default is zero after CLR WORK",
+      "guidebookPage": 51,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN"],
+      "expect": { "variable": "CPN", "display": "0.00" },
+      "notes": "Default value 0 from the p. 51 defaults table. Display string assumes the default DEC=2 format; the guidebook prints the default as bare '0'."
+    },
+    {
+      "id": "bond-defaults-rdt",
+      "title": "RDT default matches SDT default",
+      "guidebookPage": 51,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN", "DOWN"],
+      "expect": { "variable": "RDT", "display": "12-31-1990" },
+      "notes": "p. 51 defaults table. RDT equalling SDT on a fresh worksheet is precisely what makes the p. 50 Error 6 note fire."
+    },
+    {
+      "id": "bond-defaults-rv",
+      "title": "RV default is 100 percent of par",
+      "guidebookPage": 51,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "RV", "display": "100.00" },
+      "notes": "p. 51 defaults table. The worked example on p. 53 confirms the 100.00 display string when RV is left untouched."
+    },
+    {
+      "id": "bond-defaults-daycount-act",
+      "title": "Day-count toggle defaults to ACT",
+      "guidebookPage": 50,
+      "setup": {},
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "ACT/360", "display": "ACT" },
+      "notes": "p. 50 defaults table lists ACT/360 default = ACT. This position is a toggle, not a numeric field."
+    },
+    {
+      "id": "bond-defaults-coupon-freq",
+      "title": "Coupon frequency toggle defaults to 2/Y",
+      "guidebookPage": 51,
+      "setup": {},
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "2/Y,1/Y", "display": "2/Y" },
+      "notes": "p. 51 defaults table lists '2/Y, 1/Y' default = 2/Y. Confirmed by the worked example, which leaves this position alone and displays 2/Y (p. 53)."
+    },
+    {
+      "id": "bond-error6-on-default-dates",
+      "title": "Navigating a freshly-reset worksheet raises Error 6",
+      "guidebookPage": 50,
+      "setup": {},
+      "keys": ["2ND", "BOND", "2ND", "CLR WORK", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "ERROR", "display": "Error 6" },
+      "notes": "p. 50 states that navigating with the arrow keys before entering values raises Error 6, clearable with CE/C. Root cause per p. 85: a calculation was attempted with RDT earlier than or the same as SDT, and both default to 12-31-1990. The exact arrow count at which it fires is NOT specified by the guidebook - p. 50 only says navigation triggers it. This case assumes it fires when a computed position (YLD/PRI/AI) is reached; treat the key count as approximate."
+    },
+    {
+      "id": "bond-example-open-worksheet",
+      "title": "Opening the worksheet displays the current SDT",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND"],
+      "expect": { "variable": "SDT", "display": "12-31-1990" },
+      "notes": "Worked example row 1, p. 53: '2nd BOND -> SDT = 12-31-1990'. Distinct from bond-defaults-clr-work-sdt: the example does NOT press CLR WORK, so this asserts that opening the worksheet shows the CURRENT SDT (p. 52), which here happens to still be the 12-31-1990 default. This row is what establishes the at-defaults precondition for the rest of the example."
+    },
+    {
+      "id": "bond-example-settlement-date-display",
+      "title": "Settlement date entered as mm.ddyy displays in US date format",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER"],
+      "expect": { "variable": "SDT", "display": "6-12-2006" },
+      "notes": "Worked example, p. 53. NOTE the guidebook prose says the bond settles June 12, 2004, but the printed keystrokes and the printed display both say 2006. Worked example wins. Two-digit year 06 -> 2006 within the 1980-2079 window (p. 51); the pivot rule itself is never stated."
+    },
+    {
+      "id": "bond-example-coupon-rate-display",
+      "title": "Coupon rate entered as a percentage of par",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER"],
+      "expect": { "variable": "CPN", "display": "7.00" },
+      "notes": "Worked example, p. 53. CPN is the annual rate as a percent of par (p. 51), not the dollar coupon."
+    },
+    {
+      "id": "bond-example-redemption-date-display",
+      "title": "Redemption date entered as mm.ddyy displays in US date format",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER"],
+      "expect": { "variable": "RDT", "display": "12-31-2007" },
+      "notes": "Worked example, p. 53. Prose says maturity December 31, 2005; keystrokes and display say 2007. Worked example wins."
+    },
+    {
+      "id": "bond-example-redemption-value-untouched",
+      "title": "Redemption value left at its default for a to-maturity analysis",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN"],
+      "expect": { "variable": "RV", "display": "100.00" },
+      "notes": "Worked example, p. 53. Redeemable at 100% of par, so RV keeps its default. Displayed without the entry annotation because nothing was keyed in."
+    },
+    {
+      "id": "bond-example-daycount-set-to-360",
+      "title": "2ND SET flips the day-count toggle from ACT to 30/360",
+      "guidebookPage": 53,
+      "setup": { "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET"],
+      "expect": { "variable": "ACT/360", "display": "360" },
+      "notes": "Worked example, p. 53. Single 2ND SET press flips ACT -> 360. Precondition: toggle sits at its ACT default."
+    },
+    {
+      "id": "bond-example-coupon-freq-untouched",
+      "title": "Coupon frequency left at two coupons per year",
+      "guidebookPage": 53,
+      "setup": { "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN"],
+      "expect": { "variable": "2/Y,1/Y", "display": "2/Y" },
+      "notes": "Worked example, p. 53. Semiannual bond, so the 2/Y default stands (M = 2 in the appendix formulas)."
+    },
+    {
+      "id": "bond-example-yield-entry",
+      "title": "Yield to maturity entered as a percentage",
+      "guidebookPage": 53,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN", "DOWN", "8", "ENTER"],
+      "expect": { "variable": "YLD", "display": "8.00" },
+      "notes": "Worked example, p. 53. YLD is the annual nominal yield in percent; Y = YLD / 100 = 0.08 in the appendix formulas (p. 77)."
+    },
+    {
+      "id": "bond-example-compute-price",
+      "title": "Compute bond price from yield, 30/360, semiannual, more than one coupon remaining",
+      "guidebookPage": 54,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN", "DOWN", "8", "ENTER", "DOWN", "CPT"],
+      "expect": { "variable": "PRI", "display": "98.56" },
+      "notes": "PRIMARY GOLDEN CASE. Worked example, pp. 53-54. Quoted per $100 of par. Exact value 98.56275, truncating/rounding to 98.56 at DEC=2. Verified against the appendix multi-period price formula (p. 78) with N=4, A/E=0.9, DSC/E=0.1, R=0.07, M=2, Y=0.08: 13.16110 + 88.55165 - 3.15000 = 98.56275. The printed bond formulas agree with this example - no sign-convention defect here, unlike the TVM PMT formula. Precondition: worksheet at defaults before the sequence (the example's first display shows SDT = 12-31-1990). No sign convention applies; PRI is a positive magnitude."
+    },
+    {
+      "id": "bond-example-accrued-interest",
+      "title": "Accrued interest is auto-computed and requires no CPT",
+      "guidebookPage": 54,
+      "setup": { "decimals": 2, "dateFormat": "US" },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN", "DOWN", "8", "ENTER", "DOWN", "CPT", "DOWN"],
+      "expect": { "variable": "AI", "display": "3.15" },
+      "notes": "PRIMARY GOLDEN CASE. Worked example, p. 54. Quoted per $100 of par. AI = PAR x R/M x A/E = 100 x 0.035 x 0.9 = 3.15 exactly (p. 78), so no rounding caveat. Reached with a single arrow press - AI is auto-compute, never CPT."
+    }
+  ]
+}

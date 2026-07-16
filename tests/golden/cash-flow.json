@@ -1,0 +1,339 @@
+{
+  "section": "cash-flow",
+  "sourcePages": "42-49",
+  "cases": [
+    {
+      "id": "cash-flow-open-worksheet-shows-cfo",
+      "title": "CF opens the worksheet on CFo at its 0 default",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF"],
+      "expect": { "variable": "CFo", "display": "0.00" },
+      "notes": "First row of the 'Entering Cash-Flow Data' table. Assumes a cleared worksheet. No 2ND prefix: CF is a primary key."
+    },
+    {
+      "id": "cash-flow-machine-enter-cfo",
+      "title": "Machine example: enter initial cash flow of -7,000",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER"],
+      "expect": { "variable": "CFo", "display": "-7,000.00" },
+      "notes": "Outflow, so +/- is pressed on the magnitude BEFORE ENTER. Guidebook marks the display with the 'entered' annotation."
+    },
+    {
+      "id": "cash-flow-machine-enter-c01",
+      "title": "Machine example: enter year-1 cash flow of 3,000",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER"],
+      "expect": { "variable": "C01", "display": "3,000.00" },
+      "notes": "DOWN from CFo lands on C01. Positive value = inflow."
+    },
+    {
+      "id": "cash-flow-machine-f01-defaults-to-1",
+      "title": "Machine example: F01 shows its default of 1 with nothing keyed",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN"],
+      "expect": { "variable": "F01", "display": "1.00" },
+      "notes": "Key evidence that the Fnn default is 1: no value is keyed into F01, yet it reads 1.00. Establishes the amount/frequency alternating navigation order."
+    },
+    {
+      "id": "cash-flow-machine-enter-c02",
+      "title": "Machine example: enter 5,000 for years two through five",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER"],
+      "expect": { "variable": "C02", "display": "5,000.00" },
+      "notes": "DOWN from F01 reaches C02."
+    },
+    {
+      "id": "cash-flow-machine-enter-f02-grouped",
+      "title": "Machine example: group four equal 5,000 flows via F02 = 4",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER"],
+      "expect": { "variable": "F02", "display": "4.00" },
+      "notes": "Four consecutive equal flows occupy one Cnn slot. Frequency is displayed at the current DEC setting, hence 4.00 not 4."
+    },
+    {
+      "id": "cash-flow-machine-enter-c03",
+      "title": "Machine example: enter year-6 cash flow of 4,000",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER"],
+      "expect": { "variable": "C03", "display": "4,000.00" },
+      "notes": "Completes the pre-edit stream: CFo=-7000; C01=3000 F01=1; C02=5000 F02=4; C03=4000 F03=1."
+    },
+    {
+      "id": "cash-flow-machine-f03-defaults-to-1",
+      "title": "Machine example: F03 shows its default of 1",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN"],
+      "expect": { "variable": "F03", "display": "1.00" },
+      "notes": "Second confirmation of the Fnn default of 1."
+    },
+    {
+      "id": "cash-flow-machine-navigate-up-to-c03",
+      "title": "Machine example: UP from F03 returns to C03",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP"],
+      "expect": { "variable": "C03", "display": "4,000.00" },
+      "notes": "First row of the 'Editing Cash-Flow Data' table. UP reverses the alternating amount/frequency walk. DEL indicator lights here."
+    },
+    {
+      "id": "cash-flow-machine-delete-c03",
+      "title": "Machine example: 2ND DEL removes the third cash flow and its frequency",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL"],
+      "expect": { "variable": "C03", "display": "0.00" },
+      "notes": "Deleting the last flow shortens the list; the display stays on C03, which is now the vacant slot past the end and reads 0.00 with no 'entered' annotation. The amount AND frequency are removed together (p. 44)."
+    },
+    {
+      "id": "cash-flow-machine-navigate-up-to-c02",
+      "title": "Machine example: two UP presses reach C02 from C03",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP"],
+      "expect": { "variable": "C02", "display": "5,000.00" },
+      "notes": "C03 -> F02 -> C02, confirming the vacated C03 still occupies a navigable slot and that UP steps through frequencies."
+    },
+    {
+      "id": "cash-flow-machine-insert-c02",
+      "title": "Machine example: 2ND INS inserts 4,000 at C02 and shifts the rest up",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER"],
+      "expect": { "variable": "C02", "display": "4,000.00" },
+      "notes": "The new flow lands AT the selected slot; the old C02 is renumbered to C03. INS indicator confirms availability."
+    },
+    {
+      "id": "cash-flow-machine-inserted-flow-gets-frequency-1",
+      "title": "Machine example: the inserted C02 gets frequency 1 without keying",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN"],
+      "expect": { "variable": "F02", "display": "1.00" },
+      "notes": "F02 was 4 before the insert. The inserted slot takes the Fnn default of 1 and the old F02=4 travels with its amount to F03."
+    },
+    {
+      "id": "cash-flow-machine-verify-c03-shifted",
+      "title": "Machine example: the displaced 5,000 now sits at C03",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN"],
+      "expect": { "variable": "C03", "display": "5,000.00" },
+      "notes": "Verification row. Confirms insert renumbers upward."
+    },
+    {
+      "id": "cash-flow-machine-verify-f03-shifted",
+      "title": "Machine example: the displaced frequency 4 travels to F03",
+      "guidebookPage": 47,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "F03", "display": "4.00" },
+      "notes": "DISCREPANCY: the guidebook prints '4.0' here, the only one-decimal display in a table that is otherwise uniformly two-decimal (4,000.00 / 1.00 / 5,000.00) at the DEC=2 default. Treated as a typesetting slip; 4.00 asserted. Proves frequency follows its amount when flows shift. Final edited stream: CFo=-7000; C01=3000 F01=1; C02=4000 F02=1; C03=5000 F03=4."
+    },
+    {
+      "id": "cash-flow-machine-open-npv-shows-i",
+      "title": "Machine example: NPV key opens the discount rate I at 0",
+      "guidebookPage": 48,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN", "NPV"],
+      "expect": { "variable": "I", "display": "0.00" },
+      "notes": "NPV lands on I, not on NPV. I is the Cash Flow worksheet's own rate variable, independent of the TVM worksheet's I/Y."
+    },
+    {
+      "id": "cash-flow-machine-enter-discount-rate",
+      "title": "Machine example: enter a 20% per-period discount rate",
+      "guidebookPage": 48,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN", "NPV", "20", "ENTER"],
+      "expect": { "variable": "I", "display": "20.00" },
+      "notes": "Entered as a percent, per cash-flow period. Periods are annual here, so the company's 20% annual target rate is used directly."
+    },
+    {
+      "id": "cash-flow-machine-compute-npv",
+      "title": "Machine example: compute NPV = 7,266.44 at 20%",
+      "guidebookPage": 48,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN", "NPV", "20", "ENTER", "DOWN", "CPT"],
+      "expect": { "variable": "NPV", "display": "7,266.44" },
+      "notes": "ARBITER CASE for the NPV formula. Stream is the EDITED one (C02=4000 F02=1; C03=5000 F03=4), not the originally entered one. Exact value 7266.4394718793. The appendix (p. 76) prints the discount exponent as (1+i)^(-S_j-1); read literally that yields 277.46 and fails. The correct exponent is (1+i)^(-S_{j-1}) with S_0=0. Guidebook states 'NPV is $7,266.44'. If a run of these cases skipped the edit steps the pre-edit stream would give 7,625.99 instead."
+    },
+    {
+      "id": "cash-flow-machine-open-irr",
+      "title": "Machine example: IRR key opens IRR at 0",
+      "guidebookPage": 48,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN", "NPV", "20", "ENTER", "DOWN", "CPT", "IRR"],
+      "expect": { "variable": "IRR", "display": "0.00" },
+      "notes": "IRR reads 0.00 despite NPV having just been computed, so computing NPV does not populate IRR."
+    },
+    {
+      "id": "cash-flow-machine-compute-irr",
+      "title": "Machine example: compute IRR = 52.71%",
+      "guidebookPage": 48,
+      "setup": { "decimals": 2 },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "DOWN", "4000", "ENTER", "DOWN", "UP", "2ND", "DEL", "UP", "UP", "2ND", "INS", "4000", "ENTER", "DOWN", "DOWN", "DOWN", "NPV", "20", "ENTER", "DOWN", "CPT", "IRR", "CPT"],
+      "expect": { "variable": "IRR", "display": "52.71" },
+      "notes": "ARBITER CASE for IRR. Exact root 52.7053745072%, displayed 52.71 at DEC=2. Guidebook states 'IRR is 52.71%'. Result is in percent, not a decimal. One sign change (CFo negative, all Cnn positive) so exactly one root exists. No discount rate is consumed: I=20 is ignored by IRR. Requires no more than ~13 significant digits of root-finding accuracy to round correctly."
+    },
+    {
+      "id": "cash-flow-lease-reset-defaults",
+      "title": "Lease example: reset all variables to defaults",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER"],
+      "expect": { "variable": "RST", "display": "0.00" },
+      "notes": "Displays the RST acknowledgement. Resets every calculator variable and format, Cash Flow worksheet included."
+    },
+    {
+      "id": "cash-flow-lease-open-worksheet",
+      "title": "Lease example: CFo is 0 after reset and is left at 0",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF"],
+      "expect": { "variable": "CFo", "display": "0.00" },
+      "notes": "CFo is deliberately left at 0: it represents month 1 of the four-month $0 group. Beginning-of-period timing is modelled structurally by promoting the first payment into CFo, because BGN/END does not affect this worksheet."
+    },
+    {
+      "id": "cash-flow-lease-c01-left-at-zero",
+      "title": "Lease example: step past C01, leaving it at its 0 default",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN"],
+      "expect": { "variable": "C01", "display": "0.00" },
+      "notes": "No value is keyed. Demonstrates that a slot may be skipped and retains its existing value. The guidebook prints an 'entered' annotation on this display, which appears spurious since nothing was keyed."
+    },
+    {
+      "id": "cash-flow-lease-f01",
+      "title": "Lease example: first group, three remaining $0 months",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER"],
+      "expect": { "variable": "F01", "display": "3.00" },
+      "notes": "Three, not four: month 1 of the four $0 months was consumed by CFo."
+    },
+    {
+      "id": "cash-flow-lease-c02",
+      "title": "Lease example: second group, $5000 outflow",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER"],
+      "expect": { "variable": "C02", "display": "-5,000.00" },
+      "notes": "DISCREPANCY: p. 49 prints '-5000.00' with no thousands separator, while p. 47 prints '-7,000.00' and '5,000.00' for the same magnitudes and p. 49's own NPV result prints '-138,088.44' WITH a separator. The BA II Plus groups digits unconditionally; the comma-grouped form is asserted. Lease payments are outflows from the lessee, hence +/-, even though the p. 49 time-line diagram draws them unsigned."
+    },
+    {
+      "id": "cash-flow-lease-f02",
+      "title": "Lease example: eight months at $5000",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER"],
+      "expect": { "variable": "F02", "display": "8.00" },
+      "notes": "Grouping is what fits a 36-month lease into six Cnn slots."
+    },
+    {
+      "id": "cash-flow-lease-c03",
+      "title": "Lease example: third group, $0 months",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN"],
+      "expect": { "variable": "C03", "display": "0.00" },
+      "notes": "Left at default 0. A $0 group still consumes a Cnn slot because it must occupy time on the line."
+    },
+    {
+      "id": "cash-flow-lease-f03",
+      "title": "Lease example: three $0 months",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER"],
+      "expect": { "variable": "F03", "display": "3.00" },
+      "notes": "Matches the schedule row '3 months / $0'."
+    },
+    {
+      "id": "cash-flow-lease-c04",
+      "title": "Lease example: fourth group, $6000 outflow",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER"],
+      "expect": { "variable": "C04", "display": "-6,000.00" },
+      "notes": "Guidebook prints '-6000.00'; comma-grouped form asserted, as for C02. The p. 49 diagram labels this group '$600', off by a factor of ten from the schedule and the keystrokes."
+    },
+    {
+      "id": "cash-flow-lease-f04",
+      "title": "Lease example: nine months at $6000",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER"],
+      "expect": { "variable": "F04", "display": "9.00" },
+      "notes": ""
+    },
+    {
+      "id": "cash-flow-lease-c05",
+      "title": "Lease example: fifth group, $0 months",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN"],
+      "expect": { "variable": "C05", "display": "0.00" },
+      "notes": "Left at default 0."
+    },
+    {
+      "id": "cash-flow-lease-f05",
+      "title": "Lease example: two $0 months",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER"],
+      "expect": { "variable": "F05", "display": "2.00" },
+      "notes": ""
+    },
+    {
+      "id": "cash-flow-lease-c06",
+      "title": "Lease example: sixth group, $7000 outflow",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER"],
+      "expect": { "variable": "C06", "display": "-7,000.00" },
+      "notes": "Guidebook prints '-7000.00'; comma-grouped form asserted."
+    },
+    {
+      "id": "cash-flow-lease-f06",
+      "title": "Lease example: ten months at $7000",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER", "DOWN", "10", "ENTER"],
+      "expect": { "variable": "F06", "display": "10.00" },
+      "notes": "Completes the 36-month line: CFo(1) + 3 + 8 + 3 + 9 + 2 + 10 = 36 months."
+    },
+    {
+      "id": "cash-flow-lease-open-npv-shows-i",
+      "title": "Lease example: NPV key opens I at 0",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER", "DOWN", "10", "ENTER", "NPV"],
+      "expect": { "variable": "I", "display": "0.00" },
+      "notes": "The guidebook labels this step 'Select NPV' but the display lands on I."
+    },
+    {
+      "id": "cash-flow-lease-enter-monthly-rate",
+      "title": "Lease example: convert 10% annual to a monthly rate on the entry line",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER", "DOWN", "10", "ENTER", "NPV", "10", "/", "12", "ENTER"],
+      "expect": { "variable": "I", "display": "0.83" },
+      "notes": "CRITICAL PRECISION CASE. ENTER completes the pending division and stores the result. The DISPLAY rounds to 0.83 at DEC=2 but the STORED value is 0.8333333333333. An implementation that stores the rounded 0.83 still passes this case but fails the next one by $92.89 (-138,181.32 vs -138,088.44). The worksheet has no P/Y mechanism, so the annual rate must be divided by hand. '/' is the divide key."
+    },
+    {
+      "id": "cash-flow-lease-compute-npv",
+      "title": "Lease example: compute NPV = -138,088.44",
+      "guidebookPage": 49,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER", "DOWN", "10", "ENTER", "NPV", "10", "/", "12", "ENTER", "DOWN", "CPT"],
+      "expect": { "variable": "NPV", "display": "-138,088.44" },
+      "notes": "ARBITER CASE. Exact value -138088.4358224 using the unrounded stored I of 0.8333333333333; verified against the corrected exponent (1+i)^(-S_{j-1}). Negative because every flow is an outflow with no offsetting inflow, so this is a present value of payments rather than a profitability signal. Confirms zero-valued groups (C01, C03, C05) contribute nothing but still advance the period counter S_j. Also confirms BGN/END is inert: beginning-of-period timing came from promoting month 1 into CFo, not from a mode setting."
+    }
+  ]
+}

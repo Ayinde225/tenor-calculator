@@ -1,0 +1,267 @@
+{
+  "section": "memory-and-last-answer",
+  "sourcePages": "16-23",
+  "cases": [
+    {
+      "id": "memory-and-last-answer-constants-quit-clears-display",
+      "title": "2ND QUIT clears the calculator to 0.00 before a constant calculation",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT"],
+      "expect": { "variable": "DISPLAY", "display": "0.00" },
+      "notes": "Row 1 of the printed 'Multiply 3, 7, and 45 by 8' example. Display column is printed as 0.00, confirming the two-decimal default (p. 9) applies to the cleared display."
+    },
+    {
+      "id": "memory-and-last-answer-constants-entry-echo-unformatted",
+      "title": "A freshly keyed entry echoes unformatted, not at the DEC setting",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "3"],
+      "expect": { "variable": "DISPLAY", "display": "3" },
+      "notes": "Row 2 of the printed example. The guidebook prints '3', NOT '3.00', at the two-decimal default. Entry echoes are not formatted until an operator key is pressed (compare the last-answer example where 2 Y^X shows 2.00). This is a display-model rule the guidebook never states in prose."
+    },
+    {
+      "id": "memory-and-last-answer-constants-operand-echo-unformatted",
+      "title": "The constant operand also echoes unformatted after the operator key",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "3", "×", "8"],
+      "expect": { "variable": "DISPLAY", "display": "8" },
+      "notes": "Row 3 of the printed example. Printed as '8', not '8.00' - the 8 is a live keyed entry, so the unformatted-echo rule applies."
+    },
+    {
+      "id": "memory-and-last-answer-constants-arm-and-first-result",
+      "title": "2ND K arms the constant and the following = finishes the seeding calculation",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "3", "×", "8", "2ND", "K", "="],
+      "expect": { "variable": "DISPLAY", "display": "24.00" },
+      "notes": "Row 4 of the printed example. The first = after 2ND K both stores the (×, 8) pair and evaluates 3 × 8. Result is formatted to the two-decimal default. DISPUTED KEY ORDER: this sequence is transcribed verbatim from the p. 18 worked example, which arms the constant with 2ND K AFTER the operand (3 × 8 2ND K =). The 'Keystrokes for Constant Calculations' table lower on the SAME page prints the opposite order for all seven templates (n OP 2ND K c =). The corpus carries both families deliberately; see the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-constants-second-application",
+      "title": "Applying the armed constant to a new entry: 7 = yields 56.00",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "3", "×", "8", "2ND", "K", "=", "7", "="],
+      "expect": { "variable": "DISPLAY", "display": "56.00" },
+      "notes": "Row 5 of the printed example. Digits and = are the only keys that preserve the constant (p. 18)."
+    },
+    {
+      "id": "memory-and-last-answer-constants-third-application",
+      "title": "Applying the armed constant again: 45 = yields 360.00",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "3", "×", "8", "2ND", "K", "=", "7", "=", "45", "="],
+      "expect": { "variable": "DISPLAY", "display": "360.00" },
+      "notes": "Row 6 of the printed example. Confirms the constant survives an unlimited number of digit/= cycles."
+    },
+    {
+      "id": "memory-and-last-answer-last-answer-seed-calculation",
+      "title": "Completing a calculation with = sets the last answer",
+      "guidebookPage": 19,
+      "setup": { "decimals": 2 },
+      "keys": ["3", "+", "1", "="],
+      "expect": { "variable": "DISPLAY", "display": "4.00" },
+      "notes": "Row 1 of the printed 'Using the Last Answer in a Calculation' example. = is one of the three documented ANS triggers (with ENTER and CPT)."
+    },
+    {
+      "id": "memory-and-last-answer-last-answer-operand-is-formatted",
+      "title": "Pressing an operator key formats the pending operand to the DEC setting",
+      "guidebookPage": 19,
+      "setup": { "decimals": 2 },
+      "keys": ["3", "+", "1", "=", "2", "Y^X"],
+      "expect": { "variable": "DISPLAY", "display": "2.00" },
+      "notes": "Row 2 of the printed example. Printed as 2.00 - contrast with the constants example where a bare keyed 3 shows as '3'. The operator keypress is what triggers formatting. Y^X does NOT overwrite ANS (it is not one of the three triggers)."
+    },
+    {
+      "id": "memory-and-last-answer-last-answer-recall-mid-expression",
+      "title": "2ND ANS recalls the last answer as the pending operand",
+      "guidebookPage": 19,
+      "setup": { "decimals": 2 },
+      "keys": ["3", "+", "1", "=", "2", "Y^X", "2ND", "ANS"],
+      "expect": { "variable": "DISPLAY", "display": "4.00" },
+      "notes": "Row 3 of the printed example. ANS still holds 4.00 from the earlier =, proving that keying 2 and pressing Y^X did not overwrite it."
+    },
+    {
+      "id": "memory-and-last-answer-last-answer-complete-with-recalled-value",
+      "title": "Closing the calculation with the recalled last answer: 2^4 = 16.00",
+      "guidebookPage": 19,
+      "setup": { "decimals": 2 },
+      "keys": ["3", "+", "1", "=", "2", "Y^X", "2ND", "ANS", "="],
+      "expect": { "variable": "DISPLAY", "display": "16.00" },
+      "notes": "Row 4 of the printed example. The recalled ANS behaves as an ordinary operand. This = also updates ANS to 16.00."
+    },
+    {
+      "id": "memory-and-last-answer-clear-memory-4-by-storing-zero",
+      "title": "Clear a single memory by storing zero into it",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["0", "STO", "4"],
+      "expect": { "variable": "M4", "display": "0.00" },
+      "notes": "Printed 'Memory Examples' table, row 1. The table has a Press column but NO Display column, so the expected value here is the resulting register content (as it would appear on a subsequent RCL 4 at two decimals), not a printed display string. The same sequence is restated in the clearing table on p. 11 as the way to clear one memory without affecting the others."
+    },
+    {
+      "id": "memory-and-last-answer-store-value-in-m3",
+      "title": "Store 14.95 into memory 3",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["14.95", "STO", "3"],
+      "expect": { "variable": "M3", "display": "14.95" },
+      "notes": "Printed 'Memory Examples' table, row 2. No Display column is printed; expectation is the register content. STO overwrites unconditionally and leaves the display alone."
+    },
+    {
+      "id": "memory-and-last-answer-store-then-recall-round-trip",
+      "title": "RCL brings a stored value back and leaves the register intact",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["14.95", "STO", "7", "CE/C", "RCL", "7", "RCL", "7"],
+      "expect": { "variable": "DISPLAY", "display": "14.95" },
+      "notes": "COMPOSED, not printed verbatim. The guidebook's row 3 is a bare 'RCL 7' with no starting value and no Display column, so it is not executable on its own. This case joins the printed store sequence (row 2, retargeted to M7) to the printed recall sequence, with CE/C in between to prove the display was genuinely repopulated from the register, and RCL 7 twice to prove the recall is non-destructive (p. 16: 'the recalled number remains in memory')."
+    },
+    {
+      "id": "memory-and-last-answer-clear-all-ten-memories",
+      "title": "2ND MEM 2ND CLR WORK zeroes all ten registers at once",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["14.95", "STO", "3", "99", "STO", "8", "2ND", "MEM", "2ND", "CLR WORK"],
+      "expect": { "variable": "M3", "display": "0.00" },
+      "notes": "Printed sequence from p. 16 ('To clear all 10 calculator memories, press 2ND MEM 2ND CLR WORK'), prefixed with stores so the clear is observable. The assertion targets M3 because M3 is one of the two registers this case actually writes (M3=14.95, M8=99); asserting on M0 would pass vacuously, since M0 is never written and is already 0. All of M0-M9 must read 0 afterwards. NOTE: this sequence leaves the calculator inside the Memory worksheet displaying M0= - p. 16 presents it as a plain clear and never says a 2ND QUIT is needed to get back. The Memory worksheet chapter (p. 73) gives the same clear as a bare 2ND CLR WORK once already inside."
+    },
+    {
+      "id": "memory-and-last-answer-sto-add-to-m9",
+      "title": "Memory arithmetic: STO + 9 adds the displayed value to M9",
+      "guidebookPage": 17,
+      "setup": { "decimals": 2 },
+      "keys": ["100", "STO", "9", "5", "STO", "+", "9", "RCL", "9"],
+      "expect": { "variable": "M9", "display": "105.00" },
+      "notes": "DERIVED. The p. 17 table gives the keystroke and the semantics ('add the displayed value to the value stored in memory 9') but prints no operands and no Display column. Operands chosen here; expected value follows directly from the stated semantics. Trailing RCL 9 makes the register content observable."
+    },
+    {
+      "id": "memory-and-last-answer-sto-subtract-from-m3",
+      "title": "Memory arithmetic: STO - 3 subtracts the display FROM M3 (register is left operand)",
+      "guidebookPage": 17,
+      "setup": { "decimals": 2 },
+      "keys": ["100", "STO", "3", "30", "STO", "-", "3", "RCL", "3"],
+      "expect": { "variable": "M3", "display": "70.00" },
+      "notes": "DERIVED, operands chosen. Load-bearing case: the guidebook wording is 'subtract the displayed value from the value stored in memory 3', so M3' = M3 - D = 100 - 30 = 70, NOT D - M3 = -70. Operand order is only observable for the non-commutative operations."
+    },
+    {
+      "id": "memory-and-last-answer-sto-multiply-m0",
+      "title": "Memory arithmetic: STO × 0 multiplies M0 by the displayed value",
+      "guidebookPage": 17,
+      "setup": { "decimals": 2 },
+      "keys": ["12", "STO", "0", "5", "STO", "×", "0", "RCL", "0"],
+      "expect": { "variable": "M0", "display": "60.00" },
+      "notes": "DERIVED, operands chosen. Commutative, so operand order is not observable here."
+    },
+    {
+      "id": "memory-and-last-answer-sto-divide-m5",
+      "title": "Memory arithmetic: STO ÷ 5 divides M5 BY the displayed value (register is numerator)",
+      "guidebookPage": 17,
+      "setup": { "decimals": 2 },
+      "keys": ["100", "STO", "5", "4", "STO", "÷", "5", "RCL", "5"],
+      "expect": { "variable": "M5", "display": "25.00" },
+      "notes": "DERIVED, operands chosen. Load-bearing case: wording is 'divide the value in memory 5 by the displayed value', so M5' = M5 ÷ D = 100 ÷ 4 = 25, NOT D ÷ M5 = 0.04."
+    },
+    {
+      "id": "memory-and-last-answer-sto-power-m4",
+      "title": "Memory arithmetic: STO Y^X 4 raises M4 to the power of the displayed value (register is base)",
+      "guidebookPage": 17,
+      "setup": { "decimals": 2 },
+      "keys": ["3", "STO", "4", "2", "STO", "Y^X", "4", "RCL", "4"],
+      "expect": { "variable": "M4", "display": "9.00" },
+      "notes": "DERIVED, operands chosen. Load-bearing case: wording is 'raise the value in memory 4 to the power of the displayed value', so M4' = M4 ^ D = 3^2 = 9, NOT D ^ M4 = 2^3 = 8. The two orders differ numerically here by design."
+    },
+    {
+      "id": "memory-and-last-answer-memory-arithmetic-leaves-display-untouched",
+      "title": "Memory arithmetic changes only the register, never the display",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["100", "STO", "9", "5", "STO", "+", "9"],
+      "expect": { "variable": "DISPLAY", "display": "5" },
+      "notes": "DERIVED from the explicit p. 16 invariant 'memory arithmetic changes only the value in the affected memory and not the displayed value'. The expected string is '5' (unformatted) rather than '5.00' because 5 is a live keyed entry and no operator key has been pressed - per the echo rule established by the constants example (p. 18). If an implementation formats keyed entries eagerly this case will read '5.00'; that ambiguity is flagged in the spec."
+    },
+    {
+      "id": "memory-and-last-answer-memory-arithmetic-does-not-complete-pending-calculation",
+      "title": "Memory arithmetic does not resolve a calculation already in progress",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "+", "5", "STO", "+", "9", "="],
+      "expect": { "variable": "DISPLAY", "display": "8.00" },
+      "notes": "DERIVED from the explicit p. 16 invariant 'memory arithmetic does not complete any calculation in progress'. The STO + 9 adds 5 to M9 while the 3 + ... remains pending, so the final = still yields 8.00. No printed example exercises this."
+    },
+    {
+      "id": "memory-and-last-answer-constant-add-template",
+      "title": "Constant template: add c to each subsequent entry",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "10", "+", "2ND", "K", "5", "=", "20", "="],
+      "expect": { "variable": "DISPLAY", "display": "25.00" },
+      "notes": "DERIVED from the printed template 'n + 2ND K c =' (add c to each subsequent entry). Operands chosen; the table prints no Display column. Seeding = yields 15.00; the 20 = shown here yields 25.00. DISPUTED KEY ORDER: this case follows the p. 18 template table, which places 2ND K BEFORE the constant operand c. The worked example on the SAME page arms the constant with 2ND K AFTER the operand (3 × 8 2ND K =). The guidebook contradicts itself; see the spec's 'Contradictions between printed formulas and worked examples' section. An implementation must accept both orders to satisfy this corpus."
+    },
+    {
+      "id": "memory-and-last-answer-constant-subtract-template-operand-order",
+      "title": "Constant template: subtract c from each subsequent entry (constant is subtrahend)",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "100", "-", "2ND", "K", "30", "=", "50", "="],
+      "expect": { "variable": "DISPLAY", "display": "20.00" },
+      "notes": "DERIVED from the printed template 'n - 2ND K c =' ('subtract c from each subsequent entry'). Load-bearing operand order: the new entry is the minuend and the constant the subtrahend, so 50 - 30 = 20.00, NOT 30 - 50 = -20.00. Seeding = yields 70.00. This is the only non-commutative constant template with no other coverage in the corpus (multiply is exercised by the printed 3/7/45-by-8 example), so its operand order would otherwise go unpinned. DISPUTED KEY ORDER: follows the p. 18 template table (2ND K before c); the worked example on the same page uses the opposite order. See the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-constant-divide-template-operand-order",
+      "title": "Constant template: divide each subsequent entry by c (entry is numerator)",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "100", "÷", "2ND", "K", "4", "=", "50", "="],
+      "expect": { "variable": "DISPLAY", "display": "12.50" },
+      "notes": "DERIVED from the printed template 'n ÷ 2ND K c =' ('divide each subsequent entry by c'). Load-bearing operand order: the new entry is the numerator and the constant the divisor, so 50 ÷ 4 = 12.50, NOT 4 ÷ 50. Seeding = yields 25.00. DISPUTED KEY ORDER: follows the p. 18 template table (2ND K before c); the worked example on the same page uses the opposite order. See the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-constant-power-template-operand-order",
+      "title": "Constant template: raise each subsequent entry to the power of c (entry is base)",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "2", "Y^X", "2ND", "K", "3", "=", "5", "="],
+      "expect": { "variable": "DISPLAY", "display": "125.00" },
+      "notes": "DERIVED from the printed template 'n Y^X 2ND K c =' ('raise each subsequent entry to the power of c'). Load-bearing operand order: entry is base, constant is exponent, so 5^3 = 125, NOT 3^5 = 243. Seeding = yields 8.00. DISPUTED KEY ORDER: follows the p. 18 template table (2ND K before c); the worked example on the same page uses the opposite order. See the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-constant-add-percent-template",
+      "title": "Constant template: add c% of each subsequent entry to that entry",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "200", "+", "2ND", "K", "10", "%", "=", "50", "="],
+      "expect": { "variable": "DISPLAY", "display": "55.00" },
+      "notes": "DERIVED from the printed template 'n + 2ND K c % =' ('add c% of each subsequent entry to that entry'). Load-bearing: the constant register must hold the PERCENTAGE (+, 10%) and re-evaluate it against each new entry, not the seed-derived absolute value 20. Seeding = yields 220.00; then 50 = must yield 55.00 (50 + 10% of 50), not 70.00 (50 + 20). DISPUTED KEY ORDER: follows the p. 18 template table (2ND K before c); the worked example on the same page uses the opposite order. See the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-constant-subtract-percent-template",
+      "title": "Constant template: subtract c% of each subsequent entry from that entry",
+      "guidebookPage": 18,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "QUIT", "200", "-", "2ND", "K", "10", "%", "=", "50", "="],
+      "expect": { "variable": "DISPLAY", "display": "45.00" },
+      "notes": "DERIVED from the printed template 'n - 2ND K c % =' ('subtract c% of each subsequent entry from the entry'). Seeding = yields 180.00; then 50 = yields 45.00 (50 - 10% of 50). DISPUTED KEY ORDER: follows the p. 18 template table (2ND K before c); the worked example on the same page uses the opposite order. See the spec's contradictions section."
+    },
+    {
+      "id": "memory-and-last-answer-reset-zeroes-all-memories",
+      "title": "2ND RESET ENTER zeroes all ten memory registers",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["14.95", "STO", "3", "2ND", "RESET", "ENTER", "RCL", "3"],
+      "expect": { "variable": "M3", "display": "0.00" },
+      "notes": "DERIVED by joining the printed store sequence (p. 16) to the reset behaviour stated on p. 10 ('resetting the calculator clears the display, all 10 memories, any unfinished calculations, and all worksheet data'). Reset also restores DEC to 2, so the recalled 0 displays as 0.00. Contrast with power-off, which preserves memories via Constant Memory (p. 16)."
+    },
+    {
+      "id": "memory-and-last-answer-clr-work-in-other-worksheet-spares-memories",
+      "title": "CLR WORK in a non-Memory worksheet does not touch the memory registers",
+      "guidebookPage": 16,
+      "setup": { "decimals": 2 },
+      "keys": ["14.95", "STO", "3", "2ND", "AMORT", "2ND", "CLR WORK", "2ND", "QUIT", "RCL", "3"],
+      "expect": { "variable": "M3", "display": "14.95" },
+      "notes": "DERIVED from worksheet isolation (p. 19: 'operations in a worksheet do not affect variables in other worksheets') plus the clearing table (p. 11), which scopes 2ND CLR WORK to 'the prompted worksheet'. Only the Memory worksheet's own CLR WORK clears registers."
+    }
+  ]
+}

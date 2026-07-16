@@ -1,0 +1,33 @@
+{
+  "section": "errors-accuracy-aos",
+  "sourcePages": "84-87",
+  "cases": [
+    {
+      "id": "errors-accuracy-aos-round-one-div-three-times-three",
+      "title": "1 divided by 3 times 3 displays as 1 via guard-digit rounding",
+      "guidebookPage": 86,
+      "setup": {},
+      "keys": ["1", "÷", "3", "×", "3", "="],
+      "expect": { "variable": "DISPLAY", "display": "1" },
+      "notes": "The only worked example on pages 84-87. Guidebook prints the display as a bare '1' and does not state DEC; at the default DEC=2 a real unit would show '1.00'. The load-bearing claim is that the INTERNAL result is 0.9999999999999 and only the display rounds up. Does not discriminate AOS from CHN: x and / share priority 4 (p. 87), so both evaluate left-to-right and both yield 1."
+    },
+    {
+      "id": "errors-accuracy-aos-internal-step1-one-div-three",
+      "title": "Internal value of 1 divided by 3 is 13 significant digits",
+      "guidebookPage": 86,
+      "setup": {},
+      "keys": ["1", "÷", "3", "="],
+      "expect": { "variable": "INTERNAL", "display": "0.3333333333333" },
+      "notes": "Step 1 of the p. 86 example, printed literally in the guidebook. This is the INTERNAL 13-digit value, NOT the display -- at 10 displayed digits the screen would read 0.3333333333. Asserts the guard-digit mantissa width. Implementations using IEEE doubles will hold ~0.333333333333333 and must truncate to 13 significant digits to match."
+    },
+    {
+      "id": "errors-accuracy-aos-internal-step2-times-three",
+      "title": "Internal value of 0.3333333333333 times 3 is 0.9999999999999",
+      "guidebookPage": 86,
+      "setup": {},
+      "keys": ["0.3333333333333", "×", "3", "="],
+      "expect": { "variable": "INTERNAL", "display": "0.9999999999999" },
+      "notes": "Step 2 of the p. 86 example, printed literally. Critical parity assertion: the internal result is NOT exactly 1. Chained arithmetic must consume the 13-digit internal value, never the rounded display. An implementation that computes exactly 1.0 internally passes the visible example by luck and diverges elsewhere."
+    }
+  ]
+}

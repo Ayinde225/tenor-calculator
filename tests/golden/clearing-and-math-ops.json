@@ -1,0 +1,393 @@
+{
+  "section": "clearing-and-math-ops",
+  "sourcePages": "11-15",
+  "cases": [
+    {
+      "id": "clearing-and-math-ops-reset-arm-prompt",
+      "title": "2nd RESET arms the reset and shows the RST ? prompt",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET"],
+      "expect": { "variable": "DISPLAY", "display": "RST ?" },
+      "notes": "The RST ? prompt and the ENTER indicator light together. Nothing is cleared until ENTER is pressed. If an error condition is live, CE/C must be pressed before RESET can be armed (p. 11)."
+    },
+    {
+      "id": "clearing-and-math-ops-reset-cancel",
+      "title": "2nd QUIT cancels an armed reset",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET", "2ND", "QUIT"],
+      "expect": { "variable": "DISPLAY", "display": "0.00" },
+      "notes": "Cancelling leaves memories, worksheet data and settings untouched; only the RST ? prompt is dismissed."
+    },
+    {
+      "id": "clearing-and-math-ops-reset-confirm",
+      "title": "2nd RESET ENTER performs the reset",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET", "ENTER"],
+      "expect": { "variable": "DISPLAY", "display": "0.00" },
+      "notes": "The RST indicator must be lit alongside 0.00 to confirm the reset happened. Reset clears the display, all 10 memories, unfinished calculations and all worksheet data, restores every default setting, and returns to standard-calculator mode (p. 10-11)."
+    },
+    {
+      "id": "clearing-and-math-ops-entry-error-begin",
+      "title": "Entry-error example, step 1: begin the expression 3 x",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "×"],
+      "expect": { "variable": "DISPLAY", "display": "3.00" },
+      "notes": "Pressing the operation key formats the settled operand to the DEC=2 format."
+    },
+    {
+      "id": "clearing-and-math-ops-entry-error-typo",
+      "title": "Entry-error example, step 2: key the wrong number 1234.86",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "×", "1234.86"],
+      "expect": { "variable": "DISPLAY", "display": "1,234.86" },
+      "notes": "Mid-entry the display applies the thousands separator but echoes the keyed digits literally rather than padding to DEC."
+    },
+    {
+      "id": "clearing-and-math-ops-entry-error-backspace",
+      "title": "Entry-error example, step 3: two backspaces erase the error",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "×", "1234.86", "BKSP", "BKSP"],
+      "expect": { "variable": "DISPLAY", "display": "1,234." },
+      "notes": "Parity-critical formatting: the trailing decimal point is retained with no digits after it, and the thousands separator stays. BKSP is the guidebook's right-arrow key. The pending 3 x multiplication survives."
+    },
+    {
+      "id": "clearing-and-math-ops-entry-error-retype",
+      "title": "Entry-error example, step 4: key in the correct digits 56",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "×", "1234.86", "BKSP", "BKSP", "56"],
+      "expect": { "variable": "DISPLAY", "display": "1,234.56" },
+      "notes": "Correction is only possible before the next operation key; after one, CE/C would abort the whole calculation instead of clearing the number (p. 12)."
+    },
+    {
+      "id": "clearing-and-math-ops-entry-error-result",
+      "title": "Entry-error example, step 5: compute 3 x 1234.56",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "×", "1234.86", "BKSP", "BKSP", "56", "="],
+      "expect": { "variable": "DISPLAY", "display": "3,703.68" },
+      "notes": "Exact: 3 x 1234.56 = 3703.68."
+    },
+    {
+      "id": "clearing-and-math-ops-add-6-plus-4",
+      "title": "Add 6 + 4",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["6", "+", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "10.00" },
+      "notes": ""
+    },
+    {
+      "id": "clearing-and-math-ops-subtract-6-minus-4",
+      "title": "Subtract 6 - 4",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["6", "-", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "2.00" },
+      "notes": ""
+    },
+    {
+      "id": "clearing-and-math-ops-multiply-6-times-4",
+      "title": "Multiply 6 x 4",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["6", "×", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "24.00" },
+      "notes": ""
+    },
+    {
+      "id": "clearing-and-math-ops-divide-6-by-4",
+      "title": "Divide 6 / 4",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["6", "÷", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "1.50" },
+      "notes": ""
+    },
+    {
+      "id": "clearing-and-math-ops-universal-power-3-pow-1-25",
+      "title": "Universal power: 3^1.25",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "Y^X", "1.25", "="],
+      "expect": { "variable": "DISPLAY", "display": "3.95" },
+      "notes": "Exact value 3.948222... rounds to 3.95. Y^X requires = to resolve."
+    },
+    {
+      "id": "clearing-and-math-ops-parentheses-7-times-3-plus-5",
+      "title": "Use parentheses: 7 x (3 + 5)",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["7", "×", "(", "3", "+", "5", ")", "="],
+      "expect": { "variable": "DISPLAY", "display": "56.00" },
+      "notes": "The closing ) is optional here — = closes any outstanding parentheses automatically (p. 14). Up to 15 nesting levels and 8 pending operations; exceeding either raises Error 3."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-of-453",
+      "title": "Find percent: 4% of $453",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["453", "×", "4", "%", "="],
+      "expect": { "variable": "DISPLAY", "display": "18.12" },
+      "notes": "After x, % simply scales the operand by 1/100: 453 x 0.04 = 18.12."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-ratio-14-to-25",
+      "title": "Find percent ratio: 14 to 25",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["14", "÷", "25", "%", "="],
+      "expect": { "variable": "DISPLAY", "display": "56.00" },
+      "notes": "After /, % scales the divisor by 1/100: 14 / 0.25 = 56, i.e. 14 expressed as a percentage of 25."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-add-on-amount",
+      "title": "Percent add-on, step 1: the 7% sales-tax amount on $498",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["498", "+", "7", "%"],
+      "expect": { "variable": "DISPLAY", "display": "34.86" },
+      "notes": "Context-sensitive %: after + it resolves to that percentage OF the first operand (498 x 0.07 = 34.86) and displays that amount before = is pressed. This differs from the x / / behaviour."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-add-on-total",
+      "title": "Percent add-on, step 2: $498 + 7% sales tax",
+      "guidebookPage": 12,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["498", "+", "7", "%", "="],
+      "expect": { "variable": "DISPLAY", "display": "532.86" },
+      "notes": "The terminating = for this row is printed as an orphaned continuation row at the top of p. 13; text-only extraction misattributes it. 498 + 34.86 = 532.86."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-discount-amount",
+      "title": "Percent discount, step 1: the 10% discount amount on $69.99",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["69.99", "-", "10", "%"],
+      "expect": { "variable": "DISPLAY", "display": "7.00" },
+      "notes": "Internally 6.999; the display rounds it to 7.00 at DEC=2 while the stored value stays unrounded (p. 15)."
+    },
+    {
+      "id": "clearing-and-math-ops-percent-discount-total",
+      "title": "Percent discount, step 2: $69.99 - 10%",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["69.99", "-", "10", "%", "="],
+      "expect": { "variable": "DISPLAY", "display": "62.99" },
+      "notes": "Does not discriminate rounded vs internal arithmetic: 69.99 - 6.999 = 62.991 and 69.99 - 7.00 = 62.99 both display 62.99."
+    },
+    {
+      "id": "clearing-and-math-ops-square-6-3",
+      "title": "Square 6.3",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["6.3", "X^2"],
+      "expect": { "variable": "DISPLAY", "display": "39.69" },
+      "notes": "Printed in the table headed 'require you to press = to complete', but the example's own keys contain no = and the result appears immediately. The example wins: X^2 is an immediate unary operation."
+    },
+    {
+      "id": "clearing-and-math-ops-combinations-52-choose-5",
+      "title": "Combinations: n = 52, r = 5",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["52", "2ND", "NCR", "5", "="],
+      "expect": { "variable": "DISPLAY", "display": "2,598,960.00" },
+      "notes": "Agrees with the printed formula nCr = n!/((n-r)! x r!) (p. 14, vector image): 52!/(47! x 5!) = 2,598,960. Note the display carries thousands separators and DEC=2 padding."
+    },
+    {
+      "id": "clearing-and-math-ops-permutations-8-p-3",
+      "title": "Permutations: n = 8, r = 3",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["8", "2ND", "NPR", "3", "="],
+      "expect": { "variable": "DISPLAY", "display": "336.00" },
+      "notes": "Agrees with the printed formula nPr = n!/(n-r)! (p. 15, vector image, orphaned above the Rounding heading): 8!/5! = 336."
+    },
+    {
+      "id": "clearing-and-math-ops-square-root-15-5",
+      "title": "Square root of 15.5",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["15.5", "√X"],
+      "expect": { "variable": "DISPLAY", "display": "3.94" },
+      "notes": "No = required. Exact 3.937003... rounds to 3.94. A negative operand raises Error 2 (p. 84)."
+    },
+    {
+      "id": "clearing-and-math-ops-reciprocal-3-2",
+      "title": "Reciprocal of 3.2",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["3.2", "1/X"],
+      "expect": { "variable": "DISPLAY", "display": "0.31" },
+      "notes": "Exact 0.3125 rounds to 0.31 at DEC=2. 1/X on zero raises Error 1 Overflow (p. 84)."
+    },
+    {
+      "id": "clearing-and-math-ops-factorial-5",
+      "title": "Factorial of 5",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["5", "2ND", "X!"],
+      "expect": { "variable": "DISPLAY", "display": "120.00" },
+      "notes": "p. 14 requires a positive integer <= 69; the Error 2 table (p. 84) instead admits any integer 0-69. The two contradict on x = 0; no worked example arbitrates."
+    },
+    {
+      "id": "clearing-and-math-ops-natural-log-203-45",
+      "title": "Natural logarithm of 203.45",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["203.45", "LN"],
+      "expect": { "variable": "DISPLAY", "display": "5.32" },
+      "notes": "Exact 5.315427... rounds to 5.32. An operand not greater than 0 raises Error 2, not Error 1 (p. 84)."
+    },
+    {
+      "id": "clearing-and-math-ops-natural-antilog-0-69315",
+      "title": "Natural antilogarithm e^0.69315",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": [".69315", "2ND", "E^X"],
+      "expect": { "variable": "DISPLAY", "display": "2.00" },
+      "notes": "Exact 2.000003... rounds to 2.00. Leading-zero-less entry '.69315' is keyed as printed."
+    },
+    {
+      "id": "clearing-and-math-ops-round-2-divided-by-3",
+      "title": "Round 2 / 3 to the set decimal format",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["2", "÷", "3", "=", "2ND", "ROUND"],
+      "expect": { "variable": "DISPLAY", "display": "0.67" },
+      "notes": "ROUND is applied AFTER = to a completed result. The display is unchanged by ROUND; what changes is the internal value, which is replaced by its displayed rounded form so later arithmetic uses 0.67 rather than 0.666... (p. 15). Parity check: after ROUND, x 3 = must give 2.01, not 2.00."
+    },
+    {
+      "id": "clearing-and-math-ops-random-number",
+      "title": "Generate a random number",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "RAND"],
+      "expect": { "variable": "DISPLAY", "display": "0.86" },
+      "notes": "NON-DETERMINISTIC — the guidebook itself footnotes 'The random number you generate might be different' (p. 14). Do not assert the literal string 0.86. The testable contract is: a uniformly distributed real strictly between 0 and 1 (0 < x < 1), displayed at DEC."
+    },
+    {
+      "id": "clearing-and-math-ops-store-seed",
+      "title": "Store a seed value",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["STO", "2ND", "RAND"],
+      "expect": { "variable": "DISPLAY", "display": "0.86" },
+      "notes": "NOT EXECUTABLE AS PRINTED — flagged discrepancy. The example reuses the previous row's displayed 0.86 as the seed, but p. 14 requires the seed to be an integer greater than zero. 0.86 is neither. The prose sequence is: key an integer > 0, then STO 2nd RAND. Whether non-integer seeds are rejected, truncated, or silently accepted is unspecified."
+    },
+    {
+      "id": "clearing-and-math-ops-sine-11-54-deg",
+      "title": "Find sine: sin(11.54 degrees)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": ["11.54", "2ND", "SIN"],
+      "expect": { "variable": "DISPLAY", "display": "0.20" },
+      "notes": "Angle unit is DEG (the default — no RAD indicator). Exact 0.200048... rounds to 0.20."
+    },
+    {
+      "id": "clearing-and-math-ops-cosine-120-deg",
+      "title": "Find cosine: cos(120 degrees)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": ["120", "2ND", "COS"],
+      "expect": { "variable": "DISPLAY", "display": "-0.50" },
+      "notes": "Exact -0.5. The leading minus sign is part of the required display string."
+    },
+    {
+      "id": "clearing-and-math-ops-tangent-76-deg",
+      "title": "Find tangent: tan(76 degrees)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": ["76", "2ND", "TAN"],
+      "expect": { "variable": "DISPLAY", "display": "4.01" },
+      "notes": "Exact 4.010781... rounds to 4.01."
+    },
+    {
+      "id": "clearing-and-math-ops-arcsine-0-2",
+      "title": "Find arcsine: sin-1(.2)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": [".2", "INV", "SIN"],
+      "expect": { "variable": "DISPLAY", "display": "11.54" },
+      "notes": "Printed WITHOUT a 2nd before SIN — INV itself selects the second level (p. 7 describes INV as an indicator meaning 'press a key to select its inverse trigonometric function'). Sequence reproduced verbatim rather than normalised to 2ND. Exact 11.53696... rounds to 11.54."
+    },
+    {
+      "id": "clearing-and-math-ops-arccosine-neg-0-5",
+      "title": "Find arccosine: cos-1(-.5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": [".5", "+/-", "INV", "COS"],
+      "expect": { "variable": "DISPLAY", "display": "120.00" },
+      "notes": "The +/- key negates the keyed operand before INV COS. Exact 120."
+    },
+    {
+      "id": "clearing-and-math-ops-arctangent-4",
+      "title": "Find arctangent: tan-1(4)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2, "angleUnit": "DEG" },
+      "keys": ["4", "INV", "TAN"],
+      "expect": { "variable": "DISPLAY", "display": "75.96" },
+      "notes": "Exact 75.96375... rounds to 75.96."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-sine-0-5",
+      "title": "Find hyperbolic sine: sinh(.5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": [".5", "2ND", "HYP", "SIN"],
+      "expect": { "variable": "DISPLAY", "display": "0.52" },
+      "notes": "Hyperbolic functions take a pure number, not an angle — the angle unit is irrelevant. Exact 0.521095... rounds to 0.52."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-cosine-0-5",
+      "title": "Find hyperbolic cosine: cosh(.5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": [".5", "2ND", "HYP", "COS"],
+      "expect": { "variable": "DISPLAY", "display": "1.13" },
+      "notes": "Exact 1.127625... rounds to 1.13."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-tangent-0-5",
+      "title": "Find hyperbolic tangent: tanh(.5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": [".5", "2ND", "HYP", "TAN"],
+      "expect": { "variable": "DISPLAY", "display": "0.46" },
+      "notes": "Exact 0.462117... rounds to 0.46."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-arcsine-5",
+      "title": "Find hyperbolic arcsine: sinh-1(5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["5", "2ND", "HYP", "INV", "SIN"],
+      "expect": { "variable": "DISPLAY", "display": "2.31" },
+      "notes": "Prefix order is HYP then INV, and SIN carries no 2nd of its own. Exact 2.312438... rounds to 2.31."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-arccosine-5",
+      "title": "Find hyperbolic arccosine: cosh-1(5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": ["5", "2ND", "HYP", "INV", "COS"],
+      "expect": { "variable": "DISPLAY", "display": "2.29" },
+      "notes": "Exact 2.292431... rounds to 2.29."
+    },
+    {
+      "id": "clearing-and-math-ops-hyperbolic-arctangent-0-5",
+      "title": "Find hyperbolic arctangent: tanh-1(.5)",
+      "guidebookPage": 13,
+      "setup": { "decimals": 2 },
+      "keys": [".5", "2ND", "HYP", "INV", "TAN"],
+      "expect": { "variable": "DISPLAY", "display": "0.55" },
+      "notes": "Exact 0.549306... rounds to 0.55."
+    }
+  ]
+}

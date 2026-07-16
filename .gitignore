@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.DS_Store
+.vscode/
+.idea/
+
+# Research material — third-party copyrighted source (TI guidebook) and derived
+# renderings. Used as a development reference only; never committed, never shipped.
+research/
+*.pdf

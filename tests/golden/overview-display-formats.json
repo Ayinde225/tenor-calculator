@@ -1,0 +1,78 @@
+{
+  "section": "overview-display-formats",
+  "sourcePages": "6-11",
+  "cases": [
+    {
+      "id": "overview-display-formats-chn-3-plus-2-times-4",
+      "title": "Chain method evaluates 3 + 2 x 4 in entry order",
+      "guidebookPage": 10,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["3", "+", "2", "×", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "20.00" },
+      "notes": "Guidebook states the Chn answer as bare '20' in prose (3 + 2 = 5, 5 * 4 = 20), not as a display capture. Rendered as 20.00 because p. 9 states every guidebook example assumes DEC=2, and the parallel math-operations table on p. 12 shows the same class of result two-decimal (6 + 4 = -> 10.00, verified in the p. 12 image). The '20.00' string is the DEC=2 rendering, not a printed value; assert 20 exactly if the harness compares numerically. MERGE HAZARD: errors-accuracy-aos.json carries a duplicate of this case (errors-accuracy-aos-chn-add-then-multiply) with setup {} and display '20'. This section owns p. 10; prefer this case at merge."
+    },
+    {
+      "id": "overview-display-formats-aos-3-plus-2-times-4",
+      "title": "AOS method applies algebraic hierarchy to the same keystrokes",
+      "guidebookPage": 10,
+      "setup": { "decimals": 2, "calcMethod": "AOS" },
+      "keys": ["3", "+", "2", "×", "4", "="],
+      "expect": { "variable": "DISPLAY", "display": "11.00" },
+      "notes": "Identical key sequence to the CHN case; only the calcMethod setting differs. Guidebook states the AOS answer as bare '11' in prose (2 × 4 = 8; 3 + 8 = 11). Rendered as 11.00 per the DEC=2 default (p. 9). This pair is the discriminating test for the Chn/AOS setting. MERGE HAZARD: errors-accuracy-aos.json carries a duplicate (errors-accuracy-aos-aos-add-then-multiply) with setup {} and display '11'. This section owns p. 10; prefer this case at merge."
+    },
+    {
+      "id": "overview-display-formats-select-aos-via-format",
+      "title": "Navigate FORMAT from DEC to calculation method and toggle to AOS",
+      "guidebookPage": 9,
+      "setup": { "decimals": 2, "calcMethod": "CHN" },
+      "keys": ["2ND", "FORMAT", "DOWN", "DOWN", "DOWN", "DOWN", "2ND", "SET"],
+      "expect": { "variable": "CALC_METHOD", "display": "AOS" },
+      "notes": "Derived from the p. 9 format ordering (DEC, angle, date, separator, method) plus the documented navigation rule 'press DOWN or UP once for each format' and 'to change the selected format, press 2ND SET'. The guidebook does not print this exact sequence or its display string; the four DOWN presses follow from the stated ordering and the confirmed three-DOWN path to the separator format. Display token 'AOS' is the label printed in the p. 9 format table (shown there as AOS with a trademark mark). Treat as a derived case, weaker than the two prose-backed Chn/AOS cases above."
+    },
+    {
+      "id": "overview-display-formats-nav-dec-to-angle-units",
+      "title": "One DOWN press from DEC reaches the angle-unit format",
+      "guidebookPage": 9,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "FORMAT", "DOWN"],
+      "expect": { "variable": "ANGLE_UNITS", "display": "DEG" },
+      "notes": "Navigation explicitly worked on p. 9: 'to access the angle unit format, press DOWN'. Display 'DEG' is the default from the p. 9 format table, so this holds only from a defaults state; the guidebook prints no display string for this step."
+    },
+    {
+      "id": "overview-display-formats-nav-dec-to-separators",
+      "title": "Three DOWN presses from DEC reach the number-separator format",
+      "guidebookPage": 9,
+      "setup": { "decimals": 2 },
+      "keys": ["2ND", "FORMAT", "DOWN", "DOWN", "DOWN"],
+      "expect": { "variable": "SEPARATORS", "display": "US" },
+      "notes": "Worked navigation on p. 9. The guidebook gives 'UP UP UP or DOWN DOWN DOWN' for this destination; only the DOWN path is arithmetically consistent with the five-format ordering, so only DOWN is encoded here. See spec Edge cases item 1 - the UP path is a flagged discrepancy and must not be treated as parity ground truth. Display 'US' is the p. 9 default, valid from a defaults state."
+    },
+    {
+      "id": "overview-display-formats-reset-prompt",
+      "title": "2ND RESET raises the RST ? confirmation prompt",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET"],
+      "expect": { "variable": "RST", "display": "RST ?" },
+      "notes": "p. 11 step 1: the RST ? and ENTER indicators appear. This is a prompt state, not a numeric value - the readout is composite (RST label plus ? prompt) with the ENTER annunciator lit. Reset is NOT yet applied at this point. If an error condition is live, CE/C must be pressed to clear the display before 2ND RESET is accepted (p. 11)."
+    },
+    {
+      "id": "overview-display-formats-reset-confirm",
+      "title": "ENTER at the reset prompt commits the reset",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET", "ENTER"],
+      "expect": { "variable": "RST", "display": "0.00" },
+      "notes": "p. 11 step 2: RST and 0.00 appear, confirming the reset. Composite display - the RST indicator plus the numeric field 0.00. Post-state per p. 10: display cleared, all 10 memories cleared, unfinished calculations cleared, all worksheet data cleared, all default settings restored (DEC=2, DEG, US dates, US separators, Chn), standard-calculator mode. The 0.00 rendering assumes DEC=2, which is itself one of the restored defaults, so this string is self-consistent regardless of the pre-reset DEC value."
+    },
+    {
+      "id": "overview-display-formats-reset-cancel",
+      "title": "2ND QUIT at the reset prompt cancels without resetting",
+      "guidebookPage": 11,
+      "setup": {},
+      "keys": ["2ND", "RESET", "2ND", "QUIT"],
+      "expect": { "variable": "DISPLAY", "display": "0.00" },
+      "notes": "p. 11 note: to cancel reset, press 2ND QUIT; 0.00 appears. The displayed 0.00 is identical to the post-reset numeric field, so display alone does not discriminate this case from reset-confirm - the RST indicator is absent here, and memories, worksheet data and format settings must all survive untouched. A parity harness should assert retained state, not just the string. The 0.00 rendering assumes the DEC=2 default (p. 9)."
+    }
+  ]
+}

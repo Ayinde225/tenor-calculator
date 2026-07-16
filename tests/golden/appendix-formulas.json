@@ -1,0 +1,439 @@
+{
+  "section": "appendix-formulas",
+  "sourcePages": "74-83",
+  "cases": [
+    {
+      "id": "appendix-formulas-tvm-pmt-sign-convention",
+      "title": "PMT for a 30-year mortgage: printed formula omits the leading minus sign",
+      "guidebookPage": 39,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT"],
+      "expect": {
+        "variable": "PMT",
+        "display": "-729.13"
+      },
+      "notes": "THE ARBITER for the p. 75 PMT formula. As printed, PMT = (i/G_i) x [PV + (PV+FV)/((1+i)^N - 1)] with no leading minus; substituting i = .06125/12 = .005104166667, G_i = 1 (END), N = 360, PV = 120000, FV = 0 gives +729.13. The calculator displays -729.13. The i=0 branch printed directly beneath, PMT = -(PV+FV)/N, DOES carry the minus, so the page is internally inconsistent. Normative form: PMT = -(i/G_i) x [PV + (PV+FV)/((1+i)^N - 1)]. No worked example in the range 74-83 itself; this example lives on p. 39 and is the ground truth cited by the appendix spec."
+    },
+    {
+      "id": "appendix-formulas-tvm-iy-display-vs-stored",
+      "title": "I/Y stores 6.125 but displays rounded to the decimal setting",
+      "guidebookPage": 39,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y"],
+      "expect": {
+        "variable": "I/Y",
+        "display": "6.13"
+      },
+      "notes": "The display rounds to DEC=2 but the full 6.125 is retained internally: the p. 74 conversion x = (.01 x I/Y) / C/Y must consume 6.125, not 6.13. Using the displayed value would give PMT = -729.19 rather than -729.13. Guards against rounding at the wrong boundary."
+    },
+    {
+      "id": "appendix-formulas-tvm-n-payment-multiplier",
+      "title": "xP/Y multiplies years by P/Y to give N",
+      "guidebookPage": 39,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N"],
+      "expect": {
+        "variable": "N",
+        "display": "360.00"
+      },
+      "notes": "N is in payment periods, matching the p. 74 definition of i as a per-payment-period rate. Establishes the N used by the PMT sign case above."
+    },
+    {
+      "id": "appendix-formulas-tvm-rate-conversion-cy-ne-py-bgn",
+      "title": "Annuity due with C/Y != P/Y exercises both the rate conversion and G_i",
+      "guidebookPage": 39,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 4,
+        "mode": "BGN"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "DOWN", "4", "ENTER", "2ND", "BGN", "2ND", "SET", "2ND", "QUIT", "10", "2ND", "xP/Y", "N", ".5", "I/Y", "25000", "FV", "CPT", "PMT"],
+      "expect": {
+        "variable": "PMT",
+        "display": "-203.13"
+      },
+      "notes": "The single most load-bearing TVM case: it is the only worked example where C/Y != P/Y, so it is the only test of the full p. 74 conversion i = e^(y x ln(x+1)) - 1 with y = C/Y / P/Y = 4/12 and x = .01 x .5 / 4 = .00125, giving i = .000416493. It is also the only BGN example, so it is the only test of G_i = 1 + i x k with k = 1 (p. 75). Verified: -(i/G_i) x [0 + 25000/((1+i)^120 - 1)] = -203.13. If G_i were left at 1 (END) the result would be -203.21; if y were inverted to P/Y / C/Y the result would be far off. Combined with the sign correction from the PMT case, all three p. 74-75 mechanisms are pinned by this one example."
+    },
+    {
+      "id": "appendix-formulas-amort-year1-bal",
+      "title": "Amortization BAL after 9 payments, simulated from period 1 with RND at DEC=2",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "1", "ENTER", "DOWN", "9", "ENTER", "DOWN"],
+      "expect": {
+        "variable": "BAL",
+        "display": "118,928.63"
+      },
+      "notes": "bal(0) = RND(PV) = 120000, then m = 1..9 with I_m = RND[RND12(-i x bal(m-1))] and bal(m) = bal(m-1) - I_m + RND(PMT) (p. 76). The double rounding and the DEC=2 setting are load-bearing: the schedule is a function of the display setting, not just the TVM variables. Note RND(PMT) uses -729.13, the rounded PMT, not the unrounded -729.1326."
+    },
+    {
+      "id": "appendix-formulas-amort-year1-prn-offset",
+      "title": "PRN for periods 1-9 proves SigmaPrn reaches back to bal(pmt1 - 1)",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "1", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "PRN",
+        "display": "-1071.37"
+      },
+      "notes": "THE ARBITER for the p. 76 SigmaPrn formula. Printed: SigmaPrn() = bal(pmt2) - bal(pmt1). With pmt1 = P1 = 1 that is bal(9) - bal(1) = -954.74, which contradicts the display. Only bal(9) - bal(0) = 118928.63 - 120000 = -1071.37 matches, i.e. bal(pmt2) - bal(pmt1 - 1). But the SigmaInt formula on the same page needs pmt1 = P1 = 1 to work (see the INT case), so no single meaning of pmt1 satisfies both printed formulas. Normative: SigmaPrn() = bal(pmt2) - bal(pmt1 - 1) with pmt1 = P1. Sign is negative for a loan because RND(PMT) is negative and outweighs the interest added back."
+    },
+    {
+      "id": "appendix-formulas-amort-year1-int",
+      "title": "INT for periods 1-9 fixes pmt1 = P1 in the payment count",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "1", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "INT",
+        "display": "-5,490.80"
+      },
+      "notes": "SigmaInt() = (pmt2 - pmt1 + 1) x RND(PMT) - SigmaPrn() (p. 76, as printed, correct). With pmt1 = P1 = 1: (9 - 1 + 1) x -729.13 - (-1071.37) = -6562.17 + 1071.37 = -5490.80, matching exactly. With pmt1 = 0 (the reading SigmaPrn appears to require) it would be -6,219.93. This is the half of the contradiction that fixes pmt1 = P1; the PRN case is the half that forces the -1 offset inside SigmaPrn. Together they prove the printed page cannot be transcribed literally."
+    },
+    {
+      "id": "appendix-formulas-amort-year2-bal",
+      "title": "Amortization BAL after 21 payments",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "10", "ENTER", "DOWN", "21", "ENTER", "DOWN"],
+      "expect": {
+        "variable": "BAL",
+        "display": "117,421.60"
+      },
+      "notes": "P1 = 10, P2 = 21. BAL is bal(pmt2) regardless of P1, so the loop still runs from m = 1 (p. 76). Confirms the schedule cannot be short-cut from a closed form starting at period 10."
+    },
+    {
+      "id": "appendix-formulas-amort-year2-prn",
+      "title": "PRN for periods 10-21 independently confirms the bal(pmt1 - 1) offset",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "10", "ENTER", "DOWN", "21", "ENTER", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "PRN",
+        "display": "-1,507.03"
+      },
+      "notes": "bal(21) - bal(9) = 117421.60 - 118928.63 = -1507.03. A second, independent confirmation of SigmaPrn() = bal(pmt2) - bal(pmt1 - 1): here pmt1 - 1 = 9, and bal(9) is exactly the BAL displayed by the year-1 range. Note the thousands separator appears here (-1,507.03) but not in the year-1 PRN (-1071.37) as printed in the guidebook; the year-1 rendering is a guidebook typesetting inconsistency, not a display-format difference."
+    },
+    {
+      "id": "appendix-formulas-amort-year2-int",
+      "title": "INT for periods 10-21 with a full 12-payment count",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "10", "ENTER", "DOWN", "21", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "INT",
+        "display": "-7,242.53"
+      },
+      "notes": "(21 - 10 + 1) x -729.13 - (-1507.03) = -8749.56 + 1507.03 = -7242.53. Exact to the cent, confirming that SigmaInt uses the ROUNDED PMT (-729.13) multiplied by the period count, not a sum of unrounded per-period interest."
+    },
+    {
+      "id": "appendix-formulas-amort-year3-prn",
+      "title": "PRN for periods 22-33 after CPT auto-advances the range",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "10", "ENTER", "DOWN", "21", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "CPT", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "PRN",
+        "display": "-1601.98"
+      },
+      "notes": "Pressing CPT on P1 rolls the range forward one full window: P1 becomes 22 and P2 becomes 33 automatically. bal(33) - bal(21) = 115819.62 - 117421.60 = -1601.98. Third independent confirmation of the SigmaPrn offset."
+    },
+    {
+      "id": "appendix-formulas-amort-year3-int",
+      "title": "INT for periods 22-33",
+      "guidebookPage": 40,
+      "setup": {
+        "decimals": 2,
+        "P/Y": 12,
+        "C/Y": 12,
+        "mode": "END"
+      },
+      "keys": ["2ND", "RESET", "ENTER", "2ND", "P/Y", "12", "ENTER", "2ND", "QUIT", "30", "2ND", "xP/Y", "N", "6.125", "I/Y", "120000", "PV", "CPT", "PMT", "2ND", "AMORT", "10", "ENTER", "DOWN", "21", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "CPT", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "INT",
+        "display": "-7,147.58"
+      },
+      "notes": "12 x -729.13 + 1601.98 = -7147.58."
+    },
+    {
+      "id": "appendix-formulas-npv-discount-exponent",
+      "title": "NPV proves the discount exponent is -S(j-1), not -S(j) - 1",
+      "guidebookPage": 48,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "4000", "ENTER", "DOWN", "1", "ENTER", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "NPV", "20", "ENTER", "DOWN", "CPT"],
+      "expect": {
+        "variable": "NPV",
+        "display": "7,266.44"
+      },
+      "notes": "THE ARBITER for the p. 76 NPV formula. The exponent renders as -S_j-1 with j subscripted and -1 at full superscript size, literally -(S_j) - 1. Correct reading is -S_{j-1}. With S_0=0, S_1=1, S_2=2: terms are 3000 x 1 x .8333 = 2500.00, 4000 x 1.2^-1 x .8333 = 2777.78, 5000 x 1.2^-2 x 2.5887 = 8988.66; -7000 + those = 7266.44 exactly. The literal reading gives 1736.11 for the first term and cannot reach 7,266.44. Independent argument: the where-clause defines S_j = 0 for j = 0, which is unreachable unless the exponent is S_{j-1}, since the summation starts at j = 1. CF list is the edited one from p. 47: CFo=-7000, C01=3000 F01=1, C02=4000 F02=1, C03=5000 F03=4."
+    },
+    {
+      "id": "appendix-formulas-irr-root-of-npv",
+      "title": "IRR = 100 x i where i zeroes npv()",
+      "guidebookPage": 48,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["CF", "7000", "+/-", "ENTER", "DOWN", "3000", "ENTER", "DOWN", "DOWN", "4000", "ENTER", "DOWN", "1", "ENTER", "DOWN", "5000", "ENTER", "DOWN", "4", "ENTER", "IRR", "CPT"],
+      "expect": {
+        "variable": "IRR",
+        "display": "52.71"
+      },
+      "notes": "p. 77: IRR = 100 x i where i satisfies npv() = 0. Same cash-flow list as the NPV case; note IRR ignores the I entered for NPV. The sign change from CFo = -7000 to the positive inflows is what makes a root exist; without one the calculator raises Error 5 (p. 84)."
+    },
+    {
+      "id": "appendix-formulas-eff-from-nom-plus-one",
+      "title": "EFF from NOM proves the logarithm argument is x+1, not x/1",
+      "guidebookPage": 67,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "ICONV", "15", "ENTER", "DOWN", "DOWN", "4", "ENTER", "UP", "CPT"],
+      "expect": {
+        "variable": "EFF",
+        "display": "15.87"
+      },
+      "notes": "THE ARBITER for the p. 80 EFF formula, which renders as 'EFF = 100 x (eC/Y x In(x / 1) - 1' with the exponent of e flattened to the baseline, a dropped closing paren, and '+' rendered as '/'. Normative: EFF = 100 x (e^((C/Y) x ln(x+1)) - 1), x = .01 x NOM / C/Y. Check: x = .0375, 100 x (1.0375^4 - 1) = 15.865 -> 15.87. The literal reading ln(x/1) = ln(.0375) gives 100 x (e^(4 x ln .0375) - 1) = -99.98. The NOM formula one line below prints '(x + 1)' correctly, showing the '/' is a render artifact of this PDF, not the source."
+    },
+    {
+      "id": "appendix-formulas-pct-change-pd-is-exponent",
+      "title": "Compound growth rate proves #PD is an exponent, not a multiplier",
+      "guidebookPage": 65,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DELTA%", "500", "ENTER", "DOWN", "750", "ENTER", "DOWN", "DOWN", "5", "ENTER", "UP", "CPT"],
+      "expect": {
+        "variable": "%CH",
+        "display": "8.45"
+      },
+      "notes": "THE ARBITER for the p. 80 percent-change formula. #PD prints at full size on the baseline right after the closing paren, as if NEW = OLD(1 + %CH/100) x #PD. As an exponent: 100 x ((750/500)^(1/5) - 1) = 8.447 -> 8.45, matching. As a multiplier the answer would be 10.00. Stock bought at 500 in 1995, sold at 750 five years later."
+    },
+    {
+      "id": "appendix-formulas-pct-change-single-period",
+      "title": "Percent change with the default #PD = 1",
+      "guidebookPage": 65,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DELTA%", "2ND", "CLR WORK", "658", "ENTER", "DOWN", "700", "ENTER", "DOWN", "CPT"],
+      "expect": {
+        "variable": "%CH",
+        "display": "6.38"
+      },
+      "notes": "700 = 658 x (1 + %CH/100)^1 -> %CH = 6.3829 -> 6.38. Degenerate #PD = 1 case where the exponent is invisible; contrast with the #PD = 5 case above. CLR WORK is needed to restore #PD to its default of 1."
+    },
+    {
+      "id": "appendix-formulas-pct-change-solve-new",
+      "title": "Same equation solved for NEW instead of %CH",
+      "guidebookPage": 65,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DELTA%", "2ND", "CLR WORK", "658", "ENTER", "DOWN", "700", "ENTER", "DOWN", "CPT", "7", "+/-", "ENTER", "UP", "CPT"],
+      "expect": {
+        "variable": "NEW",
+        "display": "611.94"
+      },
+      "notes": "Entering %CH = -7 over the same OLD = 658 and solving forward: 658 x (1 - .07) = 611.94. Confirms the single p. 80 equation is solved for any of its four variables, and that a negative %CH is accepted."
+    },
+    {
+      "id": "appendix-formulas-pct-change-markup",
+      "title": "Cost-sell-markup is the same formula with cost as OLD",
+      "guidebookPage": 66,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DELTA%", "2ND", "CLR WORK", "100", "ENTER", "DOWN", "125", "ENTER", "DOWN", "CPT"],
+      "expect": {
+        "variable": "%CH",
+        "display": "25.00"
+      },
+      "notes": "Markup is a percentage of COST, so it rides the percent-change formula with OLD = cost. Contrast with profit margin (p. 81), which is a percentage of SELLING PRICE and gets its own formula and worksheet."
+    },
+    {
+      "id": "appendix-formulas-depreciation-fstyr",
+      "title": "Straight-line first year reveals FSTYR = (13 - M01)/12",
+      "guidebookPage": 58,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "DEP",
+        "display": "25,132.28"
+      },
+      "notes": "THE ARBITER for FSTYR, which every p. 79 method uses but NO page of the guidebook defines. Back-solving: (CST-SAL)/LIF = 1000000/31.5 = 31,746.03; 25,132.28 / 31,746.03 = 0.791667 = 9.5/12, so FSTYR = (13 - M01)/12 with M01 = 3.5 (mid-March). Caveat: a single example cannot distinguish (13 - M01)/12 from other expressions agreeing at M01 = 3.5, so this remains an open question in the spec. Method defaults to SL after a fresh worksheet."
+    },
+    {
+      "id": "appendix-formulas-depreciation-sl-normal-year",
+      "title": "Straight-line second year is the unprorated (CST-SAL)/LIF",
+      "guidebookPage": 58,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "2ND", "ENTER", "DOWN"],
+      "expect": {
+        "variable": "DEP",
+        "display": "31,746.03"
+      },
+      "notes": "1000000/31.5 = 31,746.0317 -> 31,746.03. Year 2 takes the normal-year branch with no FSTYR factor, confirming FSTYR applies to the first year only (p. 79). DOWN 2ND ENTER on the YR field advances YR from 1 to 2."
+    },
+    {
+      "id": "appendix-formulas-depreciation-rdv-first-year",
+      "title": "RDV = CST - SAL - accumulated depreciation",
+      "guidebookPage": 58,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "RDV",
+        "display": "974,867.72"
+      },
+      "notes": "p. 78: RDV = CST - SAL - accumulated depreciation = 1000000 - 0 - 25132.28 = 974,867.72. RBV displays the same value here only because SAL = 0; the two formulas are distinct and would diverge for SAL > 0."
+    },
+    {
+      "id": "appendix-formulas-depreciation-rdv-second-year",
+      "title": "RDV accumulates across years",
+      "guidebookPage": 58,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "DEPR", "DOWN", "31.5", "ENTER", "DOWN", "3.5", "ENTER", "DOWN", "1000000", "ENTER", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "2ND", "ENTER", "DOWN", "DOWN", "DOWN"],
+      "expect": {
+        "variable": "RDV",
+        "display": "943,121.69"
+      },
+      "notes": "974,867.72 - 31,746.03 = 943,121.69. The accumulated-depreciation term in the p. 78 RDV formula sums the ROUNDED yearly DEP values (25,132.28 + 31,746.03), not unrounded ones. Whether the rounding happens before or after reuse is not stated for declining balance, where it would compound; see the spec's open questions."
+    },
+    {
+      "id": "appendix-formulas-bond-accrued-interest",
+      "title": "Accrued interest AI = PAR x (R/M) x (A/E) under 30/360",
+      "guidebookPage": 54,
+      "setup": {
+        "decimals": 2,
+        "dateFormat": "US",
+        "dayCount": "360"
+      },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN", "DOWN", "8", "ENTER", "DOWN", "CPT", "DOWN"],
+      "expect": {
+        "variable": "AI",
+        "display": "3.15"
+      },
+      "notes": "Validates the p. 78 AI formula AND the p. 82-83 30/360 rules that produce A. Coupon period 12-31-2005 to 6-30-2006; settlement 6-12-2006. Under 30/360 with rule 4 (DT1 = 31 -> 30), A = (2006-2005)x360 + (6-12)x30 + (12-30) = 162, E = 180. AI = 100 x 0.035 x 0.9 = 3.15 exactly. Note A + DSC = 162 + 18 = 180 = E, a useful invariant. The guidebook prose says the bond settles in 2004 but the keystrokes enter 6.1206 and the display shows 6-12-2006; the display wins."
+    },
+    {
+      "id": "appendix-formulas-bond-price-multi-coupon",
+      "title": "Bond price with more than one coupon period to redemption",
+      "guidebookPage": 54,
+      "setup": {
+        "decimals": 2,
+        "dateFormat": "US",
+        "dayCount": "360"
+      },
+      "keys": ["2ND", "BOND", "6.1206", "ENTER", "DOWN", "7", "ENTER", "DOWN", "12.3107", "ENTER", "DOWN", "DOWN", "2ND", "SET", "DOWN", "DOWN", "8", "ENTER", "DOWN", "CPT"],
+      "expect": {
+        "variable": "PRI",
+        "display": "98.56"
+      },
+      "notes": "Validates all three terms of the p. 78 price formula. N = 4 coupons remain (6-30-2006, 12-31-2006, 6-30-2007, 12-31-2007), DSC = 18, E = 180, so DSC/E = 0.1, Y/M = 0.04, 100 x R/M = 3.5. Term 1: 100/(1.04)^3.1 = 88.5514. Term 2: sum over K=1..4 of 3.5/(1.04)^(K-1+0.1) = 13.1611. Term 3: -3.15 accrued. Total 98.5625 -> 98.56. Confirms the redemption term excludes coupon interest here (unlike the one-period-or-less formula on p. 77) and that the exponent uses N-1+DSC/E, not N+DSC/E."
+    },
+    {
+      "id": "appendix-formulas-dbd-actual-actual",
+      "title": "Days between dates, actual/actual",
+      "guidebookPage": 69,
+      "setup": {
+        "decimals": 2,
+        "dateFormat": "US",
+        "dayCount": "ACT"
+      },
+      "keys": ["2ND", "DATE", "9.0403", "ENTER", "DOWN", "11.0103", "ENTER", "DOWN", "DOWN", "UP", "CPT"],
+      "expect": {
+        "variable": "DBD",
+        "display": "58.00"
+      },
+      "notes": "Sept 4 2003 to Nov 1 2003. Actual/actual (p. 81-82): 26 days remaining in September + 31 in October + 1 = 58. Both dates are in the same year, so the (Y - YB)/4 leap term cancels between Number of Days I and II - this example therefore does NOT test the leap arithmetic or the truncation question flagged in the spec. No worked example anywhere in the guidebook spans a leap day or a February boundary."
+    },
+    {
+      "id": "appendix-formulas-profit-margin-solve-cost",
+      "title": "Profit margin is a percentage of selling price",
+      "guidebookPage": 71,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "PROFIT", "DOWN", "125", "ENTER", "DOWN", "20", "ENTER", "UP", "UP", "CPT"],
+      "expect": {
+        "variable": "CST",
+        "display": "100.00"
+      },
+      "notes": "p. 81: GrossProfitMargin = ((SellingPrice - Cost)/SellingPrice) x 100. Solving for Cost: 20 = ((125 - CST)/125) x 100 -> CST = 100.00. Contrast with the markup case (p. 66), where the same 100/125 pair yields 25%, not 20% - margin divides by selling price, markup by cost. Worksheet labels are CST/SEL/MAR; the appendix names them Cost/SellingPrice/GrossProfitMargin."
+    },
+    {
+      "id": "appendix-formulas-breakeven-quantity",
+      "title": "Breakeven quantity is the PFT = 0 case of PFT = PQ - (FC + VCQ)",
+      "guidebookPage": 72,
+      "setup": {
+        "decimals": 2
+      },
+      "keys": ["2ND", "BRKEVN", "3000", "ENTER", "DOWN", "15", "ENTER", "DOWN", "20", "ENTER", "DOWN", "DOWN", "CPT"],
+      "expect": {
+        "variable": "Q",
+        "display": "600.00"
+      },
+      "notes": "p. 81: 0 = 20Q - (3000 + 15Q) -> Q = 600. Breakeven is not a separate formula, just the PFT = 0 solution. PQ means P x Q and VCQ means VC x Q; juxtaposition is multiplication, which the printed formula never states."
+    }
+  ]
+}
