@@ -87,6 +87,60 @@ export {
 } from './math/expression-engine.js';
 
 // ---------------------------------------------------------------------------
+// The state machine: the keypad-facing surface
+// ---------------------------------------------------------------------------
+
+export {
+  reduce,
+  reduceAll,
+  project,
+  currentValue,
+  INITIAL_STATE,
+  type ReduceResult,
+} from './state/machine.js';
+
+export {
+  normalizeKey,
+  parseKeySequence,
+  isKey,
+  isDigit,
+  type Key,
+  type DigitKey,
+  type EntryKey,
+  type OperatorKey,
+  type UnaryKey,
+  type ModifierKey,
+  type WorksheetKey,
+  type TvmKey,
+  type MemoryKey,
+  type ControlKey,
+} from './state/keys.js';
+
+export {
+  makeDisplay,
+  renderFlat,
+  renderValue,
+  renderEntry,
+  errorDisplayState,
+  type DisplayState,
+  type Indicator,
+} from './state/display-state.js';
+
+export {
+  FORMAT_DEFAULTS,
+  persist,
+  restoreAfterPowerOff,
+  restoreAfterApd,
+  type CalculatorState,
+  type FormatSettings,
+  type PersistedState,
+  type Mode,
+  type WorksheetId,
+  type PendingOp,
+  type ConstantState,
+} from './state/state.js';
+
+// ---------------------------------------------------------------------------
 // Worksheets
 //
 // Namespaced rather than flattened. Several worksheets legitimately share names

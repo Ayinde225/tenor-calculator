@@ -123,6 +123,33 @@ describe('guidebook worked examples (golden corpus)', () => {
   });
 });
 
+describe('reset defaults (guidebook p. 25)', () => {
+  it('defaults P/Y and C/Y to 1, not 12', () => {
+    // Common lore says the BA II Plus defaults to twelve payments per year. The
+    // guidebook's reset table says otherwise, and its own p. 30 example proves it.
+    expect(TVM_DEFAULTS.PY).toBe(1);
+    expect(TVM_DEFAULTS.CY).toBe(1);
+  });
+
+  it('reproduces the p. 30 example WITHOUT setting P/Y, which is what pins the default', () => {
+    // 2ND RESET ENTER, 20 N, .5 I/Y, 5000 +/- PV, CPT FV -> 5,524.48.
+    // The example never touches P/Y, so this only passes if the default is 1.
+    // Every other test in this file sets P/Y explicitly and would therefore pass
+    // with the default wrong -- this one is the guard.
+    const fv = solveFV({ ...TVM_DEFAULTS, N: 20, IY: 0.5, PV: -5000, PMT: 0 });
+    expect(shown(fv)).toBe('5,524.48');
+  });
+
+  it('starts every other TVM variable at zero, in END mode', () => {
+    expect(TVM_DEFAULTS.N).toBe(0);
+    expect(TVM_DEFAULTS.IY).toBe(0);
+    expect(TVM_DEFAULTS.PV).toBe(0);
+    expect(TVM_DEFAULTS.PMT).toBe(0);
+    expect(TVM_DEFAULTS.FV).toBe(0);
+    expect(TVM_DEFAULTS.mode).toBe('END');
+  });
+});
+
 describe('rate conversion (guidebook p. 74)', () => {
   it('collapses to I/Y / (100 x P/Y) when C/Y = P/Y', () => {
     expect(periodicRate(6.125, 12, 12)).toBeCloseTo(0.06125 / 12, 12);

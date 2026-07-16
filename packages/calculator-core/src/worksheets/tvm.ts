@@ -38,15 +38,28 @@ export interface TvmState {
 
 export type TvmVariable = 'N' | 'IY' | 'PV' | 'PMT' | 'FV';
 
-/** Defaults after 2ND CLR TVM (guidebook p. 25). */
+/**
+ * Defaults after 2ND RESET ENTER (guidebook p. 25).
+ *
+ * P/Y AND C/Y BOTH DEFAULT TO 1, NOT 12. This is worth stating loudly because
+ * "the BA II Plus defaults to twelve payments per year" is common lore, and it is
+ * wrong for the reset state. Two independent parts of the guidebook agree:
+ *
+ *   - The p. 25 reset table prints `P/Y  1` and `C/Y  1`.
+ *   - The p. 30 example presses 2ND RESET ENTER, never touches P/Y, and expects
+ *     FV = 5,524.48. Only P/Y = 1 produces that; P/Y = 12 gives 5,041.83.
+ *
+ * A monthly problem must therefore set P/Y explicitly, which is exactly what the
+ * pp. 38-39 example does before its first entry.
+ */
 export const TVM_DEFAULTS: TvmState = Object.freeze({
   N: 0,
   IY: 0,
   PV: 0,
   PMT: 0,
   FV: 0,
-  PY: 12,
-  CY: 12,
+  PY: 1,
+  CY: 1,
   mode: 'END',
 });
 
