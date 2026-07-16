@@ -123,7 +123,7 @@
       "id": "tvm-variable-cash-flow-total-pv",
       "title": "Recall the summed present value of all four cash flows",
       "guidebookPage": 34,
-      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "M1": 16341.09731 },
+      "setup": { "decimals": 2, "P/Y": 1, "C/Y": 1, "M1": 16341.0969196093 },
       "keys": ["STO","PLUS","1","RCL","1"],
       "expect": { "variable": "M1", "display": "23,171.23" },
       "notes": "CRITICAL PRECISION TEST. Memory must accumulate UNROUNDED values. The four exact PVs are 4545.4545454545, 5785.1239669421, 6010.5184072126 and 6830.1345536507, summing to 23171.2314732600 -> displays 23,171.23. Summing the four DISPLAYED (rounded) values gives 23,171.22 and fails. setup.M1 is the running total after the first three STO operations."
@@ -169,7 +169,7 @@
       "title": "FV of $200 deposited at the start of each month for 20 years at 7.5%",
       "guidebookPage": 37,
       "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "BGN", "calcMethod": "CHN" },
-      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","2ND","BGN","2ND","SET","2ND","QUIT","20","2ND","xP/Y","N","7.5","I/Y","200","+/-","PMT","CPT","FV"],
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","BGN","2ND","SET","2ND","QUIT","20","2ND","xP/Y","N","7.5","I/Y","200","+/-","PMT","CPT","FV"],
       "expect": { "variable": "FV", "display": "111,438.31" },
       "notes": "Annuity due - interest accrues from the start of each period, giving a slightly higher yield than END. PV=0 from RESET (the unused fifth variable). PMT negative (deposits paid in), FV positive (balance received)."
     },
@@ -196,7 +196,7 @@
       "title": "Monthly BGN deposit to reach $25,000 in 10 years at 0.5% with quarterly compounding",
       "guidebookPage": 39,
       "setup": { "decimals": 2, "P/Y": 12, "C/Y": 4, "mode": "BGN", "calcMethod": "CHN" },
-      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","DOWN","4","ENTER","2ND","BGN","2ND","SET","2ND","QUIT","10","2ND","xP/Y","N","0.5","I/Y","25000","FV","CPT","PMT"],
+      "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","DOWN","4","ENTER","2ND","BGN","2ND","SET","2ND","QUIT","10","2ND","xP/Y","N",".5","I/Y","25000","FV","CPT","PMT"],
       "expect": { "variable": "PMT", "display": "-203.13" },
       "notes": "The only example in range where P/Y != C/Y. Order is load-bearing: entering P/Y=12 auto-writes C/Y=12, so C/Y=4 must be set AFTERWARDS via the DOWN key inside the same worksheet. The guidebook flags this trap explicitly. PV=0 from RESET. i = (1+0.005/4)^(4/12)-1 = 0.00041649 per month."
     },
@@ -243,7 +243,7 @@
       "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
       "keys": ["2ND","AMORT","10","ENTER","DOWN","21","ENTER","DOWN"],
       "expect": { "variable": "BAL", "display": "117,421.60" },
-      "notes": "HIGHEST-RISK CASE IN THE SECTION. Only reproduces if the running balance is re-rounded to 2 decimals EVERY period per bal(m) = bal(m-1) - I_m + RND(PMT) with RND applied to I_m. Carrying an unrounded running balance gives 117,421.61 and fails by a cent, while still passing amort-year1-balance. In the guidebook the range is reached by pressing DOWN from INT to wrap back to P1."
+      "notes": "Per-period rounding check. bal(m) = bal(m-1) - I_m + RND(PMT) with I_m = RND[RND12(-i x bal(m-1))]. The load-bearing detail is the OUTER RND on I_m: because bal(0)=RND(PV), I_m and RND(PMT) are all at 2 decimals, the running balance lands on 2 decimals by construction, so the explicit re-rounding of bal(m) is a no-op here rather than a separate requirement. Dropping the outer RND on I_m and letting the balance carry sub-cent precision gives 118,928.64 / 117,421.62 / 115,819.66 - it fails the FIRST range too, not just this one. In the guidebook the range is reached by pressing DOWN from INT to wrap back to P1."
     },
     {
       "id": "amort-year2-principal",
@@ -288,7 +288,7 @@
       "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 6.125, "PV": 120000, "PMT": -729.132647, "FV": 0 },
       "keys": ["2ND","AMORT","22","ENTER","DOWN","33","ENTER","DOWN"],
       "expect": { "variable": "BAL", "display": "115,819.62" },
-      "notes": "Second per-period-rounding check: an unrounded running balance gives 115,819.64 and fails by two cents."
+      "notes": "Third range of the same per-period-rounding check as amort-year2-balance; the rounding error accumulates from the origin, so this range is the most sensitive. Dropping the outer RND on I_m gives 115,819.66 here (4 cents high)."
     },
     {
       "id": "amort-year3-principal",
@@ -315,13 +315,13 @@
       "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "calcMethod": "CHN" },
       "keys": ["2ND","RESET","ENTER","2ND","P/Y","12","ENTER","2ND","QUIT","30","2ND","xP/Y","N","7","I/Y","82000","PV","CPT","PMT"],
       "expect": { "variable": "PMT", "display": "-545.55" },
-      "notes": "Seller-financing example: amortized over 30 years but with a balloon due after 5. Unrounded PMT is -545.5474..."
+      "notes": "Seller-financing example: amortized over 30 years but with a balloon due after 5. Unrounded PMT is -545.5480460469..."
     },
     {
       "id": "amort-balloon-balance",
       "title": "Balloon payment: balance due after 5 years on the $82,000 loan",
       "guidebookPage": 41,
-      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.5474, "FV": 0, "P1": 1 },
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.548046, "FV": 0, "P1": 1 },
       "keys": ["2ND","AMORT","DOWN","5","2ND","xP/Y","ENTER","DOWN"],
       "expect": { "variable": "BAL", "display": "77,187.72" },
       "notes": "Demonstrates xP/Y used INSIDE the Amortization worksheet: 5 2ND xP/Y = 60 months, committed to P2 with ENTER. P1 is 1 from the preceding RESET default. Amortization uses the rounded PMT of -545.55."
@@ -330,7 +330,7 @@
       "id": "amort-balloon-interest",
       "title": "Total interest received over the first 5 years on the $82,000 loan",
       "guidebookPage": 41,
-      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.5474, "FV": 0, "P1": 1 },
+      "setup": { "decimals": 2, "P/Y": 12, "C/Y": 12, "mode": "END", "N": 360, "I/Y": 7, "PV": 82000, "PMT": -545.548046, "FV": 0, "P1": 1 },
       "keys": ["2ND","AMORT","DOWN","5","2ND","xP/Y","ENTER","DOWN","DOWN","DOWN"],
       "expect": { "variable": "INT", "display": "-27,920.72" },
       "notes": "DISCREPANCY - the guidebook's own prose contradicts its table. The worked table displays INT= -27,920.72; the bullet list below it says $27,790.72 (two digits transposed). The TABLE WINS: 60 x 545.55 = 32,733.00 total paid, PRN = 82,000 - 77,187.72 = 4,812.28, so INT = 27,920.72. Reached by DOWN DOWN from BAL, skipping past the PRN display."

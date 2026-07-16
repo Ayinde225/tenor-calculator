@@ -4,8 +4,9 @@
 
 **Page numbering.** Citations below use the **PDF page number** (the `========== PAGE N ==========` marker
 and `pages/pageNN.png` filename). The printed footer number is PDF page minus 5 — e.g. PDF p. 12 carries the
-printed folio "7". Two pages outside the assigned range are cited where they are the authoritative source for
-material this section depends on: p. 84 (error table) and p. 87 (AOS hierarchy).
+printed folio "7". Several pages outside the assigned range are cited where they are the authoritative source for
+material this section depends on: p. 7 (`INV`/`HYP` indicators), p. 10 (reset scope; the `Chn`/`AOS` worked
+answers), p. 16 (clearing all 10 memories), p. 84 (error table) and p. 87 (AOS hierarchy).
 
 **Scope.** Reset, selective clearing, entry-error correction, the arithmetic/percent/power/root/log/trig/
 hyperbolic/factorial/nPr/nCr/random/ROUND operations of standard-calculator mode, parentheses, and scientific
@@ -111,11 +112,12 @@ The worked example (p. 12) shows the display during entry is *not* forced to the
 display settles to `3.00`, but the keyed number reads back literally: `1,234.86`, and after two `BKSP` presses it
 reads `1,234.` — a trailing decimal point with nothing after it, and the thousands separator still applied.
 
-### Evaluation order (p. 12, p. 87)
+### Evaluation order (p. 10, p. 12, p. 87)
 
-Under the default chain method (`Chn`) expressions are evaluated strictly in keying order, so `3 + 2 × 4` yields
-20. Under `AOS` the calculator applies algebraic hierarchy instead. The appendix hierarchy table (p. 87), highest
-priority first, is:
+Under the default chain method (`Chn`) expressions are evaluated strictly in keying order. p. 12 introduces the
+example `3 + 2 × 4` but prints no result; the answers are printed only on p. 10, which gives `Chn` → **20**
+(3 + 2 = 5, 5 × 4 = 20) and `AOS` → **11** (2 × 4 = 8, 3 + 8 = 11) for the same keystrokes. Under `AOS` the
+calculator applies algebraic hierarchy instead. The appendix hierarchy table (p. 87), highest priority first, is:
 
 1. `x²`, `x!`, `1/x`, `%`, `√x`, `LN`, `e^x`, `HYP`, `INV`, `SIN`, `COS`, `TAN`
 2. `nCr`, `nPr`

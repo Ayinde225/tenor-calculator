@@ -16,17 +16,42 @@ before release. See [docs/IP.md](docs/IP.md).
 
 ## Status
 
-Early development. Following the phased plan in the project brief.
+Following the phased plan in the project brief. **670 tests passing**, typecheck clean.
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 0 | Research, spec extraction, traceability matrix | Complete |
-| 1 | Calculator engine: precision, display, standard math, CHN/AOS, memory | In progress |
-| 2 | TVM and amortization | TVM solvers done; amortization pending |
-| 3 | Cash flow, bonds, depreciation, statistics, other worksheets | Not started |
+| 1 | Engine: precision, display, standard math, CHN/AOS, memory | Complete except the keypad state machine |
+| 2 | TVM and amortization | Complete |
+| 3 | Cash flow, bonds, depreciation, statistics, other worksheets | Complete |
 | 4 | UI and PWA | Not started |
 | 5 | Optional accounts and sync | Not started |
 | 6 | Final parity audit | Not started |
+
+### Required verification examples (project brief §12)
+
+All nine pass, asserted as displayed strings in
+[`parity.test.ts`](packages/calculator-core/src/parity.test.ts).
+
+| Test | Expected | |
+| --- | ---: | :-: |
+| `3 + 2 × 4` in CHN mode | `20` | ✅ |
+| `3 + 2 × 4` in AOS mode | `11` | ✅ |
+| $120,000 mortgage, 360 payments, 6.125%, P/Y 12 | PMT `-729.13` | ✅ |
+| $25,000 savings target | PMT `-203.13` | ✅ |
+| Percent change from 658 to 700 | `6.38` | ✅ |
+| 15% nominal, quarterly compounding | EFF `15.87` | ✅ |
+| Selling price 125, margin 20% | Cost `100.00` | ✅ |
+| FC 3,000, VC 15, price 20, profit 0 | Quantity `600` | ✅ |
+| September 4 2003 to November 1 2003, ACT | `58` days | ✅ |
+
+### What remains before this is a calculator
+
+The engine computes correctly, but **nothing types on a keypad yet**. The state machine that turns
+key presses into state transitions (`2ND` prefixing, `CPT`, `ENTER`, worksheet navigation,
+context-sensitive clearing, the constants and Last Answer features) is the gap between "the maths is
+right" and "it behaves like the calculator". Roughly 20 golden cases assert display behaviour that
+only that layer can own, and they are recorded as uncovered until it exists.
 
 ## Layout
 

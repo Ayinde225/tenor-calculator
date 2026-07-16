@@ -333,7 +333,7 @@
       "setup": { "decimals": 2 },
       "keys": ["2ND", "RESET", "ENTER", "CF", "DOWN", "DOWN", "3", "ENTER", "DOWN", "5000", "+/-", "ENTER", "DOWN", "8", "ENTER", "DOWN", "DOWN", "3", "ENTER", "DOWN", "6000", "+/-", "ENTER", "DOWN", "9", "ENTER", "DOWN", "DOWN", "2", "ENTER", "DOWN", "7000", "+/-", "ENTER", "DOWN", "10", "ENTER", "NPV", "10", "/", "12", "ENTER", "DOWN", "CPT"],
       "expect": { "variable": "NPV", "display": "-138,088.44" },
-      "notes": "ARBITER CASE. Exact value -138088.4358224 using the unrounded stored I of 0.8333333333333; verified against the corrected exponent (1+i)^(-S_{j-1}). Negative because every flow is an outflow with no offsetting inflow, so this is a present value of payments rather than a profitability signal. Confirms zero-valued groups (C01, C03, C05) contribute nothing but still advance the period counter S_j. Also confirms BGN/END is inert: beginning-of-period timing came from promoting month 1 into CFo, not from a mode setting."
+      "notes": "ARBITER CASE. Exact value -138088.4358221567 using the unrounded stored I of 0.8333333333333; verified against the corrected exponent (1+i)^(-S_{j-1}). The value is stable to 7 decimals across rate representations (exact 1/120, 13-significant-digit 0.008333333333333, and float64 all give -138088.4358222). Negative because every flow is an outflow with no offsetting inflow, so this is a present value of payments rather than a profitability signal. Confirms zero-valued groups (C01, C03, C05) contribute nothing but still advance the period counter S_j. Also confirms BGN/END is inert: beginning-of-period timing came from promoting month 1 into CFo, not from a mode setting."
     }
   ]
 }

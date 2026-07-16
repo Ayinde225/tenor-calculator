@@ -35,8 +35,8 @@ one without leaving this document.
 | `PV` | PV | 0 | entered/computed | real |
 | `PMT` | PMT | 0 | entered/computed | real |
 | `FV` | FV | 0 | entered/computed | real |
-| `P/Y` | P/Y | 12 | setting | > 0 (Error 4 if ≤ 0) |
-| `C/Y` | C/Y | 12 | setting | > 0 (Error 4 if ≤ 0) |
+| `P/Y` | P/Y | 1 | setting | > 0 (Error 4 if ≤ 0) |
+| `C/Y` | C/Y | 1 | setting | > 0 (Error 4 if ≤ 0) |
 | `i` | — | — | internal | periodic rate, per compounding period |
 | `k` | — | 0 | internal | 0 in END mode, 1 in BGN mode (p. 75) |
 | `G_i` | — | 1 | internal | annuity-due factor `1 + i·k` (p. 75) |
@@ -181,8 +181,11 @@ terms — and then states that the section catalogues the maths the calculator r
 equation solves with (p. 74). Going in, the annual rate is scaled to a compounding-period rate
 by `.01 × I/Y ÷ C/Y`, then compounded across the `C/Y ÷ P/Y` compounding periods that fall in
 one payment period. Coming out, the inverse runs with `P/Y ÷ C/Y` as the exponent and a factor
-of `100 × C/Y` restoring the annual percentage. When `P/Y` equals `C/Y` — the default — both
-exponents collapse to 1 and `i` is simply `.01 × I/Y ÷ C/Y`.
+of `100 × C/Y` restoring the annual percentage. When `P/Y` equals `C/Y` — which the defaults
+(`P/Y = C/Y = 1`, p. 25) satisfy, and which entering `P/Y` preserves because entering a value
+for `P/Y` automatically enters the same value for `C/Y` (p. 26) — both exponents collapse to 1
+and `i` is simply `.01 × I/Y ÷ C/Y`. Only an explicit edit of `C/Y` after `P/Y` breaks the
+equality; exactly one worked example in the guidebook does so (p. 39).
 
 A separate closed form for `i` applies when `PMT` is zero (p. 74): with no annuity leg the
 equation reduces to a single growth factor between `PV` and `FV`, so `i` follows from the
@@ -519,7 +522,10 @@ where:        RND   = round to the number of decimal places selected
 
 **Discrepancy (confirmed).** `ΣPrn()` and `ΣInt()` cannot both be right under any single meaning
 of `pmt1`. Take the amortization example (p. 40), first year, `P1=1`, `P2=9`, `PMT=-729.13`,
-`bal(0)=120000`, `bal(9)=118928.63`; the calculator displays `PRN=-1071.37`, `INT=-5,490.80`.
+`bal(0)=120000`, `bal(9)=118928.63`; the calculator displays `PRN=-1,071.37`, `INT=-5,490.80`.
+(P. 40 prints this one figure as `-1071.37`, without the thousands separator it applies to every
+other figure in the same table — a typesetting slip, not a display-format rule. Same for the
+third year's `-1601.98`.)
 
 - Reading `pmt1 = P1 = 1`: `ΣInt = (9-1+1) × -729.13 - ΣPrn` gives `-5,490.80` ✓, but
   `ΣPrn = bal(9) - bal(1) = -954.74` ✗.
@@ -786,7 +792,7 @@ where:  x = .01 × EFF
 
 Settled by the interest-conversion example (p. 67): `NOM=15`, `C/Y=4` → `EFF=15.87`. With
 `ln(x+1)`: `x = 0.0375`, `100 × (1.0375^4 - 1) = 15.865` → `15.87` ✓. With `ln(x ÷ 1)`:
-`100 × (e^(4 × ln 0.0375) - 1) = -99.98`. Golden case
+`100 × (e^(4 × ln 0.0375) - 1) = -99.9998` → `-100.00` at `DEC = 2`. Golden case
 `appendix-formulas-eff-from-nom-plus-one`.
 
 ### Percent Change (pp. 80-81)
@@ -859,9 +865,14 @@ where:  M1  = month of first date
         YB  = base year (first year after leap year)
 ```
 
-> Render note: the text layer renders the multiplication sign as `Q` (`(Y1 -YB) Q 365`); the
-> image shows `×`. The `(Y - YB)/4` leap-day term is dropped entirely from the text layer and
-> is recoverable only from the image.
+> Render note: the multiplication sign in `Number of Days I` renders as an italic `Q`
+> (`(Y1 -YB) Q 365`) — **in the page image as well as in the text layer**, so this one is not
+> recoverable by reading the image. It is settled instead by `Number of Days II` on the next
+> page (p. 82), which is the same formula with the `2` subscripts and whose image prints a
+> proper `×` (`(Y2 -YB) × 365`); the text layer renders *that* line as `Q` too. The `Q` is
+> therefore a font-substitution artifact confined to the p. 81 line, and both lines are `×`.
+> Separately, the `(Y - YB)/4` leap-day term is dropped entirely from the text layer and is
+> recoverable only from the image.
 
 ### Days between Dates — 30/360 (pp. 82-83)
 
@@ -889,8 +900,16 @@ come from the scanned insert on p. 83, which supplies the `Note:` left empty on 
 3. If `DT2` is 31 and `DT1` is 30 or 31, change `DT2` to 30.
 4. If `DT1` is 31, change `DT1` to 30.
 
-Page 82's wording of rules 3-4 matches p. 83's exactly, so the two sources are consistent; p. 83
-is strictly more complete. Additional conventions from p. 83: a year always has 360 days; days
+Page 82 states rules 3-4 in the opposite order from p. 83 and with different wording — "If `DT1`
+is 31, change `DT1` to 30. If `DT2` is 31 and `DT1` is 30 or 31, change `DT2` to 30; otherwise,
+leave it at 31." The two are nevertheless equivalent, and the order between these two rules is
+immaterial: the only way rule 4 rewrites `DT1` is from 31 to 30, and rule 3's test accepts 30 and
+31 alike, so it fires identically whichever runs first. (Order does matter for rules 1-2, which
+p. 82 omits — see below.) Page 83 is strictly more complete, and is the source used above.
+Note also that p. 83's insert cites Mayle 1993 while p. 82's footnote cites Lynch and Mayle 1986;
+the insert is from a later edition of the same work.
+
+Additional conventions from p. 83: a year always has 360 days; days
 per period is `360 ÷ number of periods` (monthly → 30); remaining days in a period is the total
 days in the period less days accrued.
 
@@ -977,8 +996,8 @@ keys do to the *inputs* of these formulas:
 - **QUIT** (`2ND QUIT`) — leaves worksheet mode for the standard calculator. Purely
   navigational; no formula input changes. Values entered before QUIT remain, which is what lets
   the p. 39 example set `P/Y`, QUIT, and then key `N`/`I/Y`/`PV` against it.
-- **RESET** (`2ND RESET ENTER`) — restores every default across the machine: `P/Y = C/Y = 12`,
-  END mode, `DEC = 2`, CHN, `RV = 100`, `M = 2` (2/Y), depreciation `SL` with `DB% = 200`,
+- **RESET** (`2ND RESET ENTER`) — restores every default across the machine: `P/Y = C/Y = 1`
+  (p. 25), END mode, `DEC = 2`, CHN, `RV = 100`, `M = 2` (2/Y), depreciation `SL` with `DB% = 200`,
   `M01 = 1`, `YR = 1`, `LIF = 1`, dates `12-31-1990`, `F0n = 1`, LIN, `#PD = 1`, and all
   worksheet values to zero. Because `DEC` is reset to 2, RESET also silently changes the `RND`
   behaviour in amortization (p. 76) and the depreciation rounding (p. 78).

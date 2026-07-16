@@ -279,7 +279,7 @@
       "setup": { "decimals": 2 },
       "keys": ["STO", "2ND", "RAND"],
       "expect": { "variable": "DISPLAY", "display": "0.86" },
-      "notes": "NOT EXECUTABLE AS PRINTED — flagged discrepancy. The example reuses the previous row's displayed 0.86 as the seed, but p. 14 requires the seed to be an integer greater than zero. 0.86 is neither. The prose sequence is: key an integer > 0, then STO 2nd RAND. Whether non-integer seeds are rejected, truncated, or silently accepted is unspecified."
+      "notes": "NOT EXECUTABLE AS PRINTED — flagged discrepancy. The example reuses the previous row's displayed 0.86 as the seed, but p. 14 requires the seed to be an integer greater than zero. 0.86 is greater than zero but is not an integer, so it fails the rule. The prose sequence is: key an integer > 0, then STO 2nd RAND. Whether non-integer seeds are rejected, truncated, or silently accepted is unspecified."
     },
     {
       "id": "clearing-and-math-ops-sine-11-54-deg",

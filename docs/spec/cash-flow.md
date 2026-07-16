@@ -351,7 +351,9 @@ stored `IRR` is stale-but-retained until recomputed with `CPT`.
 
 ## Errors
 
-Any error is cleared with `CE/C` (p. 84).
+Any error is cleared with `CE/C` (p. 84). Note that **clearing** an error and **cancelling** a running
+`IRR` iteration are two different keys: `CE/C` clears the message once it is displayed (p. 84), while
+`ON/OFF` is what interrupts an evaluation in progress and *raises* Error 8 (p. 85). Do not conflate them.
 
 | Error | Name | Raised by this worksheet when | Cite |
 |---|---|---|---|
@@ -443,8 +445,18 @@ any worksheet, but the error table names no Cash Flow-specific cause.
     the keystrokes press `+/-` on each. The entered stream is negative throughout, consistent with lease
     payments as outflows from the lessee, and consistent with the negative `NPV`.
 
-17. **`C01 = 0.00◁` on p. 49 carries an "entered" marker without a keystroke.** The `◁` annotation appears
-    on `C01` even though the sequence only steps past it. Cosmetic; `C01` holds its default of `0`.
+17. **The `◁` "entered" marker does not track what was actually keyed, and its rule is unspecified.**
+    It appears on displays no keystroke ever wrote: `F01 = 1.00◁` and `F03 = 1.00◁` on p. 47 (only `↓`
+    was pressed), and `C01 = 0.00◁`, `C03 = 0.00 ◁`, `C05 = 0.00◁` on p. 49 (stepped past, never keyed).
+    It is *absent* from `CFo = 0.00` on first display (p. 47, p. 49), from `I = 0.00` (p. 48, p. 49), and
+    from `C03 = 0.00` immediately after `2ND DEL` (p. 47).
+
+    No rule reconciles these. "Marks entered values" fails on `F01`/`C01`; "marks enter-only variables"
+    fails on `CFo` and `I`, which are enter-only and unmarked; "marks a slot holding a live value" fails
+    on the p. 49 sequence, where `2ND RESET ENTER` `CF` `↓` shows `CFo = 0.00` unmarked but `C01 = 0.00◁`
+    marked with nothing entered in either. Treat the marker as **unspecified** — cosmetic, and outside
+    the assertion surface: these slots hold their documented defaults (`Cnn = 0`, `Fnn = 1`) and no
+    golden test asserts the annotation.
 
 18. **Page 42's NPV bullet is loosely worded.** "To compute net present value (NPV), press `↓` or `↑` and
     `CPT` for each variable" reads oddly — the actual procedure (p. 45) is `NPV`, key `I`, `ENTER`, `↓`,

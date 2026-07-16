@@ -2,7 +2,7 @@
 
 > Source: official BA II Plus guidebook, pages 24-41. Behaviour described in original wording.
 > Supporting internal equations recovered from the Formulas appendix, pages 74-76 (those pages are
-> rendered as vector art and are absent from the text layer). Error table recovered from page 84.
+> rendered as vector art and are absent from the text layer). Error table recovered from pages 84–85.
 
 The TVM variables model a stream of **equal, regularly spaced** cash flows that are uniformly
 inflows or uniformly outflows — annuities, loans, mortgages, leases, savings (p. 24). Unequal cash
@@ -307,10 +307,17 @@ where:         RND   = round the display to the number of decimal places selecte
 1. `RND(PMT)` — the *rounded* payment drives the whole iteration. This is the mechanism behind the
    documented `BAL`/`FV` divergence (p. 26).
 2. `bal(0) = RND(PV)` — the opening balance is rounded too.
-3. `bal(m)` is re-rounded **every period**, because `I_m` is `RND`-ed inside the loop and `RND(PMT)`
-   is already at display precision. Carrying an unrounded running balance instead reproduces
-   `BAL(1–9) = 118,928.63` but gives `117,421.61` and `115,819.64` for the next two ranges, against
-   the guidebook's `117,421.60` and `115,819.62`. Per-period rounding of the balance is mandatory.
+3. The running balance carries **exactly two decimals every period**. Note this falls out of the
+   formula rather than needing a separate rounding step: `bal(0) = RND(PV)`, `I_m` is `RND`-ed
+   inside the loop, and `RND(PMT)` is already at display precision, so `bal(m)` is *inherently* at
+   display precision — the explicit re-rounding of `bal(m)` is a no-op given the other three.
+   The load-bearing detail is therefore the **outer `RND` on `I_m`**. Dropping it (keeping only
+   `RND12`) and letting the balance carry sub-cent precision gives `118,928.64` / `117,421.62` /
+   `115,819.66` against the guidebook's `118,928.63` / `117,421.60` / `115,819.62` — i.e. it fails
+   the *first* range too, not just the later ones. Equivalently, an implementation may keep the
+   unrounded `PMT` **if** it rounds `bal(m)` explicitly each period; that route also reproduces all
+   three ranges, because rounding a 2-decimal balance minus the unrounded `PMT` recovers
+   `RND(PMT)`.
 4. `I_m` is **negative** for a normal loan (`-i × bal` with `bal > 0`), so `INT` displays negative,
    consistent with the payment sign convention.
 5. Iteration always starts at `m = 1`, never at `pmt1` — you must walk the balance forward from the
@@ -424,7 +431,8 @@ Two traps worth calling out:
 
 ## Errors
 
-Transcribed from the error table on p. 84. Press `CE/C` to clear an error message.
+Transcribed from the error table on pp. 84–85 (Errors 1–5 are on p. 84; Errors 6–8 on p. 85). Press
+`CE/C` to clear an error message.
 
 | Error | Name | Raised by this section when |
 |---|---|---|
@@ -433,7 +441,7 @@ Transcribed from the error table on p. 84. Press `CE/C` to clear an error messag
 | **Error 4** | Out of range | **Amortization:** `P1` or `P2` entered outside 1–9,999. **TVM:** `P/Y` or `C/Y` ≤ 0. Also: the `DEC` value outside 0–9. |
 | **Error 5** | No solution exists | **TVM:** computing `I/Y` when `FV`, `(N × PMT)`, and `PV` all carry the same sign — the guidebook's own remedy is to check that inflows are positive and outflows negative. **TVM:** an `LN` input that is not > 0 during a calculation. |
 | **Error 7** | Iteration limit exceeded | **TVM:** computing `I/Y` for a problem complex enough to exhaust the solver's iterations. |
-| **Error 8** | Canceled iterative calculation | **TVM:** `CE/C` pressed to abort an `I/Y` solve. **Amortization:** `CE/C` pressed to abort a `BAL` or `INT` evaluation. |
+| **Error 8** | Canceled iterative calculation | **TVM:** `ON/OFF` pressed to stop the evaluation of `I/Y`. **Amortization:** `ON/OFF` pressed to stop the evaluation of `BAL` or `INT`. (p. 85 — the abort key is `ON/OFF`, *not* `CE/C`; `CE/C` is only what clears the resulting error message.) |
 
 Errors 3 and 6 are not reachable from the TVM or Amortization worksheets (Error 3 is parenthesis /
 pending-operation depth; Error 6 is date validity).
@@ -462,10 +470,11 @@ pending-operation depth; Error 6 is date validity).
 3. **`BAL` vs `FV` divergence is specified behaviour** (p. 26), not tolerance. Tests must not use a
    loose epsilon to paper over it; the two use different `PMT` precision by design.
 
-4. **Per-period balance rounding in amortization** (finding #3 under the amortization formula) is
-   invisible in the p. 40 first-year row and only shows up from the second range onward. A naive
-   implementation passes range 1–9 and then fails 10–21 by one cent. This is the highest-risk
-   detail in the section.
+4. **Cent-level rounding inside the amortization loop** (finding #3 under the amortization formula)
+   is visible from the p. 40 *first* row onward: an implementation that carries a sub-cent running
+   balance misses `BAL(1–9)` by a cent (`118,928.64`) and then drifts further (`115,819.66` by the
+   third range). It does not silently pass the first range, so range 1–9 is a sufficient tripwire.
+   The error accumulates from the origin, so later ranges fail by more.
 
 5. **Amortization iterates from `m = 1` even when `P1` is large.** Computing `BAL` for `P1 = 300`
    still walks 300 periods. Behaviourally invisible, but it means the rounding accumulates from the
