@@ -1,0 +1,441 @@
+/*
+ * Tenor — visual identity and layout.
+ *
+ * Deliberately NOT the BA II Plus look: no navy/tan bezel, no TI typography. Tenor
+ * is a modern dark-slate instrument with a single teal accent and an amber LCD.
+ * Three themes (dark, light, high-contrast) via [data-theme]. All colours are
+ * tokens so a theme is a token swap, never a rule rewrite.
+ */
+
+:root {
+  --font-ui: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-lcd: 'SFMono-Regular', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+
+  /* Dark theme (default). */
+  --bg: #0c0f13;
+  --shell: #151a21;
+  --shell-edge: #232b35;
+  --lcd-bg: #16281f;
+  --lcd-ink: #7ff0b0;
+  --lcd-dim: #2f5f47;
+  --lcd-label: #a9f5cd;
+  --text: #e7ecf2;
+  --text-dim: #93a1b3;
+  --accent: #2dd4a7;
+  --accent-ink: #04120d;
+
+  --key-bg: #222a34;
+  --key-edge: #2c3743;
+  --key-text: #e7ecf2;
+  --key-sub: #7f8ea3;
+
+  --tone-mod: #d8a13a;
+  --tone-nav: #4b93e8;
+  --tone-tvm: #2dd4a7;
+  --tone-sheet: #9d7ff0;
+  --tone-fn: #6b7686;
+  --tone-op: #e0673f;
+  --tone-clear: #e0673f;
+  --tone-equals: #2dd4a7;
+
+  --focus: #ffd666;
+  --radius: 12px;
+  --gap: clamp(5px, 1.2vw, 9px);
+}
+
+:root[data-theme='light'] {
+  --bg: #e7ebf0;
+  --shell: #f7f9fb;
+  --shell-edge: #d3dae3;
+  --lcd-bg: #d7ecd9;
+  --lcd-ink: #12160f;
+  --lcd-dim: #8fb59a;
+  --lcd-label: #2c5a3c;
+  --text: #1b2430;
+  --text-dim: #566579;
+  --accent: #0f9c78;
+  --accent-ink: #ffffff;
+  --key-bg: #ffffff;
+  --key-edge: #cdd6e0;
+  --key-text: #1b2430;
+  --key-sub: #7a889c;
+  --tone-mod: #b47513;
+  --tone-nav: #2f6fc4;
+  --tone-tvm: #0f9c78;
+  --tone-sheet: #7351d6;
+  --tone-fn: #59657a;
+  --tone-op: #c24a20;
+  --tone-clear: #c24a20;
+  --tone-equals: #0f9c78;
+  --focus: #a35b00;
+}
+
+:root[data-theme='high-contrast'] {
+  --bg: #000000;
+  --shell: #000000;
+  --shell-edge: #ffffff;
+  --lcd-bg: #000000;
+  --lcd-ink: #00ff9c;
+  --lcd-dim: #00cc7c;
+  --lcd-label: #ffffff;
+  --text: #ffffff;
+  --text-dim: #ffffff;
+  --accent: #00ff9c;
+  --accent-ink: #000000;
+  --key-bg: #000000;
+  --key-edge: #ffffff;
+  --key-text: #ffffff;
+  --key-sub: #ffff00;
+  --tone-mod: #ffff00;
+  --tone-nav: #66ccff;
+  --tone-tvm: #00ff9c;
+  --tone-sheet: #d69bff;
+  --tone-fn: #ffffff;
+  --tone-op: #ff9e66;
+  --tone-clear: #ff6666;
+  --tone-equals: #00ff9c;
+  --focus: #ffff00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  display: flex;
+  justify-content: center;
+  padding: clamp(8px, 2vw, 24px);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 8px 14px;
+  border-radius: 8px;
+  z-index: 50;
+}
+.skip-link:focus {
+  left: 8px;
+}
+
+/* --- Calculator shell --- */
+
+.calculator {
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-radius: calc(var(--radius) + 6px);
+  padding: clamp(12px, 3vw, 20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 800;
+  font-size: 18px;
+}
+.brand-name {
+  font-size: 18px;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--key-edge);
+  background: var(--key-bg);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+}
+.icon-button:hover {
+  border-color: var(--accent);
+}
+
+/* --- LCD --- */
+
+.lcd {
+  background: var(--lcd-bg);
+  border-radius: var(--radius);
+  padding: 12px 16px 14px;
+  border: 1px solid var(--shell-edge);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
+  font-family: var(--font-lcd);
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lcd-annunciators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lcd-dim);
+  min-height: 12px;
+}
+.lcd-flag {
+  opacity: 0.25;
+}
+.lcd-flag.on {
+  opacity: 1;
+  color: var(--lcd-ink);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--lcd-ink) 60%, transparent);
+}
+.lcd-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 1;
+}
+.lcd-label {
+  color: var(--lcd-label);
+  font-size: clamp(15px, 4vw, 20px);
+  letter-spacing: 0.05em;
+}
+.lcd-label.hidden {
+  display: none;
+}
+.lcd-value {
+  color: var(--lcd-ink);
+  font-size: clamp(30px, 9vw, 46px);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--lcd-ink) 45%, transparent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lcd-value.error {
+  color: var(--tone-op);
+  text-shadow: none;
+}
+.lcd-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* --- Keypad --- */
+
+.keypad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.keypad-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--gap);
+}
+
+.key {
+  position: relative;
+  min-height: 44px;
+  min-width: 44px;
+  height: clamp(46px, 11vw, 58px);
+  border-radius: var(--radius);
+  border: 1px solid var(--key-edge);
+  background: var(--key-bg);
+  color: var(--key-text);
+  font-family: var(--font-ui);
+  font-size: clamp(14px, 3.6vw, 17px);
+  font-weight: 600;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding-top: 8px;
+  transition:
+    transform 0.04s ease,
+    border-color 0.1s ease,
+    background 0.1s ease;
+  touch-action: manipulation;
+  user-select: none;
+}
+.key-face {
+  line-height: 1;
+}
+.key-secondary {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--tone-mod);
+}
+
+/* Tone accents: a coloured underline strip keeps the faces legible while grouping. */
+.key::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--tone-fn);
+  opacity: 0.55;
+}
+.key-mod::after { background: var(--tone-mod); }
+.key-nav::after { background: var(--tone-nav); }
+.key-tvm::after { background: var(--tone-tvm); }
+.key-sheet::after { background: var(--tone-sheet); }
+.key-op::after { background: var(--tone-op); }
+.key-clear::after { background: var(--tone-clear); }
+.key-num::after { opacity: 0; }
+.key-equals {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.key-equals::after { opacity: 0; }
+
+.key:hover {
+  border-color: var(--accent);
+}
+.key.pressed {
+  transform: translateY(2px);
+  background: color-mix(in srgb, var(--accent) 22%, var(--key-bg));
+  border-color: var(--accent);
+}
+.key:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+/* The 2ND key lights up while armed, driven by the LCD 2nd annunciator state via
+   a class the app toggles on the shell. */
+.calculator.second-armed .key-mod {
+  background: var(--tone-mod);
+  color: #1a1205;
+}
+
+/* --- Dialogs (settings, shortcuts) --- */
+
+.dialog {
+  display: none;
+  position: fixed;
+  inset: auto 0 0 0;
+  margin: 0 auto;
+  max-width: 460px;
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-radius: 16px 16px 0 0;
+  padding: 16px 18px 22px;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.4);
+  z-index: 40;
+}
+.dialog.open {
+  display: block;
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.dialog-head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+.field-group {
+  border: 1px solid var(--key-edge);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+}
+.field-group legend {
+  padding: 0 6px;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.radio,
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+}
+.switch {
+  justify-content: space-between;
+}
+.shortcut-list {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+.shortcut-list dt {
+  font-family: var(--font-lcd);
+  color: var(--accent);
+}
+.shortcut-list dd {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.disclaimer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  padding: 0 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key {
+    transition: none;
+  }
+}

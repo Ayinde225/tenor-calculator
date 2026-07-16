@@ -1,0 +1,258 @@
+/**
+ * Application entry: wires the engine, the LCD, the keypad, the physical
+ * keyboard, preferences, and session persistence together.
+ *
+ * The whole app is the engine plus a projection: every input path (button,
+ * keyboard) resolves to a single `engine.press(key)`, and every render is driven
+ * by the engine's subscription. There is no second source of truth.
+ */
+import './styles.css';
+import { INITIAL_STATE, type Key } from '@tenor/calculator-core';
+import { Engine } from './engine.js';
+import { createLcd } from './lcd.js';
+import { createKeypad } from './keypad.js';
+import { tokenFor, type KeyDef } from './layout.js';
+import { keyFromEvent, SHORTCUT_GUIDE } from './keyboard.js';
+import { Feedback } from './feedback.js';
+import {
+  loadPreferences,
+  savePreferences,
+  loadSession,
+  saveSession,
+  type Preferences,
+  type Theme,
+} from './settings.js';
+
+const prefs: Preferences = loadPreferences();
+const feedback = new Feedback();
+feedback.sound = prefs.sound;
+feedback.haptics = prefs.haptics;
+
+const engine = new Engine(loadSession() ?? INITIAL_STATE);
+const lcd = createLcd();
+
+const keypad = createKeypad({
+  onKey: (def: KeyDef) => sendKey(tokenFor(def, engine.secondArmed)),
+  onFeedback: () => feedback.press(),
+});
+
+function sendKey(key: Key): void {
+  engine.press(key);
+  saveSession(engine.current);
+}
+
+// ---------------------------------------------------------------------------
+// Layout scaffolding
+// ---------------------------------------------------------------------------
+
+const app = document.getElementById('app');
+if (app === null) throw new Error('missing #app root');
+
+const shell = document.createElement('main');
+shell.className = 'calculator';
+shell.setAttribute('aria-label', 'Tenor financial calculator');
+
+const header = buildHeader();
+const controls = buildControls();
+
+shell.append(header, lcd.root, keypad.root);
+app.append(shell, controls.panel, buildDisclaimer());
+
+engine.subscribe((display) => {
+  lcd.update(display);
+  shell.classList.toggle('second-armed', display.indicators.includes('2nd'));
+});
+
+// ---------------------------------------------------------------------------
+// Physical keyboard
+// ---------------------------------------------------------------------------
+
+window.addEventListener('keydown', (e) => {
+  const target = e.target as HTMLElement | null;
+  // Let the keypad's own buttons handle Enter/Space themselves.
+  if (target?.tagName === 'BUTTON') return;
+  const key = keyFromEvent(e);
+  if (key === null) return;
+  e.preventDefault();
+  feedback.press();
+  keypad.flash(key);
+  sendKey(key);
+});
+
+// ---------------------------------------------------------------------------
+// Header, theme, and controls
+// ---------------------------------------------------------------------------
+
+function applyTheme(theme: Theme): void {
+  document.documentElement.dataset.theme = theme;
+}
+applyTheme(prefs.theme);
+
+function buildHeader(): HTMLElement {
+  const el = document.createElement('header');
+  el.className = 'app-header';
+
+  const brand = document.createElement('div');
+  brand.className = 'brand';
+  brand.innerHTML = '<span class="brand-mark" aria-hidden="true">t</span><span class="brand-name">Tenor</span>';
+
+  const nav = document.createElement('div');
+  nav.className = 'header-actions';
+
+  const guideBtn = iconButton('Keyboard shortcuts', '?', () => toggleDialog('shortcuts'));
+  const settingsBtn = iconButton('Settings', '⚙', () => toggleDialog('settings'));
+  nav.append(guideBtn, settingsBtn);
+
+  el.append(brand, nav);
+  return el;
+}
+
+function iconButton(label: string, glyph: string, onClick: () => void): HTMLButtonElement {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'icon-button';
+  b.setAttribute('aria-label', label);
+  b.textContent = glyph;
+  b.addEventListener('click', onClick);
+  return b;
+}
+
+function buildControls(): { panel: HTMLElement } {
+  const panel = document.createElement('div');
+  panel.append(buildSettingsDialog(), buildShortcutsDialog());
+  return { panel };
+}
+
+let openDialog: string | null = null;
+function toggleDialog(id: string): void {
+  const el = document.getElementById(`dialog-${id}`);
+  if (el === null) return;
+  const willOpen = openDialog !== id;
+  document.querySelectorAll('.dialog').forEach((d) => d.classList.remove('open'));
+  openDialog = willOpen ? id : null;
+  if (willOpen) {
+    el.classList.add('open');
+    (el.querySelector('button, [tabindex]') as HTMLElement | null)?.focus();
+  }
+}
+
+function buildSettingsDialog(): HTMLElement {
+  const el = dialog('settings', 'Settings');
+
+  const themes: { value: Theme; label: string }[] = [
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+    { value: 'high-contrast', label: 'High contrast' },
+  ];
+  const themeGroup = document.createElement('fieldset');
+  themeGroup.className = 'field-group';
+  themeGroup.innerHTML = '<legend>Theme</legend>';
+  for (const t of themes) {
+    const id = `theme-${t.value}`;
+    const wrap = document.createElement('label');
+    wrap.className = 'radio';
+    wrap.htmlFor = id;
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'theme';
+    input.id = id;
+    input.value = t.value;
+    input.checked = prefs.theme === t.value;
+    input.addEventListener('change', () => {
+      prefs.theme = t.value;
+      applyTheme(t.value);
+      savePreferences(prefs);
+    });
+    wrap.append(input, document.createTextNode(' ' + t.label));
+    themeGroup.append(wrap);
+  }
+
+  const toggles = document.createElement('fieldset');
+  toggles.className = 'field-group';
+  toggles.innerHTML = '<legend>Feedback</legend>';
+  toggles.append(
+    toggle('Key-click sound', prefs.sound, (on) => {
+      prefs.sound = on;
+      feedback.sound = on;
+      savePreferences(prefs);
+    }),
+    toggle('Vibration', prefs.haptics, (on) => {
+      prefs.haptics = on;
+      feedback.haptics = on;
+      savePreferences(prefs);
+    }),
+  );
+
+  el.append(themeGroup, toggles);
+  return el;
+}
+
+function toggle(label: string, checked: boolean, onChange: (on: boolean) => void): HTMLElement {
+  const wrap = document.createElement('label');
+  wrap.className = 'switch';
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = checked;
+  input.addEventListener('change', () => onChange(input.checked));
+  const text = document.createElement('span');
+  text.textContent = label;
+  wrap.append(input, text);
+  return wrap;
+}
+
+function buildShortcutsDialog(): HTMLElement {
+  const el = dialog('shortcuts', 'Keyboard shortcuts');
+  const list = document.createElement('dl');
+  list.className = 'shortcut-list';
+  for (const s of SHORTCUT_GUIDE) {
+    const dt = document.createElement('dt');
+    dt.textContent = s.keys;
+    const dd = document.createElement('dd');
+    dd.textContent = s.does;
+    list.append(dt, dd);
+  }
+  el.append(list);
+  return el;
+}
+
+function dialog(id: string, title: string): HTMLElement {
+  const el = document.createElement('section');
+  el.id = `dialog-${id}`;
+  el.className = 'dialog';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'false');
+  el.setAttribute('aria-label', title);
+
+  const head = document.createElement('div');
+  head.className = 'dialog-head';
+  const h = document.createElement('h2');
+  h.textContent = title;
+  const close = iconButton('Close', '×', () => toggleDialog(id));
+  head.append(h, close);
+  el.append(head);
+  return el;
+}
+
+function buildDisclaimer(): HTMLElement {
+  const el = document.createElement('footer');
+  el.className = 'disclaimer';
+  el.textContent =
+    'Tenor is an independent financial calculator. It is not manufactured, ' +
+    'sponsored, endorsed, or approved by Texas Instruments.';
+  return el;
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && openDialog !== null) {
+    toggleDialog(openDialog);
+  }
+});
+
+// Register the service worker for offline use (built separately).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {
+      /* offline support is an enhancement, not a requirement */
+    });
+  });
+}

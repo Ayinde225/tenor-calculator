@@ -1,0 +1,19 @@
+{
+  "name": "@tenor/calculator-ui",
+  "version": "0.1.0",
+  "description": "Tenor calculator UI — an installable, offline-first PWA over @tenor/calculator-core.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tenor/calculator-core": "*"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}
