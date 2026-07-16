@@ -66,6 +66,14 @@ import {
 import { type Key, isDigit } from './keys.js';
 import { computeTvm, type TvmVariable } from '../worksheets/tvm.js';
 import {
+  store,
+  recall,
+  memoryArithmetic,
+  isMemoryAddress,
+  type MemoryAddress,
+  type MemoryOperation,
+} from '../worksheets/memory-worksheet.js';
+import {
   WORKSHEET_ENTRY_KEYS,
   enterWorksheet,
   reduceWorksheet,
@@ -232,6 +240,24 @@ function pressOperatorKey(state: CalculatorState, op: BinaryOp): CalculatorState
 function pressEqualsKey(state: CalculatorState): CalculatorState {
   const s = commit(state);
 
+  // Finalise a deferred-operand constant (p. 18 template `n <op> 2ND K c =`): the
+  // operand `c` is now on the display. Capture it, then fall through to the normal
+  // pending evaluation so this first `=` still computes `n <op> c`.
+  if (s.constantArming !== null) {
+    const armed: CalculatorState = {
+      ...s,
+      constant: {
+        op: s.constantArming.op,
+        operand: s.displayValue,
+        isPercent: s.constantArming.isPercent,
+      },
+      constantArming: null,
+    };
+    const { value } = reduceStack(armed, armed.displayValue, null, 0);
+    const v = toInternal(value);
+    return { ...armed, pendingOps: [], parenLevels: 0, displayValue: v, ans: v };
+  }
+
   // An armed constant re-applies its operation on every = (p. 18).
   if (s.constant !== null && s.pendingOps.length === 0) {
     const { op, operand, isPercent } = s.constant;
@@ -271,6 +297,13 @@ function pressCloseParen(state: CalculatorState): CalculatorState {
  * worked examples, which are mutually consistent.
  */
 function pressPercent(state: CalculatorState): CalculatorState {
+  // While a constant is arming (2ND K seen, operand being keyed), `%` marks the
+  // constant as a percentage rather than computing one: `n + 2ND K c % =` stores
+  // "add c% of each entry", so the operand `c` must survive to `=` unscaled (p. 18).
+  if (state.constantArming !== null) {
+    return { ...state, constantArming: { ...state.constantArming, isPercent: true } };
+  }
+
   const s = commit(state);
   const top = s.pendingOps[s.pendingOps.length - 1];
 
@@ -426,6 +459,96 @@ function pressClearTvm(state: CalculatorState): CalculatorState {
 // The reducer
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Standard-mode memory, Last Answer, and the constant
+// ---------------------------------------------------------------------------
+
+/** The five operators a STO prefix accepts (guidebook p. 17). */
+const MEMORY_OP: Partial<Readonly<Record<Key, MemoryOperation>>> = Object.freeze({
+  '+': 'add',
+  '-': 'sub',
+  '×': 'mul',
+  '÷': 'div',
+  'Y^X': 'pow',
+});
+
+/**
+ * Resolve a pending STO/RCL prefix with the key that follows it.
+ *
+ * A digit picks the register and completes the operation. An operator, after a
+ * plain `STO`, upgrades the prefix to `STO <op>` and waits for the register.
+ * Anything else abandons the prefix and is handled normally -- the hardware does
+ * not trap you in a half-finished STO.
+ *
+ * STO and STO-arithmetic leave the display untouched (p. 16); only RCL changes it.
+ */
+function resolveMemoryPrefix(
+  state: CalculatorState,
+  prefix: NonNullable<CalculatorState['memoryPrefix']>,
+  key: Key,
+): CalculatorState {
+  if (isDigit(key)) {
+    const n = Number(key);
+    if (!isMemoryAddress(n)) return { ...state, memoryPrefix: null };
+    const addr: MemoryAddress = n;
+
+    switch (prefix.kind) {
+      case 'store':
+        return { ...state, memories: store(state.memories, addr, state.displayValue), memoryPrefix: null };
+      case 'store-op':
+        return {
+          ...state,
+          memories: memoryArithmetic(state.memories, prefix.op, addr, state.displayValue),
+          memoryPrefix: null,
+        };
+      case 'recall': {
+        const v = recall(state.memories, addr);
+        return { ...state, displayValue: v, entryBuffer: null, memoryPrefix: null };
+      }
+    }
+  }
+
+  const op = MEMORY_OP[key];
+  if (op !== undefined && prefix.kind === 'store') {
+    return { ...state, memoryPrefix: { kind: 'store-op', op } };
+  }
+
+  // Not part of the STO/RCL grammar: drop the prefix and let the key act.
+  return dispatch({ ...state, memoryPrefix: null }, key);
+}
+
+/** 2ND ANS: recall the Last Answer as the current operand (p. 19). */
+function pressLastAnswer(state: CalculatorState): CalculatorState {
+  return { ...disarm(state), displayValue: state.ans, entryBuffer: null };
+}
+
+/**
+ * 2ND K: arm the constant from the pending operation (p. 18).
+ *
+ * Two printed forms (p. 18), distinguished by whether the operand is already keyed:
+ *
+ *   `3 x 8 2ND K =`      -- operand 8 is on the display: capture (x, 8) immediately.
+ *   `10 + 2ND K 5 =`     -- operator pending, operand not yet keyed: DEFER, arming
+ *                           the operator now and finalising the operand at `=`.
+ *
+ * The pending operation is left in place either way, so the first `=` still
+ * evaluates `n <op> c`; every later `=` re-applies `<op> c` (pressEqualsKey).
+ * With no pending operator there is nothing to capture.
+ */
+function pressConstantArm(state: CalculatorState): CalculatorState {
+  const top = state.pendingOps[state.pendingOps.length - 1];
+  if (top === undefined) return disarm(state);
+
+  // Operand already keyed (entry buffer live): capture it now.
+  if (state.entryBuffer !== null) {
+    const s = commit(state);
+    return { ...disarm(s), constant: { op: top.op, operand: s.displayValue, isPercent: false } };
+  }
+
+  // Operand deferred: arm the operator, finalise the operand at the next `=`.
+  return { ...disarm(state), constantArming: { op: top.op, isPercent: false } };
+}
+
 /**
  * Apply one key press.
  *
@@ -465,6 +588,13 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
     if (key === 'ENTER') return INITIAL_STATE;
     if (key === '2ND') return { ...state, secondArmed: true }; // lets 2ND QUIT cancel
     return dispatch({ ...state, resetArmed: false }, key);
+  }
+
+  // A STO/RCL prefix is pending: the next key names the register (or, after a
+  // plain STO, an operator). Resolved before anything else so the register digit
+  // is not mistaken for number entry (p. 16).
+  if (state.memoryPrefix !== null) {
+    return resolveMemoryPrefix(state, state.memoryPrefix, key);
   }
 
   // 2. The modifier latches.
@@ -575,6 +705,16 @@ function dispatch(state: CalculatorState, key: Key): CalculatorState {
 
     case 'xP/Y':
       return disarm(pressPaymentMultiplier(state));
+
+    case 'STO':
+      // A prefix: commit the display, then wait for the register (p. 16).
+      return { ...disarm(commit(state)), memoryPrefix: { kind: 'store' } };
+    case 'RCL':
+      return { ...disarm(commit(state)), memoryPrefix: { kind: 'recall' } };
+    case 'ANS':
+      return pressLastAnswer(state);
+    case 'K':
+      return pressConstantArm(state);
 
     case 'CPT':
       // A prefix, not an action: it arms the next key.

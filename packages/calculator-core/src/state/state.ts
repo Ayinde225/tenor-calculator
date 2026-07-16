@@ -27,7 +27,11 @@ import {
 import { DATE_DEFAULTS, type DateState } from '../worksheets/date.js';
 import { PROFIT_MARGIN_DEFAULTS, type ProfitMarginState } from '../worksheets/profit-margin.js';
 import { BREAKEVEN_DEFAULTS, type BreakevenState } from '../worksheets/breakeven.js';
-import { MEMORY_DEFAULTS, type MemoryState } from '../worksheets/memory-worksheet.js';
+import {
+  MEMORY_DEFAULTS,
+  type MemoryState,
+  type MemoryOperation,
+} from '../worksheets/memory-worksheet.js';
 
 /** The prompted worksheets. TVM is absent: it lives in standard-calculator mode. */
 export type WorksheetId =
@@ -68,6 +72,17 @@ export interface ConstantState {
   readonly operand: number;
   readonly isPercent: boolean;
 }
+
+/**
+ * A pending STO/RCL prefix, waiting for the register digit (guidebook pp. 16-17).
+ * `store-op` is `STO` followed by an operator, e.g. `STO + 3` adds the display to
+ * memory 3. Held as a latch because the register key that resolves it arrives on
+ * the next press.
+ */
+export type MemoryPrefix =
+  | { readonly kind: 'store' }
+  | { readonly kind: 'store-op'; readonly op: MemoryOperation }
+  | { readonly kind: 'recall' };
 
 /** Global format settings. These survive power-off (Constant Memory, p. 6). */
 export interface FormatSettings {
@@ -128,6 +143,14 @@ export interface CalculatorState {
   /** Refreshed by ENTER, CPT, = and automatic computes (p. 19). */
   readonly ans: number;
   readonly constant: ConstantState | null;
+  /**
+   * A constant armed by 2ND K whose operand has NOT been keyed yet -- the p. 18
+   * template form `n <op> 2ND K c =`, where the operator is pending at 2ND K but
+   * the operand `c` is keyed afterward. Finalised into `constant` by the next `=`.
+   */
+  readonly constantArming: { readonly op: BinaryOp; readonly isPercent: boolean } | null;
+  /** A STO/RCL prefix awaiting its register digit; null when none is pending. */
+  readonly memoryPrefix: MemoryPrefix | null;
   readonly randomSeed: number | null;
 
   readonly tvm: TvmState;
@@ -170,6 +193,8 @@ export const INITIAL_STATE: CalculatorState = Object.freeze({
   memories: MEMORY_DEFAULTS,
   ans: 0,
   constant: null,
+  constantArming: null,
+  memoryPrefix: null,
   randomSeed: null,
 
   tvm: TVM_DEFAULTS,

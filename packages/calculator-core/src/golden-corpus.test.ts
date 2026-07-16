@@ -178,17 +178,8 @@ const UNSUPPORTED: Partial<Readonly<Record<Key, Unsupported>>> = {
   // insert/delete edit keys that shift the flow list are not yet wired.
   INS: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND INS is not implemented' },
   DEL: { category: 'feature:cf-edit', reason: 'Cash Flow edit key 2ND DEL is not implemented' },
-  // Standard-mode features the reducer never dispatches.
-  STO: { category: 'feature:memory', reason: 'STO/RCL memory is not wired into the reducer' },
-  RCL: { category: 'feature:memory', reason: 'STO/RCL memory is not wired into the reducer' },
-  K: {
-    category: 'feature:constant',
-    reason: '2ND K constant calculations are not wired into the reducer',
-  },
-  ANS: {
-    category: 'feature:last-answer',
-    reason: '2ND ANS last-answer recall is not wired into the reducer',
-  },
+  // 2ND RAND is non-deterministic by nature; the corpus's single RAND case reuses
+  // a prior display as its seed and is flagged unkeyable in the spec anyway.
   RAND: {
     category: 'feature:RAND',
     reason: '2ND RAND is not wired into the reducer (and is non-deterministic)',
