@@ -25,9 +25,31 @@ documented skips, typecheck clean.
 | 1 | Engine: precision, display, standard math, CHN/AOS, memory, keypad state machine | Complete |
 | 2 | TVM and amortization | Complete |
 | 3 | Cash flow, bonds, depreciation, statistics, other worksheets | Complete |
-| 4 | UI and PWA | Not started |
+| 4 | UI and PWA | In progress — installable calculator working; guided mode/history to come |
 | 5 | Optional accounts and sync | Not started |
 | 6 | Final parity audit | Not started |
+
+### The app (`packages/calculator-ui`)
+
+A working, installable, offline-capable calculator over the engine — Vite +
+vanilla TypeScript, no UI framework, **21 KB gzipped**. The app is the engine plus
+a projection: every input resolves to one `engine.press(key)` and every render is
+driven by the engine subscription.
+
+Done: the LCD (annunciators, label, readout, `aria-live`), the full keypad in an
+original grouped layout preserving the authentic 2ND-arms-next-key workflow,
+physical-keyboard support with a shortcut guide, three themes
+(dark/light/high-contrast), 44px touch targets, hover/pressed/focus states,
+optional haptics and key-click (off by default), `localStorage` session +
+preferences, and a PWA (manifest, offline-first service worker, icons).
+
+To come: guided learning mode, calculation history, long-press scrolling, a formal
+WCAG 2.2 AA pass, and visual/e2e tests.
+
+```bash
+npm run dev --workspace @tenor/calculator-ui     # dev server
+npm run build --workspace @tenor/calculator-ui   # production PWA build
+```
 
 ### Golden corpus parity
 
