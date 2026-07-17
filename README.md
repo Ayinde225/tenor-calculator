@@ -25,9 +25,9 @@ documented skips, typecheck clean.
 | 1 | Engine: precision, display, standard math, CHN/AOS, memory, keypad state machine | Complete |
 | 2 | TVM and amortization | Complete |
 | 3 | Cash flow, bonds, depreciation, statistics, other worksheets | Complete |
-| 4 | UI and PWA | In progress — installable calculator working; guided mode/history to come |
-| 5 | Optional accounts and sync | Not started |
-| 6 | Final parity audit | Not started |
+| 4 | UI and PWA | Complete |
+| 5 | Optional accounts and sync | Not started (optional) |
+| 6 | Final parity audit | Not started (needs physical hardware) |
 
 ### The app (`packages/calculator-ui`)
 
@@ -45,11 +45,12 @@ preferences, a PWA (manifest, offline-first service worker, icons), **guided
 learning mode** (an explanatory overlay that reads the same engine state and so
 can never compute differently), and **calculation history** with lossless recall.
 
-The UI has **28 Playwright end-to-end tests** (Chromium + a mobile viewport) that
-drive real button clicks — the required parity examples now pass end-to-end
-through the interface, not just in the engine.
-
-To come: long-press worksheet scrolling and a formal WCAG 2.2 AA audit.
+The UI has **40 Playwright end-to-end tests** (Chromium + a mobile viewport) that
+drive real button clicks — the required parity examples pass end-to-end through the
+interface, not just in the engine — plus long-press worksheet scrolling and a full
+**WCAG 2.2 AA** pass (contrast computed from the theme tokens; a five-dimension
+adversarial audit; every finding fixed and test-guarded). See
+[docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
 
 ```bash
 npm run dev --workspace @tenor/calculator-ui       # dev server
