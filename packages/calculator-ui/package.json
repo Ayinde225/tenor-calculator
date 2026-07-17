@@ -8,12 +8,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tenor/calculator-core": "*"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "vite": "^5.4.11"
   }
 }

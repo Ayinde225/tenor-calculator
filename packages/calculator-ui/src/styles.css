@@ -583,6 +583,83 @@ body {
   line-height: 1.5;
 }
 
+/* --- Calculation history --- */
+
+.history {
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-radius: calc(var(--radius) + 6px);
+  padding: clamp(14px, 3vw, 20px);
+}
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.history-head h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent);
+}
+.history-clear {
+  background: none;
+  border: 1px solid var(--key-edge);
+  border-radius: 8px;
+  color: var(--text-dim);
+  padding: 5px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.history-clear:hover {
+  border-color: var(--tone-op);
+  color: var(--tone-op);
+}
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.history-entry {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--key-bg) 60%, transparent);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-lcd);
+}
+.history-entry:hover {
+  border-color: var(--accent);
+}
+.history-entry:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.history-tag {
+  color: var(--accent);
+  font-size: 13px;
+}
+.history-value {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.history-empty {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .key {
     transition: none;

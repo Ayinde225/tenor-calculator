@@ -2,6 +2,11 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
 .DS_Store
 .vscode/
 .idea/

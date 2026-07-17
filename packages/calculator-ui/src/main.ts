@@ -7,13 +7,20 @@
  * by the engine's subscription. There is no second source of truth.
  */
 import './styles.css';
-import { INITIAL_STATE, type Key } from '@tenor/calculator-core';
+import {
+  INITIAL_STATE,
+  parseKeySequence,
+  type CalculatorState,
+  type DisplayState,
+  type Key,
+} from '@tenor/calculator-core';
 import { Engine } from './engine.js';
 import { createLcd } from './lcd.js';
 import { createKeypad } from './keypad.js';
 import { tokenFor, type KeyDef } from './layout.js';
 import { keyFromEvent, SHORTCUT_GUIDE } from './keyboard.js';
 import { createGuide } from './guide.js';
+import { createHistory } from './history.js';
 import { Feedback } from './feedback.js';
 import {
   loadPreferences,
@@ -32,6 +39,7 @@ feedback.haptics = prefs.haptics;
 const engine = new Engine(loadSession() ?? INITIAL_STATE);
 const lcd = createLcd();
 const guide = createGuide();
+const history = createHistory({ onRecall: recallValue });
 
 const keypad = createKeypad({
   onKey: (def: KeyDef) => {
@@ -44,8 +52,53 @@ const keypad = createKeypad({
   onFeedback: () => feedback.press(),
 });
 
+/** Press one key, persist, and record a history entry if it produced a result. */
 function sendKey(key: Key): void {
+  const prev = engine.current;
+  const prevDisplay = engine.display;
   engine.press(key);
+  saveSession(engine.current);
+  recordResult(key, prev, prevDisplay, engine.current, engine.display);
+}
+
+/**
+ * Recognise a completed calculation and log it. Three shapes produce a result:
+ *  - `=` in standard mode,
+ *  - a worksheet `CPT` (computes immediately, so the display changes on that press),
+ *  - a standard-mode `CPT var` (CPT arms computeArmed; the following variable key
+ *    consumes it and computes).
+ */
+function recordResult(
+  key: Key,
+  prev: CalculatorState,
+  prevDisplay: DisplayState,
+  next: CalculatorState,
+  nextDisplay: DisplayState,
+): void {
+  if (nextDisplay.isError) return;
+
+  let title: string | null = null;
+  if (key === '=') {
+    title = '';
+  } else if (
+    key === 'CPT' &&
+    next.mode.kind === 'worksheet' &&
+    nextDisplay.value !== prevDisplay.value
+  ) {
+    title = nextDisplay.label.replace(/=$/, '');
+  } else if (prev.computeArmed && !next.computeArmed) {
+    title = nextDisplay.label !== '' ? nextDisplay.label.replace(/=$/, '') : String(key);
+  }
+  if (title === null) return;
+
+  history.record({ title, display: nextDisplay.value, value: next.displayValue });
+}
+
+/** Re-enter a recalled value by keying its digits, as if typed. */
+function recallValue(value: number): void {
+  const literal = Number.isFinite(value) ? value.toString() : '';
+  if (literal === '' || literal.includes('e')) return; // scientific values are not re-keyable
+  for (const k of parseKeySequence([literal])) engine.press(k);
   saveSession(engine.current);
 }
 
@@ -70,7 +123,7 @@ const header = buildHeader();
 const controls = buildControls();
 
 shell.append(header, lcd.root, keypad.root);
-app.append(shell, guide.root, controls.panel, buildDisclaimer());
+app.append(shell, guide.root, history.root, controls.panel, buildDisclaimer());
 
 engine.subscribe((display, state) => {
   lcd.update(display);
@@ -131,9 +184,17 @@ function buildHeader(): HTMLElement {
   });
   learnBtn.classList.toggle('on', prefs.guided);
 
+  const historyBtn = iconButton('Calculation history', '↺', () => {
+    const open = !history.open;
+    history.setOpen(open);
+    historyBtn.setAttribute('aria-pressed', String(open));
+    historyBtn.classList.toggle('on', open);
+  });
+  historyBtn.setAttribute('aria-pressed', 'false');
+
   const shortcutsBtn = iconButton('Keyboard shortcuts', '?', () => toggleDialog('shortcuts'));
   const settingsBtn = iconButton('Settings', '⚙', () => toggleDialog('settings'));
-  nav.append(learnBtn, shortcutsBtn, settingsBtn);
+  nav.append(learnBtn, historyBtn, shortcutsBtn, settingsBtn);
 
   el.append(brand, nav);
   return el;

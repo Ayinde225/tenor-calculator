@@ -63,6 +63,8 @@ function makeButton(
   button.type = 'button';
   button.className = `key key-${def.tone}`;
   button.setAttribute('aria-label', ariaFor(def));
+  // Stable hook for end-to-end tests; the primary token uniquely identifies a key.
+  button.dataset.key = def.primary;
   byPrimary.set(def.primary, button);
 
   if (def.secondaryLabel !== undefined) {
