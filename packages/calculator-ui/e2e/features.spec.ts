@@ -75,11 +75,62 @@ test.describe('themes and accessibility', () => {
     }
   });
 
-  test('a skip link is the first focusable element', async ({ page }) => {
+  test('a skip link is the first focusable element and moves focus to the calculator', async ({ page }) => {
     const calc = new Calc(page);
     await calc.open();
     await page.keyboard.press('Tab');
-    await expect(page.getByRole('link', { name: 'Skip to calculator' })).toBeFocused();
+    const skip = page.getByRole('link', { name: 'Skip to calculator' });
+    await expect(skip).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#calculator')).toBeFocused(); // WCAG 2.4.1
+  });
+});
+
+test.describe('dialog focus management (WCAG 2.4.3, 2.4.11, 4.1.2)', () => {
+  test('a trigger exposes aria-expanded and gets focus back on close', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    const settings = page.getByRole('button', { name: 'Settings', exact: true });
+    await expect(settings).toHaveAttribute('aria-expanded', 'false');
+
+    await settings.click();
+    await expect(settings).toHaveAttribute('aria-expanded', 'true');
+
+    await page.keyboard.press('Escape');
+    await expect(settings).toHaveAttribute('aria-expanded', 'false');
+    await expect(settings).toBeFocused(); // focus returned to the opener
+  });
+
+  test('an open dialog makes the calculator behind it inert', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await expect(page.locator('main.calculator')).toHaveAttribute('inert', '');
+    // A key behind the sheet cannot take focus while the dialog is open.
+    await page.locator('[data-key="7"]').evaluate((el) => (el as HTMLElement).focus());
+    await expect(page.locator('[data-key="7"]')).not.toBeFocused();
+  });
+});
+
+test.describe('pointer cancellation (WCAG 2.5.2)', () => {
+  test('a key activates on release, not on press', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    const seven = page.locator('[data-key="7"]');
+    await seven.dispatchEvent('pointerdown');
+    await calc.expectDisplay('0.00'); // nothing yet — down does not activate
+    await seven.dispatchEvent('pointerup');
+    await calc.expectDisplay('7');
+  });
+
+  test('sliding off a key before releasing aborts it', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    const seven = page.locator('[data-key="7"]');
+    await seven.dispatchEvent('pointerdown');
+    await seven.dispatchEvent('pointerleave'); // slide off = abort
+    await seven.dispatchEvent('pointerup');
+    await calc.expectDisplay('0.00'); // never entered
   });
 });
 

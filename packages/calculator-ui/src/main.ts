@@ -41,6 +41,13 @@ const lcd = createLcd();
 const guide = createGuide();
 const history = createHistory({ onRecall: recallValue });
 
+// Dialog state, declared before buildHeader() runs since it registers triggers.
+let openDialog: string | null = null;
+/** The control that opened the current dialog, so focus can return to it (WCAG 2.4.3). */
+let dialogTrigger: HTMLElement | null = null;
+/** The header buttons that open each dialog, for aria-expanded sync (WCAG 4.1.2). */
+const dialogTriggers = new Map<string, HTMLElement>();
+
 const keypad = createKeypad({
   onKey: (def: KeyDef) => {
     // The token the user actually invoked (primary or the armed secondary) is what
@@ -122,8 +129,28 @@ shell.setAttribute('aria-label', 'Tenor financial calculator');
 const header = buildHeader();
 const controls = buildControls();
 
+// The skip link jumps here — the display, past the header toggles. It is made
+// programmatically focusable, and the link explicitly moves focus, since browsers
+// do not reliably focus a fragment target on their own (WCAG 2.4.1).
+lcd.root.id = 'calculator';
+lcd.root.tabIndex = -1;
+const skipLink = document.querySelector('.skip-link');
+if (skipLink !== null) {
+  const activateSkip = (e: Event): void => {
+    e.preventDefault();
+    lcd.root.scrollIntoView();
+    lcd.root.focus();
+  };
+  skipLink.addEventListener('click', activateSkip);
+  // Handle Enter/Space directly rather than relying on the browser to synthesise a
+  // click and move focus to the fragment, which is unreliable across browsers.
+  skipLink.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') activateSkip(e);
+  });
+}
 shell.append(header, lcd.root, keypad.root);
-app.append(shell, guide.root, history.root, controls.panel, buildDisclaimer());
+const disclaimer = buildDisclaimer();
+app.append(shell, guide.root, history.root, controls.panel, disclaimer);
 
 engine.subscribe((display, state) => {
   lcd.update(display);
@@ -194,6 +221,15 @@ function buildHeader(): HTMLElement {
 
   const shortcutsBtn = iconButton('Keyboard shortcuts', '?', () => toggleDialog('shortcuts'));
   const settingsBtn = iconButton('Settings', '⚙', () => toggleDialog('settings'));
+  // Expose the toggle state and the panel each controls (WCAG 4.1.2).
+  for (const [btn, id] of [
+    [shortcutsBtn, 'shortcuts'],
+    [settingsBtn, 'settings'],
+  ] as const) {
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', `dialog-${id}`);
+    dialogTriggers.set(id, btn);
+  }
   nav.append(learnBtn, historyBtn, shortcutsBtn, settingsBtn);
 
   el.append(brand, nav);
@@ -216,17 +252,54 @@ function buildControls(): { panel: HTMLElement } {
   return { panel };
 }
 
-let openDialog: string | null = null;
-function toggleDialog(id: string): void {
+/**
+ * The regions made inert while a dialog is open. Inert removes them from the tab
+ * order and from assistive tech, so focus cannot land on the keypad sitting behind
+ * the opaque bottom sheet (WCAG 2.4.11) — the dialogs live in `controls.panel`,
+ * which is deliberately not in this list.
+ */
+function backgroundRegions(): HTMLElement[] {
+  return [shell, guide.root, history.root, disclaimer];
+}
+
+function setBackgroundInert(on: boolean): void {
+  for (const region of backgroundRegions()) {
+    if (on) region.setAttribute('inert', '');
+    else region.removeAttribute('inert');
+  }
+}
+
+function openDialogById(id: string): void {
   const el = document.getElementById(`dialog-${id}`);
   if (el === null) return;
-  const willOpen = openDialog !== id;
-  document.querySelectorAll('.dialog').forEach((d) => d.classList.remove('open'));
-  openDialog = willOpen ? id : null;
-  if (willOpen) {
-    el.classList.add('open');
-    (el.querySelector('button, [tabindex]') as HTMLElement | null)?.focus();
+  dialogTrigger = document.activeElement as HTMLElement | null;
+  el.classList.add('open');
+  el.setAttribute('aria-modal', 'true');
+  dialogTriggers.get(id)?.setAttribute('aria-expanded', 'true');
+  setBackgroundInert(true);
+  openDialog = id;
+  (el.querySelector('button, [tabindex]') as HTMLElement | null)?.focus();
+}
+
+function closeDialog(): void {
+  if (openDialog === null) return;
+  const el = document.getElementById(`dialog-${openDialog}`);
+  el?.classList.remove('open');
+  el?.setAttribute('aria-modal', 'false');
+  dialogTriggers.get(openDialog)?.setAttribute('aria-expanded', 'false');
+  openDialog = null;
+  setBackgroundInert(false); // lift inert before restoring focus, or the focus is refused
+  dialogTrigger?.focus();
+  dialogTrigger = null;
+}
+
+function toggleDialog(id: string): void {
+  if (openDialog === id) {
+    closeDialog();
+    return;
   }
+  if (openDialog !== null) closeDialog();
+  openDialogById(id);
 }
 
 function buildSettingsDialog(): HTMLElement {
@@ -337,7 +410,7 @@ function buildDisclaimer(): HTMLElement {
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && openDialog !== null) {
-    toggleDialog(openDialog);
+    closeDialog();
   }
 });
 

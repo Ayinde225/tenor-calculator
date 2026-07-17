@@ -90,12 +90,14 @@ function makeButton(
   face.textContent = def.label;
   button.append(face);
 
-  // Pointer Events unify mouse, touch and pen and fire exactly once per press, so
-  // there is no touch/click double-input to guard against. The visual "pressed"
-  // state is driven here rather than by :active so it also works when a press is
-  // replayed from the physical keyboard via flash().
+  // Pointer input activates on the UP-event over the button, not on down (WCAG
+  // 2.5.2 Pointer Cancellation): pressing down only shows the pressed state and, for
+  // scroll keys, starts the hold timer. Sliding off before releasing — pointerleave
+  // or pointercancel — aborts without firing, and CE/C undoes any accidental press.
   let holdDelay = 0;
   let holdInterval = 0;
+  let armed = false;
+  let repeated = false;
 
   const stopHold = (): void => {
     window.clearTimeout(holdDelay);
@@ -105,30 +107,46 @@ function makeButton(
   };
 
   button.addEventListener('pointerdown', (e) => {
-    e.preventDefault(); // keep focus off the button on touch; avoid the synthetic click
+    e.preventDefault(); // avoid the synthetic click; manage focus/press ourselves
     button.classList.add('pressed');
     button.focus({ preventScroll: true });
-    opts.onFeedback?.();
-    opts.onKey(def);
+    armed = true;
+    repeated = false;
 
-    // Hold-to-repeat for the scroll keys: after a short delay, keep firing until
-    // release. Repeats skip the feedback pulse so a long hold is not a buzz storm.
+    // Hold-to-repeat for the scroll keys: after a delay, keep firing until release.
+    // Repeats skip the feedback pulse so a long hold is not a buzz storm.
     if (REPEATABLE.has(def.primary)) {
       holdDelay = window.setTimeout(() => {
-        holdInterval = window.setInterval(() => opts.onKey(def), REPEAT_INTERVAL_MS);
+        holdInterval = window.setInterval(() => {
+          repeated = true;
+          opts.onKey(def);
+        }, REPEAT_INTERVAL_MS);
       }, REPEAT_DELAY_MS);
     }
   });
-  const release = (): void => {
+
+  // Release over the button completes the press — unless a hold already repeated,
+  // in which case the repeats were the activation and a final fire would double it.
+  button.addEventListener('pointerup', () => {
     button.classList.remove('pressed');
     stopHold();
-  };
-  button.addEventListener('pointerup', release);
-  button.addEventListener('pointercancel', release);
-  button.addEventListener('pointerleave', release);
+    if (armed && !repeated) {
+      opts.onFeedback?.();
+      opts.onKey(def);
+    }
+    armed = false;
+  });
 
-  // Keyboard activation (Enter/Space) still needs to work for focus users. Since
-  // pointerdown handled pointer input, only synthesise on real keyboard clicks.
+  const abort = (): void => {
+    button.classList.remove('pressed');
+    stopHold();
+    armed = false;
+  };
+  button.addEventListener('pointercancel', abort);
+  button.addEventListener('pointerleave', abort);
+
+  // Keyboard activation (Enter/Space) for focus users. Pointer input is handled
+  // separately above; 2.5.2 governs pointers only, so keyboard fires on keydown.
   button.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -137,7 +155,7 @@ function makeButton(
       opts.onKey(def);
     }
   });
-  button.addEventListener('keyup', release);
+  button.addEventListener('keyup', abort);
 
   return button;
 }

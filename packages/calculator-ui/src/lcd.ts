@@ -7,18 +7,18 @@
  */
 import type { DisplayState, Indicator } from '@tenor/calculator-core';
 
-/** The annunciators, in a fixed left-to-right order with their shown text. */
-const INDICATORS: readonly { flag: Indicator; text: string }[] = [
-  { flag: '2nd', text: '2ND' },
-  { flag: 'INV', text: 'INV' },
-  { flag: 'HYP', text: 'HYP' },
-  { flag: 'COMPUTE', text: 'COMPUTE' },
-  { flag: 'ENTER', text: 'ENTER' },
-  { flag: 'SET', text: 'SET' },
-  { flag: 'DEL', text: 'DEL' },
-  { flag: 'INS', text: 'INS' },
-  { flag: 'BGN', text: 'BGN' },
-  { flag: 'RAD', text: 'RAD' },
+/** The annunciators, in a fixed left-to-right order with their shown text and a spoken phrase. */
+const INDICATORS: readonly { flag: Indicator; text: string; phrase: string }[] = [
+  { flag: '2nd', text: '2ND', phrase: 'Second function armed' },
+  { flag: 'INV', text: 'INV', phrase: 'Inverse' },
+  { flag: 'HYP', text: 'HYP', phrase: 'Hyperbolic' },
+  { flag: 'COMPUTE', text: 'COMPUTE', phrase: 'Compute' },
+  { flag: 'ENTER', text: 'ENTER', phrase: 'Press Enter to store' },
+  { flag: 'SET', text: 'SET', phrase: 'Press Set to change' },
+  { flag: 'DEL', text: 'DEL', phrase: 'Delete available' },
+  { flag: 'INS', text: 'INS', phrase: 'Insert available' },
+  { flag: 'BGN', text: 'BGN', phrase: 'Begin-of-period payments' },
+  { flag: 'RAD', text: 'RAD', phrase: 'Radians' },
 ];
 
 export interface Lcd {
@@ -59,8 +59,18 @@ export function createLcd(): Lcd {
   live.setAttribute('aria-live', 'polite');
   live.setAttribute('aria-atomic', 'true');
 
+  // A separate status region for the annunciators, whose tiny glyphs are
+  // aria-hidden. Pressing 2ND or toggling BGN changes no number, so without this a
+  // screen-reader user would get no confirmation the mode changed (WCAG 4.1.3).
+  const status = document.createElement('div');
+  status.className = 'lcd-live';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+
   main.append(label, value);
-  root.append(annunciators, main, live);
+  root.append(annunciators, main, live, status);
+
+  let lastIndicators = '';
 
   function update(display: DisplayState): void {
     for (const { flag } of INDICATORS) {
@@ -73,6 +83,15 @@ export function createLcd(): Lcd {
 
     const spoken = display.label ? `${display.label} ${display.value}` : display.value;
     live.textContent = spoken;
+
+    // Announce the annunciator set only when it changes, so it does not repeat on
+    // every keystroke. `=` (the value-belongs-to-label cue) is display-only.
+    const active = INDICATORS.filter((i) => i.flag !== '=' && display.indicators.includes(i.flag));
+    const key = active.map((i) => i.flag).join(',');
+    if (key !== lastIndicators) {
+      lastIndicators = key;
+      status.textContent = active.length ? active.map((i) => i.phrase).join('. ') : '';
+    }
   }
 
   return { root, update };
