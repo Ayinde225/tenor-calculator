@@ -41,14 +41,20 @@ original grouped layout preserving the authentic 2ND-arms-next-key workflow,
 physical-keyboard support with a shortcut guide, three themes
 (dark/light/high-contrast), 44px touch targets, hover/pressed/focus states,
 optional haptics and key-click (off by default), `localStorage` session +
-preferences, and a PWA (manifest, offline-first service worker, icons).
+preferences, a PWA (manifest, offline-first service worker, icons), **guided
+learning mode** (an explanatory overlay that reads the same engine state and so
+can never compute differently), and **calculation history** with lossless recall.
 
-To come: guided learning mode, calculation history, long-press scrolling, a formal
-WCAG 2.2 AA pass, and visual/e2e tests.
+The UI has **28 Playwright end-to-end tests** (Chromium + a mobile viewport) that
+drive real button clicks — the required parity examples now pass end-to-end
+through the interface, not just in the engine.
+
+To come: long-press worksheet scrolling and a formal WCAG 2.2 AA audit.
 
 ```bash
-npm run dev --workspace @tenor/calculator-ui     # dev server
-npm run build --workspace @tenor/calculator-ui   # production PWA build
+npm run dev --workspace @tenor/calculator-ui       # dev server
+npm run build --workspace @tenor/calculator-ui     # production PWA build
+npm run test:e2e --workspace @tenor/calculator-ui  # Playwright e2e tests
 ```
 
 ### Golden corpus parity
