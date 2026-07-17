@@ -105,6 +105,35 @@ test.describe('persistence', () => {
   });
 });
 
+test.describe('long-press worksheet scrolling', () => {
+  test('holding DOWN cycles through several fields', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    await calc.press('AMORT'); // 5 fields: P1, P2, BAL, PRN, INT
+    await expect(calc.lcdLabel()).toHaveText('P1=');
+
+    const down = page.locator('[data-key="DOWN"]');
+    const seen = new Set<string>();
+    await down.dispatchEvent('pointerdown');
+    for (let i = 0; i < 8; i++) {
+      await page.waitForTimeout(120);
+      seen.add((await calc.lcdLabel().textContent()) ?? '');
+    }
+    await down.dispatchEvent('pointerup');
+
+    // A single press would move one field; the hold visits several.
+    expect(seen.size).toBeGreaterThanOrEqual(3);
+  });
+
+  test('a single press still moves exactly one field (long-press is only an accelerator)', async ({ page }) => {
+    const calc = new Calc(page);
+    await calc.open();
+    await calc.press('AMORT');
+    await calc.press('DOWN');
+    await expect(calc.lcdLabel()).toHaveText('P2=');
+  });
+});
+
 test.describe('touch targets', () => {
   test('keys meet the 44px minimum on mobile', async ({ page }) => {
     const calc = new Calc(page);

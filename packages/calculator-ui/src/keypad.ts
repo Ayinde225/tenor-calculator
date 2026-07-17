@@ -12,8 +12,18 @@
  *  - The 2ND label is exposed to sighted users as a superscript and to assistive
  *    tech through the button's accessible name.
  */
-import { KEYPAD, tokenFor, ariaFor, type KeyDef } from './layout.js';
+import { KEYPAD, ariaFor, type KeyDef } from './layout.js';
 import type { Key } from '@tenor/calculator-core';
+
+/**
+ * Keys that auto-repeat while held — the worksheet scroll keys (guidebook p. 21:
+ * "press and hold ↓ or ↑ ... to move quickly through the variables"). Holding is
+ * only an accelerator: a single press and the keyboard arrows do the same thing,
+ * so no action depends on the long-press (WCAG 2.5.1 pointer gestures).
+ */
+const REPEATABLE: ReadonlySet<Key> = new Set<Key>(['UP', 'DOWN', 'BKSP']);
+const REPEAT_DELAY_MS = 380;
+const REPEAT_INTERVAL_MS = 110;
 
 export interface Keypad {
   readonly root: HTMLElement;
@@ -84,14 +94,35 @@ function makeButton(
   // there is no touch/click double-input to guard against. The visual "pressed"
   // state is driven here rather than by :active so it also works when a press is
   // replayed from the physical keyboard via flash().
+  let holdDelay = 0;
+  let holdInterval = 0;
+
+  const stopHold = (): void => {
+    window.clearTimeout(holdDelay);
+    window.clearInterval(holdInterval);
+    holdDelay = 0;
+    holdInterval = 0;
+  };
+
   button.addEventListener('pointerdown', (e) => {
     e.preventDefault(); // keep focus off the button on touch; avoid the synthetic click
     button.classList.add('pressed');
     button.focus({ preventScroll: true });
     opts.onFeedback?.();
     opts.onKey(def);
+
+    // Hold-to-repeat for the scroll keys: after a short delay, keep firing until
+    // release. Repeats skip the feedback pulse so a long hold is not a buzz storm.
+    if (REPEATABLE.has(def.primary)) {
+      holdDelay = window.setTimeout(() => {
+        holdInterval = window.setInterval(() => opts.onKey(def), REPEAT_INTERVAL_MS);
+      }, REPEAT_DELAY_MS);
+    }
   });
-  const release = (): void => button.classList.remove('pressed');
+  const release = (): void => {
+    button.classList.remove('pressed');
+    stopHold();
+  };
   button.addEventListener('pointerup', release);
   button.addEventListener('pointercancel', release);
   button.addEventListener('pointerleave', release);
