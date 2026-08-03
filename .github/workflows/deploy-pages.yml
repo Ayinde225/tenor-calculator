@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The UI's typecheck resolves @tenor/calculator-core to its built types, so
+      # the engine must be compiled before the UI is built.
+      - name: Build the engine
+        run: npm run build --workspace @tenor/calculator-core
+
       - name: Build the calculator UI
         run: npm run build --workspace @tenor/calculator-ui
 
