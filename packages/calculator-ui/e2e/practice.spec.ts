@@ -23,26 +23,40 @@ test.describe('practice mode', () => {
     expect(await page.locator('.practice-item').count()).toBeGreaterThanOrEqual(15);
   });
 
-  test('walks a full lesson by pressing each hinted key', async ({ page }) => {
+  test('walks EVERY lesson to completion by pressing each hinted key', async ({ page }) => {
+    // The unit suite proves every lesson replays through the engine; this proves
+    // every lesson is WALKABLE through the UI — hint, press, advance, complete.
+    // It exists because a lesson once stalled on `2ND QUIT`: the script token and
+    // the hinted button's 2ND-resolution disagreed, a class of bug only clicking
+    // the real keypad can catch.
     const calc = new Calc(page);
     await calc.open();
     await openPractice(page);
-    await page.locator('.practice-item').first().click();
-    await expect(page.locator('.practice-player')).toBeVisible();
+    const lessonCount = await page.locator('.practice-item').count();
+    expect(lessonCount).toBeGreaterThanOrEqual(15);
 
-    // Press whichever key is hinted, until the lesson completes. Bounded well
-    // above any lesson's real key count so a stall fails rather than spins.
-    for (let i = 0; i < 120; i++) {
-      const doneVisible = await page.locator('.practice-done').isVisible();
-      if (doneVisible) break;
-      const hinted = page.locator('.key.hint');
-      await expect(hinted).toHaveCount(1);
-      await hinted.dispatchEvent('pointerdown');
-      await hinted.dispatchEvent('pointerup');
+    for (let l = 0; l < lessonCount; l++) {
+      await page.locator('.practice-item').nth(l).click();
+      await expect(page.locator('.practice-player')).toBeVisible();
+
+      // Bounded well above any lesson's real key count so a stall fails.
+      for (let i = 0; i < 200; i++) {
+        if (await page.locator('.practice-done').isVisible()) break;
+        const hinted = page.locator('.key.hint');
+        await expect(hinted, `lesson #${l} stalled with no hinted key`).toHaveCount(1);
+        await hinted.dispatchEvent('pointerdown');
+        await hinted.dispatchEvent('pointerup');
+      }
+
+      await expect(page.locator('.practice-done'), `lesson #${l} did not complete`).toBeVisible();
+      await expect(
+        page.locator('.practice-mismatch'),
+        `lesson #${l} drifted from its checkpoints`,
+      ).toBeHidden();
+
+      await page.locator('.practice-exit').click();
+      await expect(page.locator('.practice-picker')).toBeVisible();
     }
-
-    await expect(page.locator('.practice-done')).toBeVisible();
-    await expect(page.locator('.practice-mismatch')).toBeHidden(); // no checkpoint drift
   });
 
   test('a wrong key is not forwarded to the calculator', async ({ page }) => {

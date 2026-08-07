@@ -222,8 +222,16 @@ export function createPractice(cb: PracticeCallbacks): Practice {
   function userPressed(token: Key): void {
     const expected = expectedToken();
     if (expected === null) return;
-    if (token === expected) {
-      accept(token);
+    // Accept an exact token match, or a press of the hinted BUTTON. The second
+    // case matters when the script follows the hardware gesture: after `2ND`,
+    // a script token of `QUIT` still hints the QUIT button, but pressing it
+    // resolves to that button's secondary (`RESET`). The user did exactly what
+    // was asked, so accept — and forward the SCRIPT's token, keeping the engine
+    // replay identical to the verified lesson.
+    const sameButton =
+      cb.buttonFor(token) !== null && cb.buttonFor(token) === cb.buttonFor(expected);
+    if (token === expected || sameButton) {
+      accept(expected);
     } else {
       // Wrong key: don't forward it (the script would derail); re-pulse the hint.
       const target = cb.buttonFor(expected);
