@@ -15,3 +15,6 @@ playwright-report/
 # renderings. Used as a development reference only; never committed, never shipped.
 research/
 *.pdf
+
+# Local Claude Code session config (dev-server launch); not part of the app.
+.claude/
