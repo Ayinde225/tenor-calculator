@@ -1,0 +1,275 @@
+{
+  "area": "tvm-loans",
+  "title": "Loans & Savings (TVM)",
+  "lessons": [
+    {
+      "id": "tvm-loans-monthly-payment",
+      "title": "Computing a monthly loan payment",
+      "intro": "You borrow $75,000 for 30 years at 5.5% annual interest, repaying once a month. How much is each monthly payment?",
+      "source": "Guidebook p. 29",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Wipe every stored value so nothing left over from an earlier problem sneaks into this one. A reset also leaves the future value at 0 and payments at the end of each period, which is exactly what a standard loan needs.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER"],
+          "explain": "Tell the calculator there are 12 payments a year, since this loan is paid monthly. Entering P/Y also quietly sets compounding to 12 per year, which matches a typical loan.",
+          "expect": { "label": "P/Y=", "value": "12.00" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Leave the settings screen and return to the normal display. Quitting is pure navigation, it never erases anything.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "Convert 30 years into monthly periods: xP/Y multiplies the 30 on screen by the 12 payments per year, showing 360. Pressing N is what actually stores it, xP/Y alone only changes the display.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["5.5", "I/Y"],
+          "explain": "Store the interest rate. You always key the yearly rate, the calculator works out the monthly rate for you from the payments-per-year setting.",
+          "expect": { "label": "", "value": "5.50" }
+        },
+        {
+          "keys": ["75000", "PV"],
+          "explain": "Store the loan amount as a positive present value: it is cash the lender hands to you, and money you receive is always entered positive.",
+          "expect": { "label": "", "value": "75,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Solve for the payment. The result comes back negative because it is money leaving your pocket every month, computed outflows always carry a minus sign.",
+          "expect": { "label": "", "value": "-425.84" }
+        }
+      ],
+      "answer": "PMT = -425.84 — the loan costs $425.84 a month. The minus sign marks it as money you pay out, mirroring the positive $75,000 you received."
+    },
+    {
+      "id": "tvm-loans-loan-interest-rate",
+      "title": "Finding the interest rate of a loan",
+      "intro": "A 30-year, $75,000 mortgage costs you $425.84 every month. What annual interest rate are you being charged?",
+      "source": "Guidebook p. 28",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Start clean. The reset also guarantees the future value is 0 (the loan is fully paid off at the end) and payments fall at the end of each month.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER"],
+          "explain": "Twelve payments a year, since the mortgage is paid monthly. Compounding follows along to 12 automatically.",
+          "expect": { "label": "P/Y=", "value": "12.00" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Return to the normal display, keeping everything just stored.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "30 years times 12 payments a year gives 360 monthly periods; pressing N stores it.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["75000", "PV"],
+          "explain": "The amount borrowed goes in positive: it is money that flowed to you.",
+          "expect": { "label": "", "value": "75,000.00" }
+        },
+        {
+          "keys": ["425.84", "+/-", "PMT"],
+          "explain": "Enter the payment as a negative number: key the amount, then press +/- to flip its sign before storing. Payments flow away from you, and if the signs of the loan and the payments matched, there would be no rate that balances them and the calculator would report Error 5.",
+          "expect": { "label": "", "value": "-425.84" }
+        },
+        {
+          "keys": ["CPT", "I/Y"],
+          "explain": "Solve for the rate. The calculator searches for the annual rate that makes $75,000 today exactly equal to 360 payments of $425.84.",
+          "expect": { "label": "", "value": "5.50" }
+        }
+      ],
+      "answer": "I/Y = 5.50 — the loan charges 5.5% per year. Getting the signs right (loan positive, payments negative) is what makes this solve possible."
+    },
+    {
+      "id": "tvm-loans-mortgage-payment",
+      "title": "The $120,000 mortgage — precision behind the display",
+      "intro": "You finance $120,000 at 6.125% annual interest over 30 years with monthly payments. What is the monthly payment?",
+      "source": "Guidebook p. 39",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Clear everything back to defaults. Note the reset also puts payments per year back to 1, which is why the next step re-enters it.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER"],
+          "explain": "Monthly payments: set P/Y to 12. Compounding follows to 12 as well, matching an ordinary mortgage.",
+          "expect": { "label": "P/Y=", "value": "12.00" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Back to the normal display.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "30 years of monthly payments is 360 periods; pressing N stores it.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["6.125", "I/Y"],
+          "explain": "Store the annual rate. The screen shows 6.13 because it rounds to two decimals, but the full 6.125 is kept internally, the rounding is only cosmetic. If 6.13 were what was actually stored, the payment would come out about 39 cents higher.",
+          "expect": { "label": "", "value": "6.13" }
+        },
+        {
+          "keys": ["120000", "PV"],
+          "explain": "The mortgage amount is money you receive, so it is entered positive.",
+          "expect": { "label": "", "value": "120,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Solve for the payment. Negative, as every payment you make is.",
+          "expect": { "label": "", "value": "-729.13" }
+        }
+      ],
+      "answer": "PMT = -729.13 — you pay $729.13 a month. The exact answer only comes out because the calculator kept the full 6.125 behind the rounded 6.13 it showed you."
+    },
+    {
+      "id": "tvm-loans-savings-future-value",
+      "title": "Future value of a single deposit",
+      "intro": "You put $5,000 into an account paying 0.5% a year, compounded annually. What will it be worth after 20 years?",
+      "source": "Guidebook p. 30",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Reset first. This sets both payments and compounding to once a year, which suits this annual problem, and it zeroes PMT, which matters at the end: this problem has no recurring deposits, only the single one.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["20", "N"],
+          "explain": "Twenty yearly periods.",
+          "expect": { "label": "", "value": "20.00" }
+        },
+        {
+          "keys": [".5", "I/Y"],
+          "explain": "Half a percent per year. You can start with the decimal point, no leading zero needed.",
+          "expect": { "label": "", "value": "0.50" }
+        },
+        {
+          "keys": ["5000", "+/-", "PV"],
+          "explain": "Enter the deposit as a negative present value: you hand this money to the bank, so it flows away from you. Key the amount, then +/- to flip the sign.",
+          "expect": { "label": "", "value": "-5,000.00" }
+        },
+        {
+          "keys": ["CPT", "FV"],
+          "explain": "Solve for the future value. The calculator always uses all five variables when it computes; PMT stayed at 0 from the reset, which is what tells it there are no ongoing deposits. For a four-variable problem the unused fifth must really be 0, the calculator will not assume it.",
+          "expect": { "label": "", "value": "5,524.48" }
+        }
+      ],
+      "answer": "FV = 5,524.48 — the account grows to $5,524.48. Positive, because at the end this is money coming back to you."
+    },
+    {
+      "id": "tvm-loans-annuity-vs-annuity-due",
+      "title": "Ordinary annuity vs annuity due (END vs BGN)",
+      "intro": "A plan sets aside $20,000 a year for 10 years, with money worth 10% a year. What is that stream worth today, and how much more is it worth if each payment lands at the start of the year instead of the end?",
+      "source": "Guidebook p. 31",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Reset. Payments and compounding are now once a year, and payment timing is END, the end-of-period default.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["10", "N"],
+          "explain": "Ten yearly payments.",
+          "expect": { "label": "", "value": "10.00" }
+        },
+        {
+          "keys": ["10", "I/Y"],
+          "explain": "Ten percent a year. With one payment and one compounding period per year, the annual rate is also the per-period rate, used exactly as keyed.",
+          "expect": { "label": "", "value": "10.00" }
+        },
+        {
+          "keys": ["20000", "+/-", "PMT"],
+          "explain": "The $20,000 set aside each year is money paid in, so it is stored negative, key the amount, then +/-. Because the payments are negative, the value of the stream will come back positive.",
+          "expect": { "label": "", "value": "-20,000.00" }
+        },
+        {
+          "keys": ["CPT", "PV"],
+          "explain": "Solve for today's value with payments at the end of each year, the default. This end-of-period arrangement is called an ordinary annuity, and it is how most loans behave.",
+          "expect": { "label": "", "value": "122,891.34" }
+        },
+        {
+          "keys": ["2ND", "BGN", "2ND", "SET"],
+          "explain": "Open the payment-timing setting, it reads END, and press 2ND SET to flip it to BGN, so each payment falls at the beginning of its year. This arrangement is an annuity due, typical of leases and rent. A small BGN marker lights up and stays on as a reminder; END shows no marker at all.",
+          "expect": { "label": "", "value": "BGN" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Back to the normal display. All five stored numbers are untouched, only the timing changed.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["CPT", "PV"],
+          "explain": "Solve again with the new timing. Each payment now arrives a year earlier, so it is discounted one year less, which lifts the whole stream by exactly one year of interest.",
+          "expect": { "label": "", "value": "135,180.48" }
+        }
+      ],
+      "answer": "PV = 122,891.34 with end-of-year payments, 135,180.48 with start-of-year payments. The annuity due is worth exactly 1.10 times the ordinary annuity — one extra year of interest at 10%."
+    },
+    {
+      "id": "tvm-loans-regular-deposits",
+      "title": "Monthly deposits with quarterly compounding",
+      "intro": "You want $25,000 saved 10 years from now. Your account pays 0.5% a year compounded quarterly, and you deposit at the start of every month. How big must each deposit be?",
+      "source": "Guidebook pp. 38-39",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Clear everything. The reset puts both payments and compounding back to once a year, so this problem needs both changed, and in the right order.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER"],
+          "explain": "Twelve deposits a year. Careful: entering P/Y silently copies the same 12 into the compounding setting, which is wrong for this account, so it must be corrected next, before leaving the settings.",
+          "expect": { "label": "P/Y=", "value": "12.00" }
+        },
+        {
+          "keys": ["DOWN", "4", "ENTER"],
+          "explain": "Press the down arrow to reach the compounding line and set it to 4, quarterly. The order is the whole trick: set P/Y first, then fix C/Y. Done the other way round, entering P/Y would overwrite your C/Y.",
+          "expect": { "label": "C/Y=", "value": "4.00" }
+        },
+        {
+          "keys": ["2ND", "BGN", "2ND", "SET"],
+          "explain": "Deposits happen at the start of each month, so flip the payment timing to BGN. The BGN marker lights to confirm.",
+          "expect": { "label": "", "value": "BGN" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Settings done, back to the normal display.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["10", "2ND", "xP/Y", "N"],
+          "explain": "Ten years times 12 deposits a year is 120 monthly periods; N stores it.",
+          "expect": { "label": "", "value": "120.00" }
+        },
+        {
+          "keys": [".5", "I/Y"],
+          "explain": "The annual rate, half a percent. From P/Y = 12 and C/Y = 4 the calculator derives the true monthly growth rate itself, that is why those settings had to be right first.",
+          "expect": { "label": "", "value": "0.50" }
+        },
+        {
+          "keys": ["25000", "FV"],
+          "explain": "The savings goal is entered positive: at the end, $25,000 flows back to you.",
+          "expect": { "label": "", "value": "25,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Solve for the deposit. Negative, because each deposit is money you pay in, the mirror image of the positive $25,000 you will take out.",
+          "expect": { "label": "", "value": "-203.13" }
+        }
+      ],
+      "answer": "PMT = -203.13 — deposit $203.13 at the start of each month and quarterly compounding at 0.5% carries you to $25,000 in 10 years."
+    }
+  ]
+}

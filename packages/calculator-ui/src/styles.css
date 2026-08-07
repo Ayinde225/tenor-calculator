@@ -162,6 +162,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Five header controls no longer fit one row on a phone; wrapping keeps every
+     target reachable instead of overlapping (which swallowed pointer events). */
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 .brand {
   display: flex;
@@ -187,6 +191,8 @@ body {
 .header-actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .icon-button {
@@ -669,8 +675,136 @@ body {
   font-size: 14px;
 }
 
+/* --- Practice mode --- */
+
+.practice {
+  background: var(--shell);
+  border: 1px solid var(--shell-edge);
+  border-radius: calc(var(--radius) + 6px);
+  padding: clamp(14px, 3vw, 20px);
+}
+.practice h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: var(--accent);
+}
+.practice-intro,
+.practice-source {
+  margin: 0 0 10px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.practice-area {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+.practice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.practice-item {
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--key-edge);
+  background: color-mix(in srgb, var(--key-bg) 60%, transparent);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.practice-item:hover {
+  border-color: var(--accent);
+}
+.practice-item:focus-visible,
+.practice-exit:focus-visible,
+.practice-show:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.practice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.practice-exit {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--key-edge);
+  background: none;
+  color: var(--text-dim);
+  font-size: 13px;
+  cursor: pointer;
+}
+.practice-exit:hover {
+  border-color: var(--tone-op);
+  color: var(--tone-op);
+}
+.practice-progress {
+  margin: 4px 0 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.practice-explain {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.practice-mismatch {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--tone-op);
+}
+.practice-show {
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--accent);
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.practice-show:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.practice-done {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* The "press this next" highlight. Outline + glow, and a gentle pulse that
+   prefers-reduced-motion turns off; the outline alone still marks the key. */
+.key.hint {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+  animation: key-hint-pulse 1.1s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes key-hint-pulse {
+  0%, 100% { box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent); }
+  50% { box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 75%, transparent); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .key {
     transition: none;
+  }
+  .key.hint {
+    animation: none;
   }
 }

@@ -29,6 +29,8 @@ export interface Keypad {
   readonly root: HTMLElement;
   /** Briefly flash a key as pressed, e.g. when driven from the hardware keyboard. */
   flash(primary: Key): void;
+  /** Highlight a key as "press this next" (practice mode); null clears the hint. */
+  hint(primary: Key | null): void;
 }
 
 export interface KeypadOptions {
@@ -61,7 +63,14 @@ export function createKeypad(opts: KeypadOptions): Keypad {
     window.setTimeout(() => button.classList.remove('pressed'), 110);
   }
 
-  return { root, flash };
+  let hinted: HTMLButtonElement | null = null;
+  function hint(primary: Key | null): void {
+    hinted?.classList.remove('hint');
+    hinted = primary === null ? null : (byPrimary.get(primary) ?? null);
+    hinted?.classList.add('hint');
+  }
+
+  return { root, flash, hint };
 }
 
 function makeButton(

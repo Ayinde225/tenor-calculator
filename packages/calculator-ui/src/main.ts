@@ -17,10 +17,11 @@ import {
 import { Engine } from './engine.js';
 import { createLcd } from './lcd.js';
 import { createKeypad } from './keypad.js';
-import { tokenFor, type KeyDef } from './layout.js';
+import { KEYPAD, tokenFor, type KeyDef } from './layout.js';
 import { keyFromEvent, SHORTCUT_GUIDE } from './keyboard.js';
 import { createGuide } from './guide.js';
 import { createHistory } from './history.js';
+import { createPractice, type Practice } from './practice.js';
 import { Feedback } from './feedback.js';
 import {
   loadPreferences,
@@ -48,15 +49,47 @@ let dialogTrigger: HTMLElement | null = null;
 /** The header buttons that open each dialog, for aria-expanded sync (WCAG 4.1.2). */
 const dialogTriggers = new Map<string, HTMLElement>();
 
+let practice: Practice | null = null;
+
 const keypad = createKeypad({
   onKey: (def: KeyDef) => {
     // The token the user actually invoked (primary or the armed secondary) is what
     // the key history should show, so the guide records the same key the engine ran.
     const key = tokenFor(def, engine.secondArmed);
+    // In practice mode the lesson script decides which keys reach the engine.
+    if (practice?.active) {
+      practice.userPressed(key);
+      return;
+    }
     guide.pushKey(labelForToken(def, key));
     sendKey(key);
   },
   onFeedback: () => feedback.press(),
+});
+
+/** The button (by primary token) that produces a given engine token. */
+function buttonForToken(token: Key): Key | null {
+  for (const row of KEYPAD) {
+    for (const def of row) {
+      if (def.primary === token) return def.primary;
+      if (def.secondary === token) return def.primary;
+    }
+  }
+  return null;
+}
+
+practice = createPractice({
+  onHint: (primary) => keypad.hint(primary),
+  onSend: (token) => {
+    guide.pushKey(String(token));
+    sendKey(token);
+  },
+  onReset: () => {
+    engine.restore(INITIAL_STATE);
+    saveSession(engine.current);
+  },
+  getDisplay: () => engine.display,
+  buttonFor: buttonForToken,
 });
 
 /** Press one key, persist, and record a history entry if it produced a result. */
@@ -150,7 +183,7 @@ if (skipLink !== null) {
 }
 shell.append(header, lcd.root, keypad.root);
 const disclaimer = buildDisclaimer();
-app.append(shell, guide.root, history.root, controls.panel, disclaimer);
+app.append(shell, practice.root, guide.root, history.root, controls.panel, disclaimer);
 
 engine.subscribe((display, state) => {
   lcd.update(display);
@@ -173,6 +206,10 @@ window.addEventListener('keydown', (e) => {
   e.preventDefault();
   feedback.press();
   keypad.flash(key);
+  if (practice?.active) {
+    practice.userPressed(key);
+    return;
+  }
   sendKey(key);
 });
 
@@ -211,6 +248,18 @@ function buildHeader(): HTMLElement {
   });
   learnBtn.classList.toggle('on', prefs.guided);
 
+  const practiceBtn = document.createElement('button');
+  practiceBtn.type = 'button';
+  practiceBtn.className = 'learn-button';
+  practiceBtn.textContent = 'Practice';
+  practiceBtn.setAttribute('aria-pressed', 'false');
+  practiceBtn.addEventListener('click', () => {
+    const open = !(practice?.open ?? false);
+    practice?.setOpen(open);
+    practiceBtn.setAttribute('aria-pressed', String(open));
+    practiceBtn.classList.toggle('on', open);
+  });
+
   const historyBtn = iconButton('Calculation history', '↺', () => {
     const open = !history.open;
     history.setOpen(open);
@@ -230,7 +279,7 @@ function buildHeader(): HTMLElement {
     btn.setAttribute('aria-controls', `dialog-${id}`);
     dialogTriggers.set(id, btn);
   }
-  nav.append(learnBtn, historyBtn, shortcutsBtn, settingsBtn);
+  nav.append(learnBtn, practiceBtn, historyBtn, shortcutsBtn, settingsBtn);
 
   el.append(brand, nav);
   return el;
@@ -259,7 +308,7 @@ function buildControls(): { panel: HTMLElement } {
  * which is deliberately not in this list.
  */
 function backgroundRegions(): HTMLElement[] {
-  return [shell, guide.root, history.root, disclaimer];
+  return [shell, guide.root, history.root, ...(practice ? [practice.root] : []), disclaimer];
 }
 
 function setBackgroundInert(on: boolean): void {

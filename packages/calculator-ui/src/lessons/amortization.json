@@ -1,0 +1,238 @@
+{
+  "area": "amortization",
+  "title": "Amortization",
+  "lessons": [
+    {
+      "id": "amortization-first-year-schedule",
+      "title": "First-year balance, principal, and interest on a mortgage",
+      "intro": "You take out a $120,000 mortgage at 6.125% APR, paid monthly over 30 years. The first payment lands in April, so your first calendar year contains only payments 1 through 9. How much do you still owe at year end, and how much of what you paid actually reduced the debt?",
+      "source": "Guidebook p. 40",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Reset the calculator so nothing left over from earlier work leaks into this problem. Every variable returns to its default and the display shows 0.00.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER"],
+          "explain": "This loan is paid monthly, so tell the calculator there are 12 payments in a year. Entering P/Y also sets the compounding periods C/Y to 12 automatically.",
+          "expect": { "label": "P/Y=", "value": "12.00" }
+        },
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Leave the settings screen and return to the calculator's standard display.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "The loan runs 30 years. The xP/Y shortcut multiplies 30 by the 12 payments per year, so N becomes 360 monthly payments without you doing the arithmetic.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["6.125", "I/Y"],
+          "explain": "Store the annual rate. The screen rounds it to 6.13, but the calculator keeps the full 6.125 internally — never re-type the rounded number you see.",
+          "expect": { "label": "", "value": "6.13" }
+        },
+        {
+          "keys": ["120000", "PV"],
+          "explain": "Store the loan amount as a positive present value: it is money the lender hands to you, so it flows in.",
+          "expect": { "label": "", "value": "120,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Compute the monthly payment. It comes out negative because it is money you pay out each month.",
+          "expect": { "label": "", "value": "-729.13" }
+        },
+        {
+          "keys": ["2ND", "AMORT"],
+          "explain": "Open the Amortization worksheet. It greets you with P1, the first payment of the range you want to analyze; after a reset it starts at 1.",
+          "expect": { "label": "P1=", "value": "1.00" }
+        },
+        {
+          "keys": ["1", "ENTER"],
+          "explain": "Confirm the range starts at payment 1 — the first payment you will actually make.",
+          "expect": { "label": "P1=", "value": "1.00" }
+        },
+        {
+          "keys": ["DOWN", "9", "ENTER"],
+          "explain": "Move down to P2 and end the range at payment 9. Since the loan started in April, payments 1 through 9 are all that fall in the first calendar year.",
+          "expect": { "label": "P2=", "value": "9.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Step down to BAL: the loan balance remaining right after payment 9. The schedule works from the payment rounded to two decimals, -729.13, which is why this can differ by a cent or two from a future-value calculation.",
+          "expect": { "label": "BAL=", "value": "118,928.63" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Step down to PRN: the principal repaid across payments 1-9. It is negative because paying down principal is money out of your pocket.",
+          "expect": { "label": "PRN=", "value": "-1,071.37" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Step down to INT: the interest paid across payments 1-9, also negative as an outflow. Notice interest dwarfs principal this early in the loan.",
+          "expect": { "label": "INT=", "value": "-5,490.80" }
+        }
+      ],
+      "answer": "After nine payments you still owe $118,928.63. Of the $6,562.17 you paid, only $1,071.37 reduced the debt (PRN = -1,071.37) while $5,490.80 went to interest (INT = -5,490.80) — both negative because they are money you paid out."
+    },
+    {
+      "id": "amortization-next-year-window",
+      "title": "Moving the schedule to the next year",
+      "intro": "Same $120,000 mortgage at 6.125% over 30 years. The second calendar year covers payments 10 through 21 — a full twelve months this time. You will read that year's figures, then let the calculator slide the window to year three for you with a single key.",
+      "source": "Guidebook p. 40",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Start from a clean slate so this lesson stands on its own.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER", "2ND", "QUIT"],
+          "explain": "Set 12 payments per year for the monthly mortgage, then leave the settings screen.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "Enter the term: 30 years times 12 payments gives N = 360.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["6.125", "I/Y"],
+          "explain": "Store the 6.125% annual rate; the display rounds to 6.13 but the exact value is kept.",
+          "expect": { "label": "", "value": "6.13" }
+        },
+        {
+          "keys": ["120000", "PV"],
+          "explain": "Store the amount borrowed as a positive inflow.",
+          "expect": { "label": "", "value": "120,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Compute the monthly payment again: -729.13, negative because you pay it.",
+          "expect": { "label": "", "value": "-729.13" }
+        },
+        {
+          "keys": ["2ND", "AMORT", "10", "ENTER"],
+          "explain": "Open the Amortization worksheet and start the range at payment 10, the first payment of the second calendar year.",
+          "expect": { "label": "P1=", "value": "10.00" }
+        },
+        {
+          "keys": ["DOWN", "21", "ENTER"],
+          "explain": "End the range at payment 21. Payments 10 through 21 are the twelve payments of year two.",
+          "expect": { "label": "P2=", "value": "21.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read BAL: what you still owe right after payment 21.",
+          "expect": { "label": "BAL=", "value": "117,421.60" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read PRN: principal repaid during year two. It beats year one's 1,071.37 for two reasons: year two holds twelve payments to year one's nine, and each month a little more of your payment chips away at the debt.",
+          "expect": { "label": "PRN=", "value": "-1,507.03" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read INT: interest paid during year two, still the lion's share of the 12 x 729.13 you handed over.",
+          "expect": { "label": "INT=", "value": "-7,242.53" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "One more press past INT wraps the worksheet back around to P1, still showing the old starting payment.",
+          "expect": { "label": "P1=", "value": "10.00" }
+        },
+        {
+          "keys": ["CPT"],
+          "explain": "With P1 on screen, CPT slides the whole window forward by its own width: 10-21 becomes 22-33, the third year, with no typing.",
+          "expect": { "label": "P1=", "value": "22.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Check P2: it moved too, landing on 33. You could still overwrite it if you wanted a different range.",
+          "expect": { "label": "P2=", "value": "33.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read year three's ending balance after payment 33.",
+          "expect": { "label": "BAL=", "value": "115,819.62" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Year three's principal: the payoff keeps accelerating.",
+          "expect": { "label": "PRN=", "value": "-1,601.98" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Year three's interest: slightly less than year two's, because the balance it is charged on keeps shrinking.",
+          "expect": { "label": "INT=", "value": "-7,147.58" }
+        }
+      ],
+      "answer": "Year two (payments 10-21): BAL = 117,421.60, PRN = -1,507.03, INT = -7,242.53. Pressing CPT on P1 then advances the window to payments 22-33, where BAL = 115,819.62, PRN = -1,601.98, INT = -7,147.58 — each year a bit more principal, a bit less interest."
+    },
+    {
+      "id": "amortization-balloon-payment",
+      "title": "Sizing a balloon payment after five years",
+      "intro": "You sell a property and finance $82,000 for the buyer at 7% annual interest, with monthly payments computed over a 30-year amortization — but the full remaining balance is due as a balloon payment after 5 years. How big is the monthly payment, and how big is the balloon?",
+      "source": "Guidebook p. 41",
+      "steps": [
+        {
+          "keys": ["2ND", "RESET", "ENTER"],
+          "explain": "Reset so old values cannot contaminate the new loan.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["2ND", "P/Y", "12", "ENTER", "2ND", "QUIT"],
+          "explain": "Payments are monthly, so set 12 payments per year and quit the settings screen.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["30", "2ND", "xP/Y", "N"],
+          "explain": "The payment is sized as if the loan ran a full 30 years: N = 360 months. The balloon cuts it short later, but the payment math uses the long schedule.",
+          "expect": { "label": "", "value": "360.00" }
+        },
+        {
+          "keys": ["7", "I/Y"],
+          "explain": "Store the 7% annual interest rate.",
+          "expect": { "label": "", "value": "7.00" }
+        },
+        {
+          "keys": ["82000", "PV"],
+          "explain": "Store the amount financed as a positive present value — from the buyer's side it is money received.",
+          "expect": { "label": "", "value": "82,000.00" }
+        },
+        {
+          "keys": ["CPT", "PMT"],
+          "explain": "Compute the monthly payment: -545.55, negative because the buyer pays it out each month.",
+          "expect": { "label": "", "value": "-545.55" }
+        },
+        {
+          "keys": ["2ND", "AMORT"],
+          "explain": "Open the Amortization worksheet. P1 is already 1 from the reset, which is exactly where the range should start.",
+          "expect": { "label": "P1=", "value": "1.00" }
+        },
+        {
+          "keys": ["DOWN", "5", "2ND", "xP/Y", "ENTER"],
+          "explain": "Move to P2 and use the xP/Y shortcut right inside the worksheet: 5 years times 12 payments makes P2 = 60, the last payment before the balloon comes due.",
+          "expect": { "label": "P2=", "value": "60.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read BAL: the balance still owed after payment 60. This is the balloon payment.",
+          "expect": { "label": "BAL=", "value": "77,187.72" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read PRN: in five years of payments the buyer has retired only $4,812.28 of principal — a 30-year schedule barely dents the debt early on.",
+          "expect": { "label": "PRN=", "value": "-4,812.28" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Read INT: $27,920.72 of the $32,733 paid over five years was interest — which, as the seller, is your earnings on the financing.",
+          "expect": { "label": "INT=", "value": "-27,920.72" }
+        }
+      ],
+      "answer": "PMT = -545.55 and BAL = 77,187.72 — the buyer pays $545.55 a month for five years, then owes a balloon payment of $77,187.72 after payment 60, having paid $27,920.72 in interest along the way."
+    }
+  ]
+}

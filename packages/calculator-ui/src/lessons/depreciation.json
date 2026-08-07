@@ -1,0 +1,124 @@
+{
+  "area": "depreciation",
+  "title": "Depreciation",
+  "lessons": [
+    {
+      "id": "depreciation-sl-first-year",
+      "title": "Straight-line depreciation for a partial first year",
+      "intro": "Your firm buys a $1,000,000 office building and places it in service halfway through March. The building depreciates straight-line over 31.5 years with no salvage value. How much depreciation can you claim in the first calendar year, and what book value remains?",
+      "source": "Guidebook p. 58",
+      "steps": [
+        {
+          "keys": ["2ND", "DEPR"],
+          "explain": "Open the Depreciation worksheet. The first line shows which depreciation method is active — here SL, straight-line, which is the default. We want SL, so there is nothing to change.",
+          "expect": { "label": "", "value": "SL" }
+        },
+        {
+          "keys": ["DOWN", "31.5", "ENTER"],
+          "explain": "Scroll down to LIF, the asset's life in years, and enter 31.5. A fractional life is fine under the straight-line method.",
+          "expect": { "label": "LIF=", "value": "31.50" }
+        },
+        {
+          "keys": ["DOWN", "3.5", "ENTER"],
+          "explain": "M01 is the starting month, and it packs two facts into one number: the whole part is the calendar month (3 = March) and the decimal part is how far into that month service begins (.5 = halfway). So 3.5 means mid-March.",
+          "expect": { "label": "M01=", "value": "3.50" }
+        },
+        {
+          "keys": ["DOWN", "1000000", "ENTER"],
+          "explain": "CST is the cost of the asset. Enter 1,000,000. Depreciation amounts are plain magnitudes, not cash flows, so there is no positive/negative sign convention to worry about in this worksheet.",
+          "expect": { "label": "CST=", "value": "1,000,000.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "SAL is the salvage value — what the asset will be worth at the end of its life. Our building has none, and SAL already reads 0, so just scroll past without typing anything.",
+          "expect": { "label": "SAL=", "value": "0.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "YR is the year of the schedule you want to see. It starts at 1, which is exactly the year we want, so scroll past it too.",
+          "expect": { "label": "YR=", "value": "1.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "DEP computes by itself the moment you scroll onto it — no CPT needed. The building was in service only 9.5 of 12 months, so the full-year charge of 1,000,000 ÷ 31.5 is scaled down to 25,132.28.",
+          "expect": { "label": "DEP=", "value": "25,132.28" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "RBV is the remaining book value: cost minus all depreciation taken so far. 1,000,000 − 25,132.28 leaves 974,867.72 on the books.",
+          "expect": { "label": "RBV=", "value": "974,867.72" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "RDV is the remaining depreciable value: cost minus salvage minus depreciation taken. Because salvage is zero here, RDV matches RBV exactly.",
+          "expect": { "label": "RDV=", "value": "974,867.72" }
+        }
+      ],
+      "answer": "DEP = 25,132.28 for year 1 — a partial-year charge, because the building earned depreciation for only 9.5 of the year's 12 months. Book value at year-end is 974,867.72."
+    },
+    {
+      "id": "depreciation-sl-second-year",
+      "title": "Stepping the schedule to year 2",
+      "intro": "Same building: $1,000,000 cost, 31.5-year straight-line life, placed in service mid-March, no salvage. The worksheet shows one year at a time — this lesson builds year 1, then steps the schedule forward to read year 2, the first full year.",
+      "source": "Guidebook pp. 57-58",
+      "steps": [
+        {
+          "keys": ["2ND", "DEPR"],
+          "explain": "Open the Depreciation worksheet. The method line reads SL — straight-line, the default — which is what we want.",
+          "expect": { "label": "", "value": "SL" }
+        },
+        {
+          "keys": ["DOWN", "31.5", "ENTER"],
+          "explain": "Enter the 31.5-year life into LIF.",
+          "expect": { "label": "LIF=", "value": "31.50" }
+        },
+        {
+          "keys": ["DOWN", "3.5", "ENTER"],
+          "explain": "Enter 3.5 into M01: month 3 is March, and the .5 says service starts halfway through it.",
+          "expect": { "label": "M01=", "value": "3.50" }
+        },
+        {
+          "keys": ["DOWN", "1000000", "ENTER"],
+          "explain": "Enter the 1,000,000 cost into CST.",
+          "expect": { "label": "CST=", "value": "1,000,000.00" }
+        },
+        {
+          "keys": ["DOWN", "DOWN"],
+          "explain": "Scroll past SAL (salvage stays at its default of 0) and stop on YR, which reads 1 — the worksheet is set to show year 1 of the schedule.",
+          "expect": { "label": "YR=", "value": "1.00" }
+        },
+        {
+          "keys": ["DOWN", "DOWN", "DOWN"],
+          "explain": "Scroll through the three results for year 1. Each computes automatically as it appears: DEP 25,132.28, then RBV 974,867.72, and finally RDV — the 974,867.72 still left to depreciate.",
+          "expect": { "label": "RDV=", "value": "974,867.72" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "One more scroll down from RDV wraps back around to YR, still showing year 1. This loop — YR, DEP, RBV, RDV, back to YR — is how you walk the whole schedule.",
+          "expect": { "label": "YR=", "value": "1.00" }
+        },
+        {
+          "keys": ["CPT"],
+          "explain": "With YR on screen, press CPT to advance the schedule one year: YR moves from 1 to 2. (The guidebook's worked example prints 2ND SET for this step, and this calculator honors that too, but its instructions name CPT as the key that steps YR forward — so CPT is the habit to build.)",
+          "expect": { "label": "YR=", "value": "2.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "DEP recomputes for year 2. The building is now in service the entire year, so the charge is the full 1,000,000 ÷ 31.5 = 31,746.03 — larger than year 1's prorated amount.",
+          "expect": { "label": "DEP=", "value": "31,746.03" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "RBV drops by another year of depreciation: 1,000,000 − 25,132.28 − 31,746.03 = 943,121.69.",
+          "expect": { "label": "RBV=", "value": "943,121.69" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "RDV again equals RBV because salvage is zero. Keep repeating the loop — wrap to YR, press CPT to advance a year, scroll the three results — until RDV hits zero and the schedule is done.",
+          "expect": { "label": "RDV=", "value": "943,121.69" }
+        }
+      ],
+      "answer": "Year 2 DEP = 31,746.03 — the first full-year charge of 1,000,000 ÷ 31.5, since only year 1 was prorated for the mid-March start. Book value at the end of year 2 is 943,121.69."
+    }
+  ]
+}

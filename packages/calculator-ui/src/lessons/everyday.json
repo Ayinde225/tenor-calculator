@@ -1,0 +1,195 @@
+{
+  "area": "everyday",
+  "title": "Everyday Business",
+  "lessons": [
+    {
+      "id": "everyday-percent-change",
+      "title": "Percent change from forecast to actual",
+      "intro": "Your sales forecast was 658 units, but actual sales came in at 700. By what percent did actual beat the forecast? The Percent Change worksheet answers this from just the old and new values.",
+      "source": "Guidebook pp. 64-65",
+      "steps": [
+        {
+          "keys": ["2ND", "Δ%", "2ND", "CLR WORK"],
+          "explain": "Open the Percent Change worksheet with 2ND Δ%, then press 2ND CLR WORK so no leftover numbers from earlier work can sneak into the answer. The worksheet opens on OLD, the starting value.",
+          "expect": { "label": "OLD=", "value": "0.00" }
+        },
+        {
+          "keys": ["658", "ENTER"],
+          "explain": "Key in 658 and press ENTER to lock it in as the old value — the forecast you are measuring against.",
+          "expect": { "label": "OLD=", "value": "658.00" }
+        },
+        {
+          "keys": ["DOWN", "700", "ENTER"],
+          "explain": "Press the down arrow to move to NEW, then enter 700, the actual result. ENTER stores it.",
+          "expect": { "label": "NEW=", "value": "700.00" }
+        },
+        {
+          "keys": ["DOWN", "CPT"],
+          "explain": "Move down once more to %CH — the unknown. Do not type anything here; just press CPT and the calculator solves for the percent change.",
+          "expect": { "label": "%CH=", "value": "6.38" }
+        }
+      ],
+      "answer": "%CH = 6.38 — actual sales beat the forecast by about 6.38%. A positive percent change means an increase; a negative one would mean a decline."
+    },
+    {
+      "id": "everyday-effective-annual-rate",
+      "title": "Effective rate of 15% compounded quarterly",
+      "intro": "A bank quotes 15% annual interest, compounded quarterly. Because each quarter's interest starts earning interest itself, you really earn more than 15% over the year. The Interest Conversion worksheet turns the quoted (nominal) rate into the true effective annual rate.",
+      "source": "Guidebook p. 67",
+      "steps": [
+        {
+          "keys": ["2ND", "ICONV", "2ND", "CLR WORK"],
+          "explain": "Open the Interest Conversion worksheet with 2ND ICONV and clear it. Clearing zeroes the two rates but deliberately leaves the compounding setting alone — you will set that yourself in a moment. The worksheet opens on NOM, the nominal rate.",
+          "expect": { "label": "NOM=", "value": "0.00" }
+        },
+        {
+          "keys": ["15", "ENTER"],
+          "explain": "Enter the quoted rate: 15, then ENTER. Rates here are annual figures in percent, so 15 means 15% per year.",
+          "expect": { "label": "NOM=", "value": "15.00" }
+        },
+        {
+          "keys": ["DOWN", "DOWN", "4", "ENTER"],
+          "explain": "Press down twice — the first press shows EFF, the answer slot, and the second lands on C/Y, the compounding periods per year. Quarterly compounding means 4 periods, so enter 4.",
+          "expect": { "label": "C/Y=", "value": "4.00" }
+        },
+        {
+          "keys": ["UP", "CPT"],
+          "explain": "Press up to step back to EFF and press CPT. The calculator compounds 15%/4 per quarter across four quarters and reports the annual rate that actually results.",
+          "expect": { "label": "EFF=", "value": "15.87" }
+        }
+      ],
+      "answer": "EFF = 15.87 — a 15% nominal rate compounded quarterly really earns 15.87% over a year. When two offers compound at different frequencies, convert both to effective rates before comparing them."
+    },
+    {
+      "id": "everyday-markup-from-cost",
+      "title": "Markup: profit as a percent of cost",
+      "intro": "An item costs you 100 and sells for 125. The 25 of profit, measured as a percentage of the COST, is the markup. Markup problems go in the Percent Change worksheet — cost is the old value and selling price is the new one.",
+      "source": "Guidebook pp. 65-66",
+      "steps": [
+        {
+          "keys": ["2ND", "Δ%", "2ND", "CLR WORK"],
+          "explain": "Open the Percent Change worksheet and clear it. Clearing also puts the number of periods back to 1, which is exactly what a one-step markup calculation needs.",
+          "expect": { "label": "OLD=", "value": "0.00" }
+        },
+        {
+          "keys": ["100", "ENTER"],
+          "explain": "Enter the cost, 100, as the old value. Markup is always measured from cost, so cost is the starting point.",
+          "expect": { "label": "OLD=", "value": "100.00" }
+        },
+        {
+          "keys": ["DOWN", "125", "ENTER"],
+          "explain": "Move down to NEW and enter the selling price, 125.",
+          "expect": { "label": "NEW=", "value": "125.00" }
+        },
+        {
+          "keys": ["DOWN", "CPT"],
+          "explain": "Move down to %CH and press CPT. The change from 100 to 125 as a percent of the starting 100 is the markup.",
+          "expect": { "label": "%CH=", "value": "25.00" }
+        }
+      ],
+      "answer": "%CH = 25.00 — the markup is 25% of cost. Careful: the very same 25 of profit is only a 20% margin, because margin divides by the 125 selling price instead. The next lesson shows that side."
+    },
+    {
+      "id": "everyday-cost-from-margin",
+      "title": "Cost from a 20% margin on a 125 price",
+      "intro": "An item sells for 125 and your pricing policy requires a 20% gross profit margin. What is the most the item can cost you? Margin measures profit against the SELLING PRICE — that is what the Profit Margin worksheet computes. (Profit against cost is markup, which belongs in the Percent Change worksheet instead.)",
+      "source": "Guidebook p. 71",
+      "steps": [
+        {
+          "keys": ["2ND", "PROFIT", "2ND", "CLR WORK"],
+          "explain": "Open the Profit Margin worksheet with 2ND PROFIT and clear its three variables. It opens on CST, the cost — which is the value you want computed, so leave it alone.",
+          "expect": { "label": "CST=", "value": "0.00" }
+        },
+        {
+          "keys": ["DOWN", "125", "ENTER"],
+          "explain": "Move down to SEL and enter the selling price, 125.",
+          "expect": { "label": "SEL=", "value": "125.00" }
+        },
+        {
+          "keys": ["DOWN", "20", "ENTER"],
+          "explain": "Move down to MAR and enter 20. This is the gross profit margin — 20% of the selling price, not of the cost.",
+          "expect": { "label": "MAR=", "value": "20.00" }
+        },
+        {
+          "keys": ["UP", "UP", "CPT"],
+          "explain": "Press up twice to walk back through SEL to CST, then press CPT. The calculator takes 20% of the 125 price as profit and returns what is left as the allowable cost.",
+          "expect": { "label": "CST=", "value": "100.00" }
+        }
+      ],
+      "answer": "CST = 100.00 — the item can cost at most 100. Check the two views of the same deal: 25 profit is a 20% margin of the 125 price, but a 25% markup on the 100 cost. Same money, different denominator."
+    },
+    {
+      "id": "everyday-breakeven-quantity",
+      "title": "How many units to break even",
+      "intro": "Your product sells for 20 a unit and costs 15 a unit to make, and you carry 3,000 of fixed costs. How many units must you sell just to cover all your costs? The Breakeven worksheet solves this when you set profit to zero.",
+      "source": "Guidebook p. 72",
+      "steps": [
+        {
+          "keys": ["2ND", "BRKEVN", "2ND", "CLR WORK"],
+          "explain": "Open the Breakeven worksheet with 2ND BRKEVN and clear it. Clearing matters here: it guarantees the profit variable is zero, which is the definition of breaking even. The worksheet opens on FC, the fixed cost.",
+          "expect": { "label": "FC=", "value": "0.00" }
+        },
+        {
+          "keys": ["3000", "ENTER"],
+          "explain": "Enter the fixed costs, 3000 — the costs you pay no matter how many units you sell. Enter it as a plain positive number; the worksheet knows costs are subtracted.",
+          "expect": { "label": "FC=", "value": "3,000.00" }
+        },
+        {
+          "keys": ["DOWN", "15", "ENTER"],
+          "explain": "Move down to VC and enter 15, the variable cost of producing each single unit.",
+          "expect": { "label": "VC=", "value": "15.00" }
+        },
+        {
+          "keys": ["DOWN", "20", "ENTER"],
+          "explain": "Move down to P and enter 20, the selling price per unit. Each sale now contributes 20 − 15 = 5 toward the fixed costs.",
+          "expect": { "label": "P=", "value": "20.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "Move down to PFT and leave it at 0.00 — do not type anything. Zero profit is exactly what 'breakeven' means: revenue just covers total costs.",
+          "expect": { "label": "PFT=", "value": "0.00" }
+        },
+        {
+          "keys": ["DOWN", "CPT"],
+          "explain": "Move down to Q, the quantity, and press CPT. The calculator finds how many 5-per-unit contributions it takes to cover 3,000 of fixed costs.",
+          "expect": { "label": "Q=", "value": "600.00" }
+        }
+      ],
+      "answer": "Q = 600.00 — you must sell 600 units to break even. Below 600 you run at a loss; every unit past 600 adds 5 of profit."
+    },
+    {
+      "id": "everyday-days-between-dates",
+      "title": "Days between two dates",
+      "intro": "How many days pass between September 4, 2003 and November 1, 2003? The Date worksheet counts real calendar days — actual month lengths and leap years included.",
+      "source": "Guidebook p. 69",
+      "steps": [
+        {
+          "keys": ["2ND", "DATE", "2ND", "CLR WORK"],
+          "explain": "Open the Date worksheet with 2ND DATE and clear it. Clearing resets both dates to the factory default of December 31, 1990, ready for your own dates. It opens on DT1, the first (earlier) date.",
+          "expect": { "label": "DT1=", "value": "12-31-1990" }
+        },
+        {
+          "keys": ["9.0403", "ENTER"],
+          "explain": "Dates are keyed as one number in MM.DDYY form: 9.0403 means month 9, day 04, year 03. Two-digit years land in the 1980-2079 window, so 03 reads as 2003. Press ENTER and the display confirms the date it understood.",
+          "expect": { "label": "DT1=", "value": "9-04-2003" }
+        },
+        {
+          "keys": ["DOWN", "11.0103", "ENTER"],
+          "explain": "Move down to DT2 and key the later date the same way: 11.0103 is November 1, 2003. Keep DT1 as the earlier of the two dates.",
+          "expect": { "label": "DT2=", "value": "11-01-2003" }
+        },
+        {
+          "keys": ["DOWN", "DOWN"],
+          "explain": "Press down twice: past DBD (the answer slot) and onto the day-count method. It should read ACT — actual/actual, which counts true calendar days. If it ever showed 360, pressing 2ND SET would switch it back.",
+          "expect": { "label": "", "value": "ACT" }
+        },
+        {
+          "keys": ["UP", "CPT"],
+          "explain": "Press up to return to DBD and press CPT. The calculator counts the actual days from September 4 to November 1.",
+          "expect": { "label": "DBD=", "value": "58.00" }
+        }
+      ],
+      "answer": "DBD = 58.00 — 58 days separate the two dates: 26 days left in September, 31 in October, and 1 day into November."
+    }
+  ]
+}

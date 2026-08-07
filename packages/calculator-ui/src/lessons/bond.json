@@ -1,0 +1,99 @@
+{
+  "area": "bond",
+  "title": "Bonds",
+  "lessons": [
+    {
+      "id": "bond-price-from-yield",
+      "title": "Pricing a bond from its yield",
+      "intro": "You are looking at a 7% bond that pays interest twice a year, settles on June 12, 2006, and matures on December 31, 2007. Using a 30/360 day count and an 8% yield to maturity, what price should you pay per $100 of face value?",
+      "source": "Guidebook pp. 53-54",
+      "steps": [
+        {
+          "keys": ["2ND", "BOND"],
+          "explain": "Open the Bond worksheet. It greets you with the settlement date, SDT. The worksheet remembers whatever was stored last time, so on a brand-new calculator you see the factory date 12-31-1990.",
+          "expect": { "label": "SDT=", "value": "12-31-1990" }
+        },
+        {
+          "keys": ["2ND", "CLR WORK"],
+          "explain": "Wipe the worksheet back to its defaults so no leftover numbers from an earlier problem sneak into this one. CLR WORK only clears the worksheet you are currently standing in, so press it here, inside Bond.",
+          "expect": { "label": "SDT=", "value": "12-31-1990" }
+        },
+        {
+          "keys": ["6.1206", "ENTER"],
+          "explain": "Dates go in as MM.DDYY: the month, a decimal point, then two digits for the day and two for the year. June 12, 2006 becomes 6.1206. The calculator reads the two-digit year 06 as 2006 and shows the full date back to you.",
+          "expect": { "label": "SDT=", "value": "6-12-2006" }
+        },
+        {
+          "keys": ["DOWN", "7", "ENTER"],
+          "explain": "Arrow down to CPN, the annual coupon rate. The calculator wants the rate itself, not the dollar coupon — a 7% bond is keyed as 7, no matter how large the bond actually is.",
+          "expect": { "label": "CPN=", "value": "7.00" }
+        },
+        {
+          "keys": ["DOWN", "12.3107", "ENTER"],
+          "explain": "Arrow down to RDT, the redemption date, and use the same MM.DDYY pattern: December 31, 2007 becomes 12.3107. Since we point it at the maturity date, we are pricing the bond to maturity. It must fall after the settlement date.",
+          "expect": { "label": "RDT=", "value": "12-31-2007" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "RV tells the calculator what the bond hands back when it is retired, scaled so that face value counts as 100. This bond repays exactly its face amount at maturity, so leave the default 100 alone and just move past it.",
+          "expect": { "label": "RV=", "value": "100.00" }
+        },
+        {
+          "keys": ["DOWN", "2ND", "SET"],
+          "explain": "This position is a switch, not a number: it picks the day-count method. It starts on ACT (actual calendar days); pressing 2ND SET flips it to 360, the 30/360 convention this problem calls for.",
+          "expect": { "label": "", "value": "360" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "The next position is the other switch: coupons per year. Our bond pays twice a year, which is exactly the 2/Y default, so leave it and move on. (2ND SET here would flip it to 1/Y for annual-pay bonds.)",
+          "expect": { "label": "", "value": "2/Y" }
+        },
+        {
+          "keys": ["DOWN", "8", "ENTER"],
+          "explain": "Key the yield to maturity into YLD as an annual percentage: 8 means 8% per year.",
+          "expect": { "label": "YLD=", "value": "8.00" }
+        },
+        {
+          "keys": ["DOWN", "CPT"],
+          "explain": "Arrow down to PRI and press CPT to compute the price. It comes out below 100 — the bond sells at a discount because its 7% coupon pays less than the 8% the market demands.",
+          "expect": { "label": "PRI=", "value": "98.56" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "One more arrow shows AI, the accrued interest, already computed — no CPT needed. This is the coupon interest the seller earned since the last coupon date, which the buyer must hand over on top of the price.",
+          "expect": { "label": "AI=", "value": "3.15" }
+        }
+      ],
+      "answer": "PRI = 98.56 — the bond is worth $98.56 per $100 of face value. Add the accrued interest AI = 3.15 and the buyer actually hands over about $101.71 per $100 of face value. Bond figures carry no plus-or-minus cash-flow convention; both are plain positive amounts."
+    },
+    {
+      "id": "bond-fresh-worksheet-error6",
+      "title": "Why a fresh Bond worksheet shows Error 6",
+      "intro": "Scroll through a freshly cleared Bond worksheet without typing anything and the calculator suddenly shows Error 6. This short exercise shows exactly where that happens, why, and how to clear it with CE/C.",
+      "source": "Guidebook p. 50",
+      "steps": [
+        {
+          "keys": ["2ND", "BOND", "2ND", "CLR WORK"],
+          "explain": "Open the Bond worksheet and clear it to defaults. Notice the trap being set: the settlement date SDT and the redemption date RDT both reset to the same date, 12-31-1990.",
+          "expect": { "label": "SDT=", "value": "12-31-1990" }
+        },
+        {
+          "keys": ["DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN"],
+          "explain": "Scrolling through the places where you type things is harmless: CPN, RDT, RV, the two switches, YLD, and PRI all display without complaint.",
+          "expect": { "label": "PRI=", "value": "0.00" }
+        },
+        {
+          "keys": ["DOWN"],
+          "explain": "One more arrow reaches AI — and AI computes itself the moment it is displayed. That calculation needs the redemption date to come after the settlement date, but on a fresh worksheet they are identical, so the calculator refuses with Error 6.",
+          "expect": { "label": "", "value": "Error 6" }
+        },
+        {
+          "keys": ["CE/C"],
+          "explain": "CE/C dismisses the error and drops you back on PRI. Nothing you stored is lost — an error message never erases your data.",
+          "expect": { "label": "PRI=", "value": "0.00" }
+        }
+      ],
+      "answer": "The lesson: enter your settlement and redemption dates before scrolling to the far end of the worksheet. Error 6 on a fresh Bond worksheet just means RDT is not later than SDT — press CE/C, key in the real dates, and carry on."
+    }
+  ]
+}

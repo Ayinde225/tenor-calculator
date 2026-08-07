@@ -1,0 +1,137 @@
+{
+  "area": "memory-shortcuts",
+  "title": "Memory & Shortcuts",
+  "lessons": [
+    {
+      "id": "memory-shortcuts-store-and-recall",
+      "title": "Storing a value and getting it back",
+      "intro": "A price of $14.95 keeps coming up in your work, and you don't want to retype it. The calculator has ten memories, numbered 0 through 9. Store 14.95 in memory 3, wipe the display, then pull the value back — twice, to prove it stays put.",
+      "source": "Guidebook p. 16",
+      "steps": [
+        {
+          "keys": ["14.95"],
+          "explain": "Key in the value you want to keep. It appears exactly as typed — the calculator doesn't format a number while you are still entering it.",
+          "expect": { "label": "", "value": "14.95" }
+        },
+        {
+          "keys": ["STO", "3"],
+          "explain": "STO followed by a digit copies the displayed value into that memory. Memory 3 now holds 14.95. Whatever was in there before is simply overwritten — there is no confirmation step.",
+          "expect": { "label": "", "value": "14.95" }
+        },
+        {
+          "keys": ["CE/C"],
+          "explain": "Clear the display to zero. This is just to prove the next step really fetches the value from memory, not from the screen.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["RCL", "3"],
+          "explain": "RCL followed by the digit brings the stored value back into the display, ready to use in a calculation.",
+          "expect": { "label": "", "value": "14.95" }
+        },
+        {
+          "keys": ["RCL", "3"],
+          "explain": "Recall it again. Recalling only copies the value out — the memory still holds 14.95, so you can reuse it as many times as you like. When a memory has outlived its usefulness, overwrite it with zero (0 STO 3) and it reads as empty again.",
+          "expect": { "label": "", "value": "14.95" }
+        }
+      ],
+      "answer": "RCL 3 shows 14.95 every time. Storing overwrites a memory unconditionally, and recalling never empties it — the value stays until you store something else over it."
+    },
+    {
+      "id": "memory-shortcuts-memory-arithmetic",
+      "title": "Running a total inside a memory with STO +",
+      "intro": "You want a running total that lives in memory while the display stays free for other work. Start with 100 in memory 9, add 5 into it, then subtract 30 from it — all without ever disturbing what's on screen.",
+      "source": "Guidebook p. 17",
+      "steps": [
+        {
+          "keys": ["100", "STO", "9"],
+          "explain": "Store 100 in memory 9. Pressing STO finishes the number you were typing, so the display now shows it formatted to two decimals.",
+          "expect": { "label": "", "value": "100.00" }
+        },
+        {
+          "keys": ["5", "STO", "+", "9"],
+          "explain": "Key 5, then STO + 9. This adds the displayed 5 INTO memory 9, so the memory now holds 105 — but look at the screen: it still shows your 5. The addition happened entirely inside the memory; the screen never budged.",
+          "expect": { "label": "", "value": "5.00" }
+        },
+        {
+          "keys": ["RCL", "9"],
+          "explain": "Recall memory 9 to see the result of the hidden addition: 100 + 5 = 105.",
+          "expect": { "label": "", "value": "105.00" }
+        },
+        {
+          "keys": ["30", "STO", "-", "9"],
+          "explain": "Now subtract. The order matters: the memory is always the left-hand side, so this computes memory minus display, 105 - 30 — not 30 - 105. The same rule holds for STO with divide and with the power key.",
+          "expect": { "label": "", "value": "30.00" }
+        },
+        {
+          "keys": ["RCL", "9"],
+          "explain": "Recall memory 9 once more to confirm: 105 - 30 = 75.",
+          "expect": { "label": "", "value": "75.00" }
+        }
+      ],
+      "answer": "Memory 9 ends at 75.00. STO followed by +, -, ×, ÷, or y^x rewrites the memory as (memory op displayed value) in one short key sequence, while the display never moves — perfect for accumulating a total on the side."
+    },
+    {
+      "id": "memory-shortcuts-constant",
+      "title": "Multiplying a whole list by 8 with the constant",
+      "intro": "You need to multiply a whole list of numbers — 3, 7, and 45 — by the same 8. Instead of retyping × 8 every time, arm it once as a constant; after that, each new number needs only the = key.",
+      "source": "Guidebook p. 18",
+      "steps": [
+        {
+          "keys": ["2ND", "QUIT"],
+          "explain": "Leave any worksheet and drop any half-finished calculation, so the constant starts from a clean slate.",
+          "expect": { "label": "", "value": "0.00" }
+        },
+        {
+          "keys": ["3", "×", "8"],
+          "explain": "Set up the first calculation as usual: 3 times 8. The display shows the raw 8 you just keyed — a number is shown exactly as typed while you are still entering it.",
+          "expect": { "label": "", "value": "8" }
+        },
+        {
+          "keys": ["2ND", "K", "="],
+          "explain": "2ND K locks the '× 8' in as the constant. The = that follows does double duty: it finishes the first calculation, 3 × 8 = 24.",
+          "expect": { "label": "", "value": "24.00" }
+        },
+        {
+          "keys": ["7", "="],
+          "explain": "Here is the payoff. Key the next number and press = — the armed × 8 is applied automatically: 7 × 8 = 56.",
+          "expect": { "label": "", "value": "56.00" }
+        },
+        {
+          "keys": ["45", "="],
+          "explain": "And again: 45 × 8 = 360. The constant keeps working for any number of these number-then-= rounds. It stays armed until you set up a new operation and press 2ND K again — and if you have an ordinary calculation in progress, = finishes that first instead.",
+          "expect": { "label": "", "value": "360.00" }
+        }
+      ],
+      "answer": "24.00, 56.00, 360.00 — one × 8, armed once with 2ND K, applied to every number you follow with =. The constant stays armed until you replace it with a new 2ND K or switch the calculator off, so a whole column of numbers costs one keystroke each."
+    },
+    {
+      "id": "memory-shortcuts-last-answer",
+      "title": "Reusing the last answer with 2ND ANS",
+      "intro": "Compute 3 + 1, then raise 2 to that result — without retyping the 4. The calculator quietly remembers the most recent result as the Last Answer, and 2ND ANS drops it into the middle of your next calculation.",
+      "source": "Guidebook p. 19",
+      "steps": [
+        {
+          "keys": ["3", "+", "1", "="],
+          "explain": "A small calculation to make a result: 3 + 1 = 4. The = key is one of the moments the calculator saves its Last Answer, so ANS now holds 4.",
+          "expect": { "label": "", "value": "4.00" }
+        },
+        {
+          "keys": ["2", "Y^X"],
+          "explain": "Start the next calculation: 2 raised to a power. Pressing the operator key formats the pending 2 to 2.00 — and note that y^x does NOT touch the Last Answer, which still holds 4.",
+          "expect": { "label": "", "value": "2.00" }
+        },
+        {
+          "keys": ["2ND", "ANS"],
+          "explain": "Recall the Last Answer as the exponent. The 4 from the first calculation reappears, sitting right where the exponent belongs.",
+          "expect": { "label": "", "value": "4.00" }
+        },
+        {
+          "keys": ["="],
+          "explain": "Close the calculation: 2 to the 4th power is 16. This = also makes 16.00 the new Last Answer, ready for whatever comes next.",
+          "expect": { "label": "", "value": "16.00" }
+        }
+      ],
+      "answer": "2^4 = 16.00, with the 4 supplied by 2ND ANS instead of your fingers. The Last Answer refreshes whenever =, ENTER, or CPT produces a value, so you can chain results between calculations — and even between worksheets — without rekeying them."
+    }
+  ]
+}

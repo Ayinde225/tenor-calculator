@@ -45,12 +45,27 @@ preferences, a PWA (manifest, offline-first service worker, icons), **guided
 learning mode** (an explanatory overlay that reads the same engine state and so
 can never compute differently), and **calculation history** with lossless recall.
 
-The UI has **40 Playwright end-to-end tests** (Chromium + a mobile viewport) that
+The UI has **45 Playwright end-to-end tests** (Chromium + a mobile viewport) that
 drive real button clicks — the required parity examples pass end-to-end through the
 interface, not just in the engine — plus long-press worksheet scrolling and a full
 **WCAG 2.2 AA** pass (contrast computed from the theme tokens; a five-dimension
 adversarial audit; every finding fixed and test-guarded). See
 [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md).
+
+### Practice mode
+
+Interactive walkthroughs of the guidebook's worked examples, played key-by-key on
+the real calculator: pick a problem ("Computing a monthly mortgage payment"), the
+key to press lights up on the keypad, each step explains why, and the display is
+checked against the recorded value at every checkpoint. **33 lessons across 8
+areas** (basics, TVM, amortization, cash flow, bonds, depreciation, everyday
+business, memory), curated from the same verified corpus the parity tests use.
+
+Lessons are data, not code (`src/lessons/*.json`), and every checkpoint is
+replayed through the engine in CI (`lessons.test.ts`) — a lesson that would teach
+a wrong keystroke cannot ship. A "wrong" key during a walkthrough is absorbed with
+a hint pulse rather than derailing the script, and "Press it for me" advances the
+script hands-free.
 
 ```bash
 npm run dev --workspace @tenor/calculator-ui       # dev server
